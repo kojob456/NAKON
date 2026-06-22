@@ -1,0 +1,11 @@
+{
+  "name": "Nakhon Si Thammarat Flood Early Warning & Recovery System",
+  "description": "A comprehensive real-time flood warning, incident reporting, responder dispatch, and risk management application for Nakhon Si Thammarat.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

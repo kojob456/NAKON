@@ -1,0 +1,538 @@
+import React, { useState, useEffect } from "react";
+import { Shield, HelpCircle, Phone, MapPin, Check, Plus, AlertCircle, Volume2, HelpCircle as HelpIcon, Accessibility } from "lucide-react";
+import { User, UserRole, FloodReport, ReportStatus, FloodSeverity, WeatherStation, RiverGauge, ThresholdSettings, IntegrationAPI } from "./types";
+import {
+  initialAmphoes,
+  initialWeatherStations,
+  initialRiverGauges,
+  initialEvacuationCenters,
+  initialFloodReports,
+  defaultThresholdSettings,
+  defaultAPIs,
+  mockUsers
+} from "./data/mockData";
+
+import Header from "./components/Header";
+import Dashboard from "./components/Dashboard";
+import InteractiveMap from "./components/InteractiveMap";
+import AuthPage from "./components/AuthPage";
+import ReportPortal from "./components/ReportPortal";
+import TrackingPortal from "./components/TrackingPortal";
+import ResponderDashboard from "./components/ResponderDashboard";
+import AdminConsole from "./components/AdminConsole";
+import { getThemeStyle, AppThemeType } from "./utils/theme";
+
+export default function App() {
+  // Global States loaded from LocalStorage if available
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    return localStorage.getItem("activeTab") || "dashboard";
+  });
+
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem("currentUser");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [reports, setReports] = useState<FloodReport[]>(() => {
+    const saved = localStorage.getItem("reports");
+    return saved ? JSON.parse(saved) : initialFloodReports;
+  });
+
+  const [weatherStations, setWeatherStations] = useState<WeatherStation[]>(() => {
+    const saved = localStorage.getItem("weatherStations");
+    return saved ? JSON.parse(saved) : initialWeatherStations;
+  });
+
+  const [riverGauges, setRiverGauges] = useState<RiverGauge[]>(() => {
+    const saved = localStorage.getItem("riverGauges");
+    return saved ? JSON.parse(saved) : initialRiverGauges;
+  });
+
+  const [thresholdSettings, setThresholdSettings] = useState<ThresholdSettings>(() => {
+    const saved = localStorage.getItem("thresholdSettings");
+    return saved ? JSON.parse(saved) : defaultThresholdSettings;
+  });
+
+  const [apis, setApis] = useState<IntegrationAPI[]>(() => {
+    const saved = localStorage.getItem("apis");
+    return saved ? JSON.parse(saved) : defaultAPIs;
+  });
+
+  const [usersList, setUsersList] = useState<User[]>(() => {
+    const saved = localStorage.getItem("usersList");
+    return saved ? JSON.parse(saved) : mockUsers;
+  });
+
+  const [selectedAmphoe, setSelectedAmphoe] = useState<string>("");
+
+  // Accessibility State Setup & Theme Selector
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem("isDarkMode") === "true";
+  });
+
+  const [appTheme, setAppTheme] = useState<AppThemeType>(() => {
+    return (localStorage.getItem("appTheme") as AppThemeType) || "white";
+  });
+
+  const [fontSizeScale, setFontSizeScale] = useState<number>(() => {
+    const saved = localStorage.getItem("fontSizeScale");
+    return saved ? Number(saved) : 100;
+  });
+
+  const [isHighContrast, setIsHighContrast] = useState<boolean>(() => {
+    return localStorage.getItem("isHighContrast") === "true";
+  });
+
+  const [isBoldText, setIsBoldText] = useState<boolean>(() => {
+    return localStorage.getItem("isBoldText") === "true";
+  });
+
+  // Watch zones add drawer helper
+  const [tempWatchZoneInput, setTempWatchZoneInput] = useState("");
+
+  // Persists states in localstorage to have pristine recovery
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("currentUser");
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem("reports", JSON.stringify(reports));
+  }, [reports]);
+
+  useEffect(() => {
+    localStorage.setItem("weatherStations", JSON.stringify(weatherStations));
+  }, [weatherStations]);
+
+  useEffect(() => {
+    localStorage.setItem("riverGauges", JSON.stringify(riverGauges));
+  }, [riverGauges]);
+
+  useEffect(() => {
+    localStorage.setItem("thresholdSettings", JSON.stringify(thresholdSettings));
+  }, [thresholdSettings]);
+
+  useEffect(() => {
+    localStorage.setItem("apis", JSON.stringify(apis));
+  }, [apis]);
+
+  useEffect(() => {
+    localStorage.setItem("usersList", JSON.stringify(usersList));
+  }, [usersList]);
+
+  useEffect(() => {
+    localStorage.setItem("isDarkMode", String(isDarkMode));
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      setAppTheme("black");
+    } else {
+      document.documentElement.classList.remove("dark");
+      setAppTheme("white");
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    localStorage.setItem("appTheme", appTheme);
+  }, [appTheme]);
+
+  useEffect(() => {
+    localStorage.setItem("fontSizeScale", String(fontSizeScale));
+  }, [fontSizeScale]);
+
+  useEffect(() => {
+    localStorage.setItem("isHighContrast", String(isHighContrast));
+  }, [isHighContrast]);
+
+  useEffect(() => {
+    localStorage.setItem("isBoldText", String(isBoldText));
+  }, [isBoldText]);
+
+
+  // Handler 1: Simulator Quick switcher
+  const handleSelectSimulatedUser = (userUid: string | null) => {
+    if (userUid === null) {
+      setCurrentUser(null);
+      setActiveTab("dashboard");
+    } else {
+      const u = usersList.find((usr) => usr.uid === userUid);
+      if (u) {
+        setCurrentUser(u);
+        // Automatically switch page tabs corresponding to role to guide reviewers nicely!
+        if (u.role === UserRole.ADMIN) {
+          setActiveTab("admin");
+        } else if (u.role === UserRole.RESPONDER) {
+          setActiveTab("responder");
+        } else {
+          setActiveTab("report");
+        }
+      }
+    }
+  };
+
+  // Handler 2: Modify User Roles in admin panel
+  const handleUpdateUserRole = (uid: string, newRole: UserRole, agency?: string) => {
+    const updated = usersList.map((usr) => {
+      if (usr.uid === uid) {
+        return { ...usr, role: newRole, agency: agency || "" };
+      }
+      return usr;
+    });
+    setUsersList(updated);
+
+    // Sync session user if current
+    if (currentUser?.uid === uid) {
+      setCurrentUser({ ...currentUser, role: newRole, agency: agency || "" });
+    }
+  };
+
+  // Handler 3: Add new user submitted flood report case
+  const handleAddReportCase = (newReport: FloodReport) => {
+    setReports((prev) => [newReport, ...prev]);
+
+    // Fast-trigger automatic notification simulated SMS/LINE alert to matched Sentinel Watch zones
+    // Search active users that subscribed to this tambon watchZone
+    const matchedSubscribedUsers = usersList.filter((u) => 
+      u.watchZones && u.watchZones.some((z) => z.toLowerCase().includes(newReport.tambon.toLowerCase()))
+    );
+
+    if (matchedSubscribedUsers.length > 0) {
+      setTimeout(() => {
+        alert(
+          `📢 [SMS / LINE BROADCAST ALERT] : ตรวจพบคดีวิกฤตน้ำป่าระดับสูง ต.${newReport.tambon}! เจ้าหน้าที่สังเกตการณ์ส่งสัญญาณเตือนภัยเร่งด่วน 3 ชม. ไปยังพิกัดประชาชนจำนวน ${matchedSubscribedUsers.length} รายเรียบร้อยแล้ว`
+        );
+      }, 1200);
+    }
+
+    setActiveTab("tracking");
+  };
+
+  // Handler 4: Responder Dispatch update case action
+  const handleUpdateReportStatus = (
+    reportId: string,
+    status: ReportStatus,
+    assignedAgency: string,
+    note: string
+  ) => {
+    const updated = reports.map((r) => {
+      if (r.id === reportId) {
+        return {
+          ...r,
+          status,
+          assignedAgency,
+          responderNote: note,
+          updatedAt: new Date().toISOString()
+        };
+      }
+      return r;
+    });
+    setReports(updated);
+  };
+
+  // Handler 5: Custom alert zones subscriptions (Section 3.2.1)
+  const handleAddWatchZone = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tempWatchZoneInput || !currentUser) return;
+
+    if (currentUser.watchZones.includes(tempWatchZoneInput)) {
+      alert("มีตําบลนี้ในรายการเฝ้าระวังพิเศษอยู่แล้ว");
+      return;
+    }
+
+    const updatedUser = {
+      ...currentUser,
+      watchZones: [...currentUser.watchZones, tempWatchZoneInput]
+    };
+
+    setCurrentUser(updatedUser);
+
+    // Update usersList list copy too
+    const updatedUsersList = usersList.map((u) => {
+      if (u.uid === currentUser.uid) {
+        return updatedUser;
+      }
+      return u;
+    });
+    setUsersList(updatedUsersList);
+    setTempWatchZoneInput("");
+    alert(`📌 บันทึกตำบลเฝ้าระวังพิเศษ "${tempWatchZoneInput}" เพื่อรับข้อมูล SMS/LINE 3 ชม. ด่วน ล้นตลิ่งคีรีวง ลุล่วงแล้วครับ`);
+  };
+
+  const handleRemoveWatchZone = (zone: string) => {
+    if (!currentUser) return;
+    const updatedUser = {
+      ...currentUser,
+      watchZones: currentUser.watchZones.filter(z => z !== zone)
+    };
+    setCurrentUser(updatedUser);
+
+    const updatedUsersList = usersList.map((u) => {
+      if (u.uid === currentUser.uid) {
+        return updatedUser;
+      }
+      return u;
+    });
+    setUsersList(updatedUsersList);
+  };
+
+  // Handler 6: Toggle API connectors statuses
+  const handleToggleAPIStatus = (apiId: string) => {
+    const updated = apis.map((a) => {
+      if (a.id === apiId) {
+        return {
+          ...a,
+          status: a.status === "connected" ? "disconnected" : "connected",
+          lastSyncTime: new Date().toISOString()
+        };
+      }
+      return a;
+    });
+    setApis(updated as any);
+  };
+
+  const getBoldClass = () => {
+    return isBoldText ? "font-bold" : "";
+  };
+
+  const themeStyle = getThemeStyle(appTheme, isHighContrast);
+
+  return (
+    <div 
+      style={{ '--font-scale': fontSizeScale / 100 } as React.CSSProperties}
+      className={`min-h-screen flex flex-col font-sans transition-all selection:bg-blue-500 selection:text-white ${themeStyle.bg} ${themeStyle.text} ${getBoldClass()}`}
+    >
+      
+      {/* Dynamic Header Component */}
+      <Header
+        currentUser={currentUser}
+        onSelectUser={handleSelectSimulatedUser}
+        mockUsers={usersList}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        fontSizeScale={fontSizeScale}
+        onChangeFontSizeScale={setFontSizeScale}
+        isHighContrast={isHighContrast}
+        onToggleHighContrast={() => setIsHighContrast(!isHighContrast)}
+        isBoldText={isBoldText}
+        onToggleBoldText={() => setIsBoldText(!isBoldText)}
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        appTheme={appTheme}
+        onChangeAppTheme={setAppTheme}
+      />
+
+      {/* Main Core Content Stage Area */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-8">
+        
+        {/* Render Tab Content based on active state */}
+        {activeTab === "dashboard" && (
+          <div className="space-y-8">
+            {/* Split top: Welcome panel with mini Sentinel Watch Setup (Section 3.2.1) + Interactive Map */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Map Column (Spans 2 on desktop) */}
+              <div className="lg:col-span-2 space-y-4">
+                <div className="flex justify-between items-center select-none">
+                  <div>
+                    <h2 className="text-base md:text-lg font-extrabold flex items-center gap-1.5">
+                      <MapPin className="w-5 h-5 text-blue-500 animate-bounce" /> 1.3 แผนที่สถานการณ์น้ำท่วมจังหวัด และจุดความช่วยเหลือปัจจุบัน (Interactive Flood Map)
+                    </h2>
+                    <p className="text-xs opacity-75 mt-0.5">คลิกพินหรือหัวเมืองย่อยบนแผนผังจำลองเพื่อลอร์ดรายละเอียดเชิงสืบค้น</p>
+                  </div>
+                </div>
+
+                <InteractiveMap
+                  reports={reports}
+                  evacCenters={initialEvacuationCenters}
+                  selectedAmphoe={selectedAmphoe}
+                  onSelectAmphoe={setSelectedAmphoe}
+                  isDarkMode={isDarkMode}
+                  isHighContrast={isHighContrast}
+                />
+              </div>
+
+              {/* Sidebar: Profile Zone Subscriptions or Welcome (Section 3.2.1) */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-base md:text-lg">🎯 3.2.1 ส่วนตั้งค่าพื้นที่เฝ้าระวังภัยด่วน 3 ชั่วโมง</h3>
+                {currentUser ? (
+                  <div className={`p-5 rounded-3xl border space-y-4 ${
+                    isHighContrast ? "bg-black border-white" : "bg-white dark:bg-slate-800 border-slate-200"
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <img src={currentUser.avatarUrl} className="w-10 h-10 rounded-full border shadow" referrerPolicy="no-referrer" />
+                      <div>
+                        <h4 className="font-bold text-sm leading-none">{currentUser.displayName.split(" ")[0]}</h4>
+                        <p className="text-[10px] opacity-70 mt-1">{currentUser.phone}</p>
+                      </div>
+                    </div>
+
+                    <form onSubmit={handleAddWatchZone} className="space-y-2 border-t pt-3 border-slate-100 dark:border-slate-800">
+                      <label className="text-[11px] font-bold block opacity-80 mb-1">
+                        ➕ ระบุชื่อตำบลเพื่อสมัครรับ SMS/LINE เตือนภัย 3ชม. ด่วน :
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          required
+                          placeholder="เช่น ต.กำโลน หรือ ต.ในเมือง"
+                          value={tempWatchZoneInput}
+                          onChange={(e) => setTempWatchZoneInput(e.target.value)}
+                          className={`flex-1 p-2 rounded-xl text-xs border focus:outline-none ${
+                            isHighContrast ? "bg-black text-white border-white" : "bg-slate-50 dark:bg-slate-800 border-slate-200"
+                          }`}
+                        />
+                        <button
+                          type="submit"
+                          className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-xs shadow"
+                        >
+                          บันทึก
+                        </button>
+                      </div>
+                    </form>
+
+                    <div className="space-y-1 pt-2">
+                      <span className="text-[10px] font-bold block opacity-70">พื้นที่เฝ้าระวังของคุณปัจจุบัน:</span>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {currentUser.watchZones.length > 0 ? (
+                          currentUser.watchZones.map((z, i) => (
+                            <span
+                              key={i}
+                              className="bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5"
+                            >
+                              ต. {z}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveWatchZone(z)}
+                                className="text-[10px] font-bold text-red-500 hover:text-red-700"
+                              >
+                                ✕
+                              </button>
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs opacity-60 italic">ยังไม่ได้ลงทะเบียนพื้นที่เฝ้าระวัง</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`p-5 rounded-3xl border text-xs text-center space-y-4 ${
+                    isHighContrast ? "bg-black border-white" : "bg-white dark:bg-slate-800/60 border-slate-200"
+                  }`}>
+                    <Accessibility className="w-10 h-10 text-blue-500 mx-auto opacity-70 animate-bounce" />
+                    <div>
+                      <h4 className="font-bold text-sm">ต้องการรับ SMS / LINE แจ้งเตือนด่วนของตำบล?</h4>
+                      <p className="opacity-75 leading-relaxed mt-1.5">
+                        ระบบคำนวนประสานงาน SMS เฝ้าระวังพิเศษ 3 ชม. อุปกรณ์เครื่องใช้วิทยุดาวเทียม ต้องการให้ท่านล็อกอินเพื่อระบุข้อมูลสายด่วนสัญญาน
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveTab("auth")}
+                      className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-md text-xs hover:from-blue-700"
+                    >
+                      🔓 ปลดล็อกเข้าสู่ระบบทีเดียว
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Standard Dashboard Charts & Analytics (Sections 1.2, 1.4, 2.0) */}
+            <Dashboard
+              amphoes={initialAmphoes}
+              weatherStations={weatherStations}
+              riverGauges={riverGauges}
+              thresholdSettings={thresholdSettings}
+              isDarkMode={isDarkMode}
+              isHighContrast={isHighContrast}
+              onSelectAmphoe={setSelectedAmphoe}
+              selectedAmphoe={selectedAmphoe}
+            />
+          </div>
+        )}
+
+        {activeTab === "auth" && (
+          <AuthPage
+            onLogin={(user) => {
+              setCurrentUser(user);
+              // Save to list
+              if (!usersList.some((usr) => usr.uid === user.uid)) {
+                setUsersList((prev) => [...prev, user]);
+              }
+              setActiveTab("dashboard");
+            }}
+            isDarkMode={isDarkMode}
+            isHighContrast={isHighContrast}
+          />
+        )}
+
+        {/* 4.0 Report Flooding portal */}
+        {activeTab === "report" && (
+          <ReportPortal
+            currentUser={currentUser}
+            onAddReport={handleAddReportCase}
+            isDarkMode={isDarkMode}
+            isHighContrast={isHighContrast}
+          />
+        )}
+
+        {/* 5.0 Citizens status tracer tracking */}
+        {activeTab === "tracking" && (
+          <TrackingPortal
+            currentUser={currentUser}
+            reports={reports}
+            isDarkMode={isDarkMode}
+            isHighContrast={isHighContrast}
+          />
+        )}
+
+        {/* 6.0 Responders Action Grid Command */}
+        {activeTab === "responder" && (
+          <ResponderDashboard
+            currentUser={currentUser}
+            reports={reports}
+            onUpdateReportStatus={handleUpdateReportStatus}
+            isDarkMode={isDarkMode}
+            isHighContrast={isHighContrast}
+          />
+        )}
+
+        {/* 7.0 Admin risk threshold configs */}
+        {activeTab === "admin" && (
+          <AdminConsole
+            currentUser={currentUser}
+            usersList={usersList}
+            onUpdateUserRole={handleUpdateUserRole}
+            apisList={apis}
+            onToggleAPIStatus={handleToggleAPIStatus}
+            thresholdSettings={thresholdSettings}
+            onUpdateThresholds={setThresholdSettings}
+            isHighContrast={isHighContrast}
+            isDarkMode={isDarkMode}
+          />
+        )}
+      </main>
+
+      {/* Dynamic humble global footer */}
+      <footer className={`py-6 border-t font-semibold text-xs mt-12 text-center select-none ${
+        isHighContrast
+          ? "bg-black border-white text-white"
+          : "bg-slate-100 dark:bg-slate-900 border-slate-200 text-slate-500"
+      }`}>
+        <p className="opacity-80">
+          © 2026 สำนักงานป้องกันและบรรเทาสาธารณภัย มหาวิทยาลัยนครศรีธรรมราชร่วมสากล
+        </p>
+        <p className="text-[10px] opacity-65 mt-1 font-normal uppercase">
+          Nakhon Si Thammarat Hydro-Meteorological Disaster Alleviation Control Suite (Ver 4.10)
+        </p>
+      </footer>
+    </div>
+  );
+}
