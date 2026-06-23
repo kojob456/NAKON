@@ -13,6 +13,7 @@ import {
 } from "./data/mockData";
 
 import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import InteractiveMap from "./components/InteractiveMap";
 import AuthPage from "./components/AuthPage";
@@ -89,6 +90,7 @@ export default function App() {
 
   // Watch zones add drawer helper
   const [tempWatchZoneInput, setTempWatchZoneInput] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Persists states in localstorage to have pristine recovery
   useEffect(() => {
@@ -310,6 +312,7 @@ export default function App() {
       
       {/* Dynamic Header Component */}
       <Header
+        onToggleSidebar={() => setIsSidebarOpen(true)}
         currentUser={currentUser}
         onSelectUser={handleSelectSimulatedUser}
         mockUsers={usersList}
@@ -325,6 +328,16 @@ export default function App() {
         onChangeTab={setActiveTab}
         appTheme={appTheme}
         onChangeAppTheme={setAppTheme}
+      />
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        currentUser={currentUser}
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        appTheme={appTheme}
+        isHighContrast={isHighContrast}
       />
 
       {/* Main Core Content Stage Area */}

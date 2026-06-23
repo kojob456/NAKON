@@ -66,13 +66,13 @@ export const getThemeStyle = (
       card: "bg-black border-2 border-white text-white",
       border: "border-white",
       text: "text-white font-black",
-      textMuted: "text-white/85 font-bold",
-      accent: "bg-black border-2 border-yellow-400 text-yellow-400",
-      accentHover: "hover:bg-zinc-900",
+      textMuted: "text-yellow-400 font-bold",
+      accent: "bg-yellow-400 border-2 border-yellow-400 text-black font-black",
+      accentHover: "hover:bg-yellow-500",
       accentText: "text-yellow-400",
-      input: "bg-black",
-      inputBorder: "border-white focus:ring-yellow-400",
-      divider: "border-white",
+      input: "bg-black text-white font-bold",
+      inputBorder: "border-2 border-white focus:ring-yellow-400",
+      divider: "border-2 border-white",
     };
   }
 

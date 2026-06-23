@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Shield, Eye, Sun, Moon, Type, AlertCircle, Settings, UserCheck, Accessibility, Palette, Check, ZoomIn, ZoomOut } from "lucide-react";
+import { Shield, Eye, Sun, Moon, Type, AlertCircle, Settings, UserCheck, Accessibility, Palette, Check, ZoomIn, ZoomOut, Menu } from "lucide-react";
 import { User, UserRole } from "../types";
 import { getThemeStyle, AppThemeType, themes } from "../utils/theme";
 
 interface HeaderProps {
+  onToggleSidebar: () => void;
   currentUser: User | null;
   onSelectUser: (userUid: string | null) => void;
   mockUsers: User[];
@@ -22,6 +23,7 @@ interface HeaderProps {
 }
 
 export default function Header({
+  onToggleSidebar,
   currentUser,
   onSelectUser,
   mockUsers,
@@ -92,8 +94,17 @@ export default function Header({
 
       {/* Main Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        {/* Logo & Brand */}
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onChangeTab("dashboard")}>
+        {/* Menu Toggle & Logo & Brand */}
+        <div className="flex items-center gap-2 md:gap-4">
+          <button
+            onClick={onToggleSidebar}
+            className={`p-2 rounded-xl transition-all border ${
+              isHighContrast ? "border-white hover:bg-zinc-800" : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onChangeTab("dashboard")}>
           <div className="bg-blue-600 text-white p-2 rounded-xl shadow-md flex items-center justify-center animate-bounce">
             <Shield className="w-6 h-6" />
           </div>
@@ -105,91 +116,10 @@ export default function Header({
               ระบบแจ้งเตือนภัยน้ำท่วมล่วงหน้า & จัดการกู้ภัย จ.นครศรีธรรมราช
             </p>
           </div>
+          </div>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          <button
-            onClick={() => onChangeTab("dashboard")}
-            className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === "dashboard"
-                ? isHighContrast
-                  ? "bg-white text-black font-extrabold"
-                  : "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-            }`}
-          >
-            📊 วันนี้ & ย้อนหลัง
-          </button>
-
-          {/* Report tab is public, but login is triggered upon entry if not authorized */}
-          <button
-            onClick={() => onChangeTab("report")}
-            className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === "report"
-                ? isHighContrast
-                  ? "bg-white text-black font-extrabold"
-                  : "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-            }`}
-          >
-            📸 แจ้งเหตุน้ำท่วม
-          </button>
-
-          {currentUser && (
-            <button
-              onClick={() => onChangeTab("tracking")}
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === "tracking"
-                  ? isHighContrast
-                    ? "bg-white text-black font-extrabold"
-                    : "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-              }`}
-            >
-              📋 ติดตามสถานะ ({currentUser.role === UserRole.ADMIN ? "รวม" : "ของฉัน"})
-            </button>
-          )}
-
-          {currentUser && (currentUser.role === UserRole.RESPONDER || currentUser.role === UserRole.ADMIN) && (
-            <button
-              onClick={() => onChangeTab("responder")}
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === "responder"
-                  ? isHighContrast
-                    ? "bg-white text-black font-extrabold"
-                    : "bg-red-50 text-red-650 dark:bg-red-950/20 dark:text-red-400"
-                  : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-              }`}
-            >
-              🚨 ห้องควบคุมภัย (Responder)
-            </button>
-          )}
-
-          {currentUser && currentUser.role === UserRole.ADMIN && (
-            <button
-              onClick={() => onChangeTab("admin")}
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === "admin"
-                  ? isHighContrast
-                    ? "bg-white text-black font-extrabold"
-                    : "bg-violet-50 text-violet-600 dark:bg-violet-950/20 dark:text-violet-400"
-                  : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-              }`}
-            >
-              ⚙️ จัดการระบบ (Admin)
-            </button>
-          )}
-
-          {!currentUser && (
-            <button
-              onClick={() => onChangeTab("auth")}
-              className={`px-4.5 py-2 rounded-lg text-sm font-semibold transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow`}
-            >
-              🔓 เข้าสู่ระบบ
-            </button>
-          )}
-        </nav>
+        {/* Navigation moved to Sidebar */}
 
         {/* Global Controls & Accessibility */}
         <div className="flex items-center gap-1.5 md:gap-3">
@@ -421,55 +351,6 @@ export default function Header({
         </div>
       </div>
 
-      {/* Mobile Navigation Bar */}
-      <div className={`md:hidden border-t py-1.5 px-2 grid grid-cols-4 md:grid-cols-5 text-center text-[10px] font-bold ${
-        isHighContrast ? "bg-black text-white" : "bg-slate-50 dark:bg-slate-900/60"
-      }`}>
-        <button
-          onClick={() => onChangeTab("dashboard")}
-          className={`py-1 rounded-lg ${activeTab === "dashboard" ? "text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20" : "text-slate-500"}`}
-        >
-          📊 แดชบอร์ด
-        </button>
-        <button
-          onClick={() => onChangeTab("report")}
-          className={`py-1 rounded-lg ${activeTab === "report" ? "text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20" : "text-slate-500"}`}
-        >
-          📸 แจ้งภัยพิบัติน้ำ
-        </button>
-        <button
-          onClick={() => {
-            if (currentUser) onChangeTab("tracking");
-            else onChangeTab("auth");
-          }}
-          className={`py-1 rounded-lg ${activeTab === "tracking" ? "text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20" : "text-slate-500"}`}
-        >
-          📋 ติดตามสถานะ
-        </button>
-
-        {currentUser && (currentUser.role === UserRole.RESPONDER || currentUser.role === UserRole.ADMIN) ? (
-          <button
-            onClick={() => onChangeTab("responder")}
-            className={`py-1 rounded-lg ${activeTab === "responder" ? "text-red-500 bg-red-50/50 dark:bg-red-950/20" : "text-slate-500"}`}
-          >
-            🚨 ศูนย์กู้ภัย
-          </button>
-        ) : currentUser && currentUser.role === UserRole.ADMIN ? (
-          <button
-            onClick={() => onChangeTab("admin")}
-            className={`py-1 rounded-lg ${activeTab === "admin" ? "text-violet-500 bg-violet-50/50 dark:bg-violet-950/20" : "text-slate-500"}`}
-          >
-            ⚙️ แอดมิน
-          </button>
-        ) : (
-          <button
-            onClick={() => onChangeTab("auth")}
-            className="py-1 text-slate-500 rounded-lg"
-          >
-            🔓 ล็อกอิน
-          </button>
-        )}
-      </div>
     </header>
   );
 }
