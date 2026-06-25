@@ -25,6 +25,7 @@ import ResponderDashboard from "./components/ResponderDashboard";
 import AdminConsole from "./components/AdminConsole";
 import EvacuationPortalModal from "./components/EvacuationPortalModal";
 import { getThemeStyle, AppThemeType } from "./utils/theme";
+import { logUserAccess } from "./utils/userTracker";
 
 export default function App() {
   // Global States loaded from LocalStorage if available
@@ -223,6 +224,9 @@ export default function App() {
   // Handler 1: Simulator Quick switcher
   const handleSelectSimulatedUser = async (userUid: string | null) => {
     if (userUid === null) {
+      if (currentUser) {
+        logUserAccess(currentUser, "LOGOUT", "System Logout");
+      }
       setCurrentUser(null);
       setActiveTab("dashboard");
       try {
@@ -370,6 +374,51 @@ export default function App() {
   };
 
   const themeStyle = getThemeStyle(appTheme, isHighContrast);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const ua = window.navigator.userAgent || "";
+      if ((ua.includes("LINE") || ua.includes("LIFF")) && !currentUser) {
+        const autoLineUser: User = {
+          uid: "line_liff_" + Date.now(),
+          displayName: "สมาชิก LINE สื่อสารเตือนภัยนครฯ",
+          phone: "-",
+          email: "citizen_line@nakhon.go.th",
+          role: UserRole.CITIZEN,
+          watchZones: ["ในเมือง", "เขาหลวง"]
+        };
+        setCurrentUser(autoLineUser);
+        logUserAccess(autoLineUser, "LOGIN", "LINE_LIFF_AUTO");
+      }
+    }
+  }, []);
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-center items-center p-4 selection:bg-blue-500 font-sans">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-center">
+            <h2 className="font-bold text-lg text-white">🌊 ศูนย์สารสนเทศเตือนภัยน้ำท่วมนครศรีธรรมราช</h2>
+            <p className="text-xs text-blue-100 mt-1">กรุณาเข้าสู่ระบบเพื่อยืนยันตัวตนก่อนเข้าใช้งานระบบเรียลไทม์</p>
+          </div>
+          <div className="p-4">
+            <AuthPage
+              onLogin={(user) => {
+                setCurrentUser(user);
+                logUserAccess(user, "LOGIN", "Web Login Portal");
+                if (!usersList.some((usr) => usr.uid === user.uid)) {
+                  setUsersList((prev) => [...prev, user]);
+                }
+                setActiveTab("dashboard");
+              }}
+              isDarkMode={true}
+              isHighContrast={false}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 

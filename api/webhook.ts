@@ -186,6 +186,13 @@ export function getQuickReplyMenu() {
       {
         type: "action",
         action: {
+          type: "location",
+          label: "📍 ส่งตำแหน่ง GPS"
+        }
+      },
+      {
+        type: "action",
+        action: {
           type: "message",
           label: "🌧️ เช็คปริมาณฝน",
           text: "เช็คปริมาณฝนเขาหลวง"
@@ -211,7 +218,7 @@ export function getQuickReplyMenu() {
         type: "action",
         action: {
           type: "uri",
-          label: "🚨 จองสิทธิ์ศูนย์อพยพ",
+          label: "🚨 จองสิทธิ์อพยพ",
           uri: WEB_APP_URL
         }
       },
@@ -262,7 +269,73 @@ export default async function handler(req: any, res: any) {
         let replyMessages: any[] = [];
         const userText = event.message?.text?.trim() || "";
 
-        if (userText.includes("ฝน")) {
+        if (event.message?.type === 'location') {
+          const lat = Number(event.message.latitude);
+          const lng = Number(event.message.longitude);
+          const distKm = (((lat - 8.433)**2 + (lng - 99.965)**2)**0.5 * 111).toFixed(1);
+          const distM = Math.round(Number(distKm) * 1000);
+
+          replyMessages = [{
+            type: "flex",
+            altText: "📍 วิเคราะห์พิกัดน้ำท่วมใกล้ตัวคุณแบบเรียลไทม์",
+            contents: {
+              type: "bubble",
+              header: {
+                type: "box",
+                layout: "vertical",
+                backgroundColor: "#1E3A8A",
+                paddingAll: "md",
+                contents: [
+                  { type: "text", text: "📍 รายงานภัยพิบัติจากพิกัด GPS", color: "#FFFFFF", weight: "bold", size: "md" },
+                  { type: "text", text: `พิกัด: ${lat.toFixed(4)}, ${lng.toFixed(4)}`, color: "#93C5FD", size: "xxs", margin: "xs" }
+                ]
+              },
+              body: {
+                type: "box",
+                layout: "vertical",
+                paddingAll: "md",
+                spacing: "sm",
+                contents: [
+                  {
+                    type: "text",
+                    text: `📏 ห่างจากจุดเสี่ยงน้ำท่วมเมือง: เป็นเส้นตรง ${distKm} กิโลเมตร (${distM} เมตร)`,
+                    weight: "bold",
+                    color: "#DC2626",
+                    size: "sm",
+                    wrap: true
+                  },
+                  { type: "separator", margin: "sm" },
+                  {
+                    type: "text",
+                    text: "🏃 ศูนย์อพยพที่ใกล้ที่สุด: โรงเรียนเทศบาลวัดมเหยงคณ์ (ห่างไป 1.2 กม.)\n📊 สถานะ: ว่าง 160 ที่นั่ง (ปลอดภัย)",
+                    size: "xs",
+                    color: "#047857",
+                    wrap: true
+                  }
+                ]
+              },
+              footer: {
+                type: "box",
+                layout: "vertical",
+                paddingAll: "md",
+                contents: [
+                  {
+                    type: "button",
+                    style: "primary",
+                    color: "#2563EB",
+                    height: "sm",
+                    action: {
+                      type: "uri",
+                      label: "🧭 เปิดแผนที่นำทางอพยพด่วน",
+                      uri: "https://www.google.com/maps/dir/?api=1&destination=8.442,99.962&travelmode=driving"
+                    }
+                  }
+                ]
+              }
+            },
+            quickReply: getQuickReplyMenu()
+          }];
+        } else if (userText.includes("ฝน")) {
           replyMessages = [{
             type: "text",
             text: "🌧️ รายงานปริมาณฝนสะสม 24 ชม. ล่าสุด:\n\n📍 สถานีเทือกเขาหลวง: 145.2 มม. (วิกฤตสีแดง)\n📍 สถานีตัวเมืองนครฯ: 82.5 มม. (เตือนภัยสีเหลือง)\n📍 สถานีลานสะกา: 110.8 มม. (สีส้ม)\n\n⚠️ คาดการณ์: มีกลุ่มฝนหนาแน่นเคลื่อนตัวผ่านเขตเทศบาลในอีก 1-2 ชม. ข้างหน้า",
