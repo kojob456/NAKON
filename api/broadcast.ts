@@ -1,19 +1,24 @@
 // Vercel Serverless Function: /api/broadcast
-// Triggers Daily Broadcast Push to ALL followers of LINE OA (@590auynk "น้องน้ำหวาน")
+// Triggers Daily Morning Automated Push to ALL followers of LINE OA (@590auynk "น้องน้ำหวาน")
 
-import { getDailySummaryFlexMessage, getQuickReplyMenu } from './webhook';
+import { getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu } from './webhook';
 
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: "Method not allowed. Use POST to broadcast." });
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return res.status(405).json({ error: "Method not allowed. Use GET or POST to broadcast." });
   }
 
-  const { title = "รายงานสถานการณ์น้ำท่วมประจำวัน", isEmergency = false } = req.body || {};
+  const queryCron = req.query?.cron;
+  const { title = "รายงานสถานการณ์น้ำท่วมประจำวัน", isEmergency = false, placeName = "อำเภอเมืองนครศรีธรรมราช" } = req.body || {};
 
   try {
-    const flexMsg = getDailySummaryFlexMessage("ประชาชนชาวนครฯ ทุกท่าน");
+    const isMorningDaily = queryCron === "morning_daily" || req.query?.mode === "morning";
+    const flexMsg = isMorningDaily 
+      ? getDistrictMorningForecastFlex(req.query?.place || placeName)
+      : getDailySummaryFlexMessage("ประชาชนชาวนครฯ ทุกท่าน");
+
     const broadcastMsg = {
       ...flexMsg,
       quickReply: getQuickReplyMenu()
@@ -38,6 +43,7 @@ export default async function handler(req: any, res: any) {
 
       return res.status(200).json({ 
         success: true, 
+        mode: isMorningDaily ? "MORNING_DAILY_CRON_0700" : "MANUAL_BROADCAST",
         deliveredCount: "ALL_FOLLOWERS", 
         timestamp: new Date().toISOString() 
       });
@@ -46,7 +52,8 @@ export default async function handler(req: any, res: any) {
       return res.status(200).json({ 
         success: true, 
         simulated: true,
-        message: "จำลองยิงบรอดแคสต์สำเร็จ (ยังไม่ได้ใส่ LINE_CHANNEL_ACCESS_TOKEN ใน .env)", 
+        mode: isMorningDaily ? "MORNING_DAILY_CRON_0700" : "MANUAL_BROADCAST",
+        message: "จำลองยิงแจ้งเตือนทุกเช้าอัตโนมัติสำเร็จ (ยังไม่ได้ใส่ LINE_CHANNEL_ACCESS_TOKEN ใน .env)", 
         payload: broadcastMsg 
       });
     }

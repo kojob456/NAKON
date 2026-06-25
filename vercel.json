@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/broadcast?cron=morning_daily",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
