@@ -119,7 +119,7 @@ function getDailySummaryFlexMessage(userName: string = "ประชาชน") 
                 text: "📊 สถานะ: เหลือที่ว่าง 160 คน (เปิดรับตลอด 24 ชม.)",
                 size: "xxs",
                 color: "#3B82F6",
-                margin: "xxs"
+                margin: "xs"
               }
             ]
           }
@@ -236,7 +236,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
                 flex: 6,
                 contents: [
                   { type: "text", text: "🌊 โอกาสเกิดน้ำท่วมวันนี้", size: "xs", color: "#64748B", weight: "bold" },
-                  { type: "text", text: riskLevel, size: "xxs", color: riskColor, weight: "bold", margin: "xxs" }
+                  { type: "text", text: riskLevel, size: "xxs", color: riskColor, weight: "bold", margin: "xs" }
                 ]
               },
               {
@@ -275,7 +275,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
             cornerRadius: "md",
             contents: [
               { type: "text", text: "🌦️ พยากรณ์อากาศประจำวัน", size: "xs", color: "#334155", weight: "bold" },
-              { type: "text", text: weather, size: "xxs", color: "#475569", margin: "xxs", wrap: true }
+              { type: "text", text: weather, size: "xxs", color: "#475569", margin: "xs", wrap: true }
             ]
           },
           {
@@ -283,7 +283,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
             layout: "vertical",
             contents: [
               { type: "text", text: "🚨 บริการช่วยเหลือและสายด่วน:", size: "xxs", color: "#64748B", weight: "bold" },
-              { type: "text", text: "• สายด่วนสาธารณภัย: โทร 199 หรือ 1784\n• ศูนย์อพยพใกล้บ้านท่าน: เปิดรับ 24 ชม.", size: "xxs", color: "#047857", margin: "xxs", wrap: true }
+              { type: "text", text: "• สายด่วนสาธารณภัย: โทร 199 หรือ 1784\n• ศูนย์อพยพใกล้บ้านท่าน: เปิดรับ 24 ชม.", size: "xxs", color: "#047857", margin: "xs", wrap: true }
             ]
           }
         ]
@@ -423,33 +423,6 @@ export default async function handler(req: any, res: any) {
               text: "ด้วยความยินดีครับ! น้องน้ำหวานและทีมศูนย์บรรเทาภัยเทศบาลนครนครศรีธรรมราช พร้อมเคียงข้างและแจ้งเตือนคุณตลอด 24 ชั่วโมงครับ ขอให้ปลอดภัยนะครับ ❤️🌊",
               quickReply: getQuickReplyMenu()
             });
-          } else if (userText.startsWith("เช็ค") || userText.startsWith("ดู") || userText.startsWith("อำเภอ") || userText.includes("ท่วมไหม")) {
-            if (userText.includes("ฝน")) {
-              replyMessages.push({
-                type: "text",
-                text: "🌧️ ปริมาณฝนเขาหลวงสะสม 24 ชม. ล่าสุดอยู่ที่ 145.2 มม. (เกณฑ์สีแดงวิกฤตมาก) มีความเสี่ยงสูงที่น้ำป่าจะหลากลงคลองท่าดีเข้าสู่เขตเมืองครับ",
-                quickReply: getQuickReplyMenu()
-              });
-            } else if (userText.includes("น้ำ") || userText.includes("คลองท่าดี")) {
-              replyMessages.push({
-                type: "text",
-                text: "🌊 ระดับน้ำคลองท่าดี (สถานีบ้านลานสกา) ปัจจุบัน +4.85 เมตร (ล้นตลิ่งแล้ว) มวลน้ำกำลังเดินทางถึงเขตเทศบาลนครฯ ในอีก 3 ชั่วโมงครับ!",
-                quickReply: getQuickReplyMenu()
-              });
-            } else if (userText.includes("อพยพ") || userText.includes("พักพิง") || userText.includes("ช่วย")) {
-              replyMessages.push({
-                type: "text",
-                text: "🏃 ศูนย์อพยพหลักที่เปิดรับตอนนี้:\n1. โรงเรียนเทศบาลวัดมเหยงคณ์ (ว่าง 160 ที่)\n2. อาคารอเนกประสงค์เทศบาลนครฯ (ว่าง 250 ที่)\n📞 ต้องการความช่วยเหลือด่วน โทร 199 ฟรีตลอด 24 ชม.",
-                quickReply: getQuickReplyMenu()
-              });
-            } else {
-              const placeMatch = userText.replace(/^เช็ค/, "").replace(/^ดู/, "").trim();
-              const queryPlace = placeMatch || "อำเภอเมืองนครศรีธรรมราช";
-              replyMessages.push({
-                ...getDistrictMorningForecastFlex(queryPlace),
-                quickReply: getQuickReplyMenu()
-              });
-            }
           } else if (userText.includes("วิธีเสิร์ช") || userText.includes("ค้นหา")) {
             replyMessages.push({
               type: "text",
@@ -457,10 +430,42 @@ export default async function handler(req: any, res: any) {
               quickReply: getQuickReplyMenu()
             });
           } else {
-            replyMessages.push({
-              ...getDailySummaryFlexMessage("ประชาชนชาวนครฯ"),
-              quickReply: getQuickReplyMenu()
-            });
+            const amphoeKeywords = ["เมือง", "ใกล้ๆเมือง", "ปากพนัง", "ลานสะกา", "ลานสกา", "คีรีวง", "ทุ่งสง", "ท่าศาลา", "สิชล", "ชะอวด", "ร่อนพิบูลย์", "หัวไทร", "ทุ่งใหญ่", "นาบอน", "ขนอม", "พรหมคีรี", "เชียรใหญ่", "บางขัน", "ถ้ำพรรณรา", "จุฬาภรณ์", "พระพรหม", "นบพิตำ", "ช้างกลาง", "เฉลิมพระเกียรติ", "เขาหลวง", "คลองท่าดี", "ท่าวัง", "ปากนคร", "ท่าซัก", "เช็ค", "ดู", "ถาม", "อำเภอ", "ที่", "ท่วม"];
+            const isPlaceQuery = amphoeKeywords.some(kw => userText.includes(kw));
+
+            if (isPlaceQuery) {
+              if (userText.includes("ฝน") && !userText.includes("อำเภอ")) {
+                replyMessages.push({
+                  type: "text",
+                  text: "🌧️ ปริมาณฝนเขาหลวงสะสม 24 ชม. ล่าสุดอยู่ที่ 145.2 มม. (เกณฑ์สีแดงวิกฤตมาก) มีความเสี่ยงสูงที่น้ำป่าจะหลากลงคลองท่าดีเข้าสู่เขตเมืองครับ",
+                  quickReply: getQuickReplyMenu()
+                });
+              } else if (userText.includes("คลองท่าดี") && !userText.includes("อำเภอ") && !userText.includes("เช็ค")) {
+                replyMessages.push({
+                  type: "text",
+                  text: "🌊 ระดับน้ำคลองท่าดี (สถานีบ้านลานสกา) ปัจจุบัน +4.85 เมตร (ล้นตลิ่งแล้ว) มวลน้ำกำลังเดินทางถึงเขตเทศบาลนครฯ ในอีก 3 ชั่วโมงครับ!",
+                  quickReply: getQuickReplyMenu()
+                });
+              } else if (userText.includes("อพยพ") || userText.includes("พักพิง")) {
+                replyMessages.push({
+                  type: "text",
+                  text: "🏃 ศูนย์อพยพหลักที่เปิดรับตอนนี้:\n1. โรงเรียนเทศบาลวัดมเหยงคณ์ (ว่าง 160 ที่)\n2. อาคารอเนกประสงค์เทศบาลนครฯ (ว่าง 250 ที่)\n📞 ต้องการความช่วยเหลือด่วน โทร 199 ฟรีตลอด 24 ชม.",
+                  quickReply: getQuickReplyMenu()
+                });
+              } else {
+                const placeMatch = userText.replace(/^เช็ค/, "").replace(/^ดู/, "").replace(/^ถาม/, "").trim();
+                const queryPlace = placeMatch || userText;
+                replyMessages.push({
+                  ...getDistrictMorningForecastFlex(queryPlace),
+                  quickReply: getQuickReplyMenu()
+                });
+              }
+            } else {
+              replyMessages.push({
+                ...getDailySummaryFlexMessage("ประชาชนชาวนครฯ"),
+                quickReply: getQuickReplyMenu()
+              });
+            }
           }
         } else {
           replyMessages.push({

@@ -90,7 +90,26 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
       onLogin(newUser);
     } catch (error: any) {
       console.error(`${provider} login failed`, error);
-      alert(`การเข้าสู่ระบบผ่าน ${provider.toUpperCase()} ล้มเหลว\nสาเหตุ: ${error.message || error}`);
+      const errStr = error?.message || error || "";
+      if (errStr.includes("unauthorized-domain") || errStr.includes("popup-closed-by-user") || errStr.includes("cancelled")) {
+        const useDemo = confirm(
+          `⚠️ แจ้งเตือนความปลอดภัย: โดเมน nakong-seven.vercel.app ยังไม่ได้เปิดสิทธิ์ Authorized Domains ใน Firebase Console\n\n💡 ต้องการเข้าสู่ระบบด้วย "บัญชีจำลองพลเมือง (Demo SSO Bypass)" เพื่อเข้าชมแดชบอร์ดทันทีหรือไม่ครับ?`
+        );
+        if (useDemo) {
+          const demoUser: User = {
+            uid: "demo_" + provider + "_" + Date.now(),
+            phone: "089-999-8888",
+            email: provider === "google" ? "citizen_demo@gmail.com" : "citizen_line@line.me",
+            displayName: provider === "google" ? "คุณพลเมือง นครศรีฯ (Google SSO)" : "คุณพลเมือง นครศรีฯ (LINE SSO)",
+            avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100",
+            role: UserRole.CITIZEN,
+            watchZones: ["ปากพนังตะวันออก"]
+          };
+          onLogin(demoUser);
+          return;
+        }
+      }
+      alert(`การเข้าสู่ระบบผ่าน ${provider.toUpperCase()} ล้มเหลว\nสาเหตุ: ${errStr}\n\nคำแนะนำ: ท่านสามารถเลือกเข้าสู่ระบบด้วย "เบอร์โทรศัพท์ (ใส่ OTP 1234)" หรือกดปุ่ม "โหมดทดสอบสำรอง" ด้านล่างแทนได้ทันทีครับ`);
     }
   };
 
@@ -247,6 +266,25 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
             >
               <MessageSquare className="w-4 h-4 fill-white" /> เข้าสู่ระบบด้วยบัญชี LINE Official
             </button>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onLogin({
+                    uid: "demo_line_" + Date.now(),
+                    phone: "089-999-8888",
+                    email: "citizen_line@line.me",
+                    displayName: "คุณพลเมือง นครศรีฯ (LINE SSO)",
+                    avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100",
+                    role: UserRole.CITIZEN,
+                    watchZones: ["ปากพนังตะวันออก"]
+                  });
+                }}
+                className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center justify-center gap-1.5"
+              >
+                ⚡ เข้าสู่ระบบโหมดสำรองทันที (Demo LINE Bypass)
+              </button>
+            </div>
           </div>
         )}
 
@@ -259,6 +297,25 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
             >
               <ShieldCheck className="w-4 h-4" /> เข้าสู่ระบบด้วยกูเกิล (Sign in with Google)
             </button>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onLogin({
+                    uid: "demo_google_" + Date.now(),
+                    phone: "089-999-8888",
+                    email: "citizen_demo@gmail.com",
+                    displayName: "คุณพลเมือง นครศรีฯ (Google SSO)",
+                    avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100",
+                    role: UserRole.CITIZEN,
+                    watchZones: ["ปากพนังตะวันออก"]
+                  });
+                }}
+                className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center justify-center gap-1.5"
+              >
+                ⚡ เข้าสู่ระบบโหมดสำรองทันที (Demo Google Bypass)
+              </button>
+            </div>
           </div>
         )}
 
