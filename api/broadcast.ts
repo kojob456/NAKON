@@ -1,7 +1,7 @@
 // Vercel Serverless Function: /api/broadcast
 // Triggers Daily Morning Automated Push to ALL followers of LINE OA (@590auynk "น้องน้ำหวาน")
 
-import { getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu } from './_utils';
+import { getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu } from '../src/utils/flexHelpers';
 
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 

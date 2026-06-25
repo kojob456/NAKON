@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || "";
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
-import { WEB_APP_URL, getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu } from './_utils';
+import { WEB_APP_URL, getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu } from '../src/utils/flexHelpers';
 export { getDailySummaryFlexMessage, getDistrictMorningForecastFlex, getQuickReplyMenu };
 
 export default async function handler(req: any, res: any) {
