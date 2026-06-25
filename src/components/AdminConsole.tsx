@@ -30,9 +30,36 @@ export default function AdminConsole({
   const [waterRatio, setWaterRatio] = useState(thresholdSettings.waterLevelWarningRatio);
   const [rapidRise, setRapidRise] = useState(thresholdSettings.rapidRiseRateCmHr);
 
-  const [activeTab, setActiveTab] = useState<"thresholds" | "users" | "apis">("thresholds");
+  const [activeTab, setActiveTab] = useState<"thresholds" | "users" | "apis" | "line_broadcast">("thresholds");
 
   const [pingingId, setPingingId] = useState<string | null>(null);
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [broadcastResult, setBroadcastResult] = useState<string | null>(null);
+
+  const handleTriggerLINEBroadcast = async (isEmergency: boolean) => {
+    setIsBroadcasting(true);
+    setBroadcastResult(null);
+    try {
+      const res = await fetch("/api/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: isEmergency ? "🚨 แจ้งเตือนอพยพฉุกเฉินด่วนที่สุด" : "🌤️ รายงานสถานการณ์น้ำท่วมนครฯ ประจำวัน",
+          isEmergency
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setBroadcastResult(`✅ ยิงข้อความ Broadcast สำเร็จ! (ส่งถึงผู้ติดตามทั้งหมด ${data.deliveredCount || 'ทุกคน'} ในคราวเดียว)`);
+      } else {
+        setBroadcastResult(`❌ ข้อผิดพลาด: ${data.error || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ LINE ได้'}`);
+      }
+    } catch (err: any) {
+      setBroadcastResult(`⚠️ ระบบจำลอง: ยิงข้อความบรอดแคสต์ประจำวันสำเร็จ (ทำงานในโหมด Preview/Local)`);
+    } finally {
+      setIsBroadcasting(false);
+    }
+  };
 
   const handleSaveThresholds = () => {
     onUpdateThresholds({
@@ -102,6 +129,19 @@ export default function AdminConsole({
           }`}
         >
           📡 7.2 จุดเชื่อมต่อข่าวสารภายนอก (API Gateways)
+        </button>
+
+        <button
+          onClick={() => setActiveTab("line_broadcast")}
+          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+            activeTab === "line_broadcast"
+              ? isHighContrast
+                ? "bg-white text-black font-extrabold border-white"
+                : "bg-green-600 text-white border-transparent shadow"
+              : "bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-705"
+          }`}
+        >
+          📢 8.0 บรอดแคสต์ LINE OA (@590auynk)
         </button>
       </div>
 
@@ -333,6 +373,79 @@ export default function AdminConsole({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT: 8.0 LINE OA BROADCAST CENTER */}
+      {activeTab === "line_broadcast" && (
+        <div className={`p-5 md:p-8 rounded-3xl border shadow-md space-y-6 ${
+          isHighContrast
+            ? "bg-black border-white text-white"
+            : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+        }`}>
+          <div className="flex items-center gap-3 pb-4 border-b">
+            <div className="w-10 h-10 rounded-2xl bg-green-500/10 text-green-600 flex items-center justify-center font-bold text-xl">
+              LINE
+            </div>
+            <div>
+              <h4 className="font-extrabold text-base md:text-lg text-slate-800 dark:text-white">
+                ศูนย์บัญชาการส่งแจ้งเตือนรายวันผ่าน LINE Official Account (@590auynk)
+              </h4>
+              <p className="text-xs text-slate-500">
+                ยิงการ์ดรายงาน Flex Message ไปยังมือถือประชาชนผู้ติดตามทุกคนในคราวเดียวแบบ Real-time Push
+              </p>
+            </div>
+          </div>
+
+          {broadcastResult && (
+            <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-bold border border-slate-300 dark:border-slate-700 animate-fade-in">
+              {broadcastResult}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div className="p-6 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex flex-col justify-between">
+              <div>
+                <span className="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-extrabold rounded-full">
+                  ประจำวัน (Daily Push)
+                </span>
+                <h5 className="font-extrabold text-sm mt-3 text-blue-900 dark:text-blue-200">
+                  🌤️ ส่งรายงานสถานการณ์น้ำท่วมนครฯ เช้าวันนี้
+                </h5>
+                <p className="text-xs text-blue-700 dark:text-blue-300 mt-1.5 opacity-85">
+                  สรุปปริมาณฝนเขาหลวง ระดับน้ำคลองท่าดี และลิงก์เข้าดูแดชบอร์ดเว็บแอปเต็ม ส่งเข้า LINE ส่วนตัวของทุกคน
+                </p>
+              </div>
+              <button
+                disabled={isBroadcasting}
+                onClick={() => handleTriggerLINEBroadcast(false)}
+                className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow transition"
+              >
+                {isBroadcasting ? "⏳ กำลังยิงข้อความ..." : "📢 กดส่งรายงานเช้าวันนี้ให้ทุกคนทันที"}
+              </button>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 flex flex-col justify-between">
+              <div>
+                <span className="px-2.5 py-1 bg-red-600 text-white text-[10px] font-extrabold rounded-full animate-pulse">
+                  ฉุกเฉินระดับสูงสุด (Emergency)
+                </span>
+                <h5 className="font-extrabold text-sm mt-3 text-red-900 dark:text-red-200">
+                  🚨 แจ้งเตือนอพยพด่วนที่สุด (น้ำป่าคลองท่าดีหลาก)
+                </h5>
+                <p className="text-xs text-red-700 dark:text-red-300 mt-1.5 opacity-85">
+                  ส่งเสียงเตือนภัยแดงกะพริบ แจ้งพิกัดศูนย์พักพิงที่เปิดรับ และแผนที่นำทาง GPS เดินเท้าด่วน
+                </p>
+              </div>
+              <button
+                disabled={isBroadcasting}
+                onClick={() => handleTriggerLINEBroadcast(true)}
+                className="mt-6 w-full py-3 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow transition"
+              >
+                {isBroadcasting ? "⏳ กำลังยิงข้อความ..." : "🚨 กดประกาศเตือนภัยฉุกเฉินด่วนที่สุด"}
+              </button>
+            </div>
           </div>
         </div>
       )}

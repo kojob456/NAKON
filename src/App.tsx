@@ -23,6 +23,7 @@ import ReportPortal from "./components/ReportPortal";
 import TrackingPortal from "./components/TrackingPortal";
 import ResponderDashboard from "./components/ResponderDashboard";
 import AdminConsole from "./components/AdminConsole";
+import EvacuationPortalModal from "./components/EvacuationPortalModal";
 import { getThemeStyle, AppThemeType } from "./utils/theme";
 
 export default function App() {
@@ -68,6 +69,7 @@ export default function App() {
 
   const [selectedAmphoe, setSelectedAmphoe] = useState<string>("");
   const [amphoesList, setAmphoesList] = useState<any[]>(initialAmphoes);
+  const [isEvacPortalOpen, setIsEvacPortalOpen] = useState(false);
 
   useEffect(() => {
     const fetchRemoteFloodData = async () => {
@@ -540,6 +542,7 @@ export default function App() {
               isHighContrast={isHighContrast}
               onSelectAmphoe={setSelectedAmphoe}
               detectedAmphoeId={selectedAmphoe}
+              onCheckEvacRights={() => setIsEvacPortalOpen(true)}
             />
           </div>
         )}
@@ -614,6 +617,12 @@ export default function App() {
           />
         )}
       </main>
+
+      <EvacuationPortalModal 
+        isOpen={isEvacPortalOpen} 
+        onClose={() => setIsEvacPortalOpen(false)} 
+        userPos={{ lat: 8.432, lng: 99.963 }} 
+      />
 
       {/* Dynamic humble global footer */}
       <footer className={`py-6 border-t font-semibold text-xs mt-12 text-center select-none ${

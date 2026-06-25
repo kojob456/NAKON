@@ -11,6 +11,7 @@ interface OverviewDashboardProps {
   isHighContrast: boolean;
   onSelectAmphoe: (amphoeId: string) => void;
   detectedAmphoeId?: string;
+  onCheckEvacRights?: () => void;
 }
 
 export default function OverviewDashboard({
@@ -20,7 +21,8 @@ export default function OverviewDashboard({
   thresholdSettings,
   isHighContrast,
   onSelectAmphoe,
-  detectedAmphoeId = "lansaka"
+  detectedAmphoeId = "lansaka",
+  onCheckEvacRights
 }: OverviewDashboardProps) {
 
   // Helper: Dynamic Flood Chance calculation per district (Amphoe)
@@ -76,7 +78,7 @@ export default function OverviewDashboard({
             </div>
           </div>
           <button
-            onClick={() => onSelectAmphoe("mueang")}
+            onClick={onCheckEvacRights}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center gap-1.5 shadow"
           >
             เช็คจุดสิทธิ์อพยพ <ArrowRight className="w-4 h-4" />
@@ -103,6 +105,12 @@ export default function OverviewDashboard({
               </p>
             </div>
           </div>
+          <button
+            onClick={onCheckEvacRights}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center gap-1.5 shadow"
+          >
+            เช็คจุดสิทธิ์อพยพ <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 
