@@ -8,11 +8,11 @@ const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 const WEB_APP_URL = "https://nakon-seven.vercel.app/";
 
 function getDailySummaryFlexMessage(userName: string = "ประชาชน") {
-  const dateStr = new Date().toLocaleDateString('th-TH', { 
-    year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Bangkok' 
+  const dateStr = new Date().toLocaleDateString('th-TH', {
+    year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Bangkok'
   });
-  const timeStr = new Date().toLocaleTimeString('th-TH', { 
-    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' 
+  const timeStr = new Date().toLocaleTimeString('th-TH', {
+    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok'
   });
 
   return {
@@ -378,9 +378,9 @@ function getQuickReplyMenu() {
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
-    return res.status(200).json({ 
-      status: "online", 
-      message: "LINE OA Webhook Endpoint for @590auynk is ready." 
+    return res.status(200).json({
+      status: "online",
+      message: "LINE OA Webhook Endpoint for @590auynk is ready."
     });
   }
 
@@ -395,7 +395,7 @@ export default async function handler(req: any, res: any) {
     if (signature && LINE_CHANNEL_SECRET) {
       const hash = crypto.createHmac('sha256', LINE_CHANNEL_SECRET).update(bodyString).digest('base64');
       if (hash !== signature) {
-         console.warn("Invalid LINE Webhook Signature");
+        console.warn("Invalid LINE Webhook Signature");
       }
     }
 

@@ -116,7 +116,7 @@ function getDailySummaryFlexMessage(userName: string = "ประชาชน") 
                 text: "📊 สถานะ: เหลือที่ว่าง 160 คน (เปิดรับตลอด 24 ชม.)",
                 size: "xxs",
                 color: "#3B82F6",
-                margin: "xxs"
+                margin: "xs"
               }
             ]
           }
@@ -233,7 +233,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
                 flex: 6,
                 contents: [
                   { type: "text", text: "🌊 โอกาสเกิดน้ำท่วมวันนี้", size: "xs", color: "#64748B", weight: "bold" },
-                  { type: "text", text: riskLevel, size: "xxs", color: riskColor, weight: "bold", margin: "xxs" }
+                  { type: "text", text: riskLevel, size: "xxs", color: riskColor, weight: "bold", margin: "xs" }
                 ]
               },
               {
@@ -272,7 +272,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
             cornerRadius: "md",
             contents: [
               { type: "text", text: "🌦️ พยากรณ์อากาศประจำวัน", size: "xs", color: "#334155", weight: "bold" },
-              { type: "text", text: weather, size: "xxs", color: "#475569", margin: "xxs", wrap: true }
+              { type: "text", text: weather, size: "xxs", color: "#475569", margin: "xs", wrap: true }
             ]
           },
           {
@@ -280,7 +280,7 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
             layout: "vertical",
             contents: [
               { type: "text", text: "🚨 บริการช่วยเหลือและสายด่วน:", size: "xxs", color: "#64748B", weight: "bold" },
-              { type: "text", text: "• สายด่วนสาธารณภัย: โทร 199 หรือ 1784\n• ศูนย์อพยพใกล้บ้านท่าน: เปิดรับ 24 ชม.", size: "xxs", color: "#047857", margin: "xxs", wrap: true }
+              { type: "text", text: "• สายด่วนสาธารณภัย: โทร 199 หรือ 1784\n• ศูนย์อพยพใกล้บ้านท่าน: เปิดรับ 24 ชม.", size: "xxs", color: "#047857", margin: "xs", wrap: true }
             ]
           }
         ]
