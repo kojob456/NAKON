@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MessageSquare, Mail, ShieldCheck, Phone, CheckCircle, HelpCircle } from "lucide-react";
 import { User, UserRole } from "../types";
+import { loginWithGoogle, loginWithLine, saveUserProfile } from "../utils/firebase";
 
 interface AuthPageProps {
   onLogin: (user: User) => void;
@@ -60,24 +61,37 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
     onLogin(newUser);
   };
 
-  const handleThirdPartySignIn = (provider: "google" | "line") => {
-    const defaultName = provider === "google" ? "สมศักดิ์ รักสงบ (Google User)" : "เนตรนภา อุทกภัย (LINE Link)";
-    const defaultEmail = provider === "google" ? "somsak.google@gmail.com" : "netnapa.line@linecorp.com";
-    const avatar = provider === "google" 
-      ? "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100"
-      : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100";
+  const handleThirdPartySignIn = async (provider: "google" | "line") => {
+    try {
+      let user;
+      if (provider === "google") {
+        user = await loginWithGoogle();
+      } else {
+        user = await loginWithLine();
+      }
+      
+      const newUser: User = {
+        uid: user.uid,
+        phone: user.phoneNumber || "089-111-2222",
+        email: user.email || "",
+        displayName: user.displayName || (provider === "google" ? "Google User" : "LINE User"),
+        avatarUrl: user.photoURL || "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100",
+        role: UserRole.CITIZEN,
+        watchZones: ["ปากพนังตะวันออก"]
+      };
 
-    const newUser: User = {
-      uid: "user_" + provider + "_" + Date.now(),
-      phone: "089-111-2222",
-      email: defaultEmail,
-      displayName: defaultName,
-      avatarUrl: avatar,
-      role: UserRole.CITIZEN,
-      watchZones: ["ปากพนังตะวันออก"]
-    };
-
-    onLogin(newUser);
+      // Save to firestore (wrapped in try-catch so permission errors don't block login)
+      try {
+        await saveUserProfile(user, { role: UserRole.CITIZEN, watchZones: ["ปากพนังตะวันออก"] });
+      } catch (dbError) {
+        console.warn("Could not save user to Firestore due to permissions, but proceeding with login:", dbError);
+      }
+      
+      onLogin(newUser);
+    } catch (error: any) {
+      console.error(`${provider} login failed`, error);
+      alert(`การเข้าสู่ระบบผ่าน ${provider.toUpperCase()} ล้มเหลว\nสาเหตุ: ${error.message || error}`);
+    }
   };
 
   const handleEmailSignIn = (e: React.FormEvent) => {

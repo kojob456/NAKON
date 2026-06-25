@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Shield, Eye, Sun, Moon, Type, AlertCircle, Settings, UserCheck, Accessibility, Palette, Check, ZoomIn, ZoomOut, Menu } from "lucide-react";
 import { User, UserRole } from "../types";
 import { getThemeStyle, AppThemeType, themes } from "../utils/theme";
@@ -43,57 +43,90 @@ export default function Header({
   const [showAccessMenu, setShowAccessMenu] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
 
-  const theme = getThemeStyle(appTheme, isHighContrast);
+  // Smart navbar state
+  const [isHidden, setIsHidden] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > 50) {
+        setIsCompact(true);
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          setIsHidden(true); // scrolling down -> hide
+        } else {
+          setIsHidden(false); // scrolling up -> show
+        }
+      } else {
+        setIsCompact(false);
+        setIsHidden(false);
+      }
+      setLastScrollY(currentScrollY);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
+  const theme = getThemeStyle(appTheme, isHighContrast);
+  const isDebug = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debug") === "true";
 
   return (
-    <header className={`border-b sticky top-0 z-50 transition-all ${theme.card} ${theme.border}`}>
-      {/* 🛠️ Top Simulator Bar */}
-      <div className={`text-xs px-4 py-2 border-b flex flex-wrap gap-2 items-center justify-between ${
-        isHighContrast
-          ? "border-white bg-zinc-900 text-yellow-400"
-          : "bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/40 text-amber-900 dark:text-amber-200"
-      }`}>
-        <div className="flex items-center gap-1.5 font-medium">
-          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span>สลับบทบาททดลองระบบ (Quick Role Switcher) :</span>
+    <header className={`border-b sticky top-0 z-50 transition-all duration-300 glass-panel ${
+        isHidden ? "-translate-y-full shadow-none" : "translate-y-0 shadow-sm"
+    } ${
+        isHighContrast ? "bg-black border-white" : "border-slate-200/50 dark:border-slate-800/50"
+    }`}>
+      {/* 🛠️ Top Simulator Bar (Only visible when ?debug=true) */}
+      {isDebug && (
+        <div className={`text-xs px-4 border-b flex flex-wrap gap-2 items-center justify-between transition-all duration-300 overflow-hidden ${
+          isCompact ? "max-h-0 py-0 opacity-0 border-transparent" : "max-h-40 py-2 opacity-100"
+        } ${
+          isHighContrast
+            ? "border-white bg-zinc-900 text-yellow-400"
+            : "bg-amber-50/50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/40 text-amber-900 dark:text-amber-200"
+        }`}>
+          <div className="flex items-center gap-1.5 font-medium">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>สลับบทบาททดลองระบบ (Quick Role Switcher) :</span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              onClick={() => onSelectUser(null)}
+              className={`px-2.5 py-1 rounded transition-all font-semibold border ${
+                !currentUser
+                  ? isHighContrast
+                    ? "bg-yellow-400 text-black border-white font-bold"
+                    : "bg-slate-800 text-white dark:bg-amber-400 dark:text-black border-transparent"
+                  : "bg-transparent text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+              }`}
+            >
+              🌐 ประชาชนทั่วไป
+            </button>
+            {mockUsers.map((u) => {
+              const isSelected = currentUser?.uid === u.uid;
+              return (
+                <button
+                  key={u.uid}
+                  onClick={() => onSelectUser(u.uid)}
+                  className={`px-2.5 py-1 rounded text-xs transition-all font-semibold border flex items-center gap-1 ${
+                    isSelected
+                      ? isHighContrast
+                        ? "bg-yellow-400 text-black border-white font-bold"
+                        : "bg-blue-600 text-white dark:bg-blue-500 border-transparent"
+                      : "bg-transparent text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {u.role === UserRole.ADMIN ? "⚙️" : u.role === UserRole.RESPONDER ? "🚨" : "👤"} {u.displayName.split(" ")[0]}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <button
-            onClick={() => onSelectUser(null)}
-            className={`px-2.5 py-1 rounded transition-all font-semibold border ${
-              !currentUser
-                ? isHighContrast
-                  ? "bg-yellow-400 text-black border-white font-bold"
-                  : "bg-slate-800 text-white dark:bg-amber-400 dark:text-black border-transparent"
-                : "bg-transparent text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-          >
-            🌐 ประชาชนทั่วไป
-          </button>
-          {mockUsers.map((u) => {
-            const isSelected = currentUser?.uid === u.uid;
-            return (
-              <button
-                key={u.uid}
-                onClick={() => onSelectUser(u.uid)}
-                className={`px-2.5 py-1 rounded text-xs transition-all font-semibold border flex items-center gap-1 ${
-                  isSelected
-                    ? isHighContrast
-                      ? "bg-yellow-400 text-black border-white font-bold"
-                      : "bg-blue-600 text-white dark:bg-blue-500 border-transparent"
-                    : "bg-transparent text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
-                }`}
-              >
-                {u.role === UserRole.ADMIN ? "⚙️" : u.role === UserRole.RESPONDER ? "🚨" : "👤"} {u.displayName.split(" ")[0]}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
       {/* Main Bar */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div className={`max-w-7xl mx-auto px-4 flex items-center justify-between gap-4 transition-all duration-300 ${isCompact ? "py-2" : "py-3"}`}>
         {/* Menu Toggle & Logo & Brand */}
         <div className="flex items-center gap-2 md:gap-4">
           <button

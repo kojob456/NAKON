@@ -46,8 +46,8 @@ export default function Sidebar({
 
       {/* Sidebar Panel */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 sm:w-96 shadow-2xl z-[70] transition-transform duration-300 ease-in-out flex flex-col ${
-          isHighContrast ? "bg-black border-r-4 border-white text-white" : "bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800"
+        className={`fixed top-0 left-0 h-full w-[85vw] sm:w-80 shadow-2xl z-[70] transition-transform duration-300 ease-in-out flex flex-col glass-panel ${
+          isHighContrast ? "bg-black border-r-4 border-white text-white" : ""
         } ${sidebarClass}`}
       >
         <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
@@ -75,7 +75,18 @@ export default function Sidebar({
                 : isHighContrast ? "hover:bg-zinc-800 text-white" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
             }`}
           >
-            <Home className="w-5 h-5" /> 📊 วันนี้ & ย้อนหลัง
+            <Home className="w-5 h-5" /> 📊 หน้าแรก
+          </button>
+
+          <button
+            onClick={() => handleNavClick("analytics")}
+            className={`${navButtonBaseClass} ${
+              activeTab === "analytics"
+                ? isHighContrast ? "bg-white text-black" : "bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                : isHighContrast ? "hover:bg-zinc-800 text-white" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+            }`}
+          >
+            <Activity className="w-5 h-5" /> 📈 ศูนย์ติดตามทางน้ำ
           </button>
 
           <button

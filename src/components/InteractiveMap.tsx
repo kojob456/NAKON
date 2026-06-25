@@ -101,12 +101,10 @@ export default function InteractiveMap({
   };
 
   return (
-    <div className={`relative w-full rounded-3xl overflow-hidden border p-1 md:p-2 flex flex-col ${
+    <div className={`relative w-full rounded-3xl overflow-hidden border p-1 md:p-2 flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)] glass-panel ${
       isHighContrast
         ? "bg-black border-white text-white"
-        : isDarkMode
-        ? "bg-slate-900 border-slate-800 text-slate-100"
-        : "bg-slate-50 border-slate-200 text-slate-900"
+        : "border-slate-200/50 dark:border-slate-700/50"
     }`}>
       {/* Map Control Info bar */}
       <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2 max-w-xs pointer-events-none">

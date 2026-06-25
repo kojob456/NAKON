@@ -14,7 +14,9 @@ import {
 
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import Dashboard from "./components/Dashboard";
+import OverviewDashboard from "./components/OverviewDashboard";
+import FloodPrediction from "./components/FloodPrediction";
+import WaterTrackingDashboard from "./components/WaterTrackingDashboard";
 import InteractiveMap from "./components/InteractiveMap";
 import AuthPage from "./components/AuthPage";
 import ReportPortal from "./components/ReportPortal";
@@ -65,6 +67,65 @@ export default function App() {
   });
 
   const [selectedAmphoe, setSelectedAmphoe] = useState<string>("");
+  const [amphoesList, setAmphoesList] = useState<any[]>(initialAmphoes);
+
+  useEffect(() => {
+    const fetchRemoteFloodData = async () => {
+      try {
+        const { fetchCollectionData } = await import("./utils/firebase");
+        const [locList, floodList] = await Promise.all([
+          fetchCollectionData("location"),
+          fetchCollectionData("flooddata")
+        ]);
+        const remoteList = [...locList, ...floodList];
+        if (remoteList && remoteList.length > 0) {
+          const matchedIds = new Set();
+          const updated: any[] = initialAmphoes.map((amp) => {
+            const match = remoteList.find((r: any) => 
+              r.id === amp.id ||
+              r.districtNameEn?.toLowerCase().replace(/\s+/g, "") === amp.engName?.toLowerCase().replace(/\s+/g, "") ||
+              r.districtNameTh === amp.name ||
+              amp.engName?.toLowerCase().replace(/\s+/g, "-") === r.id ||
+              r.name === amp.name || r.name === amp.engName
+            );
+            if (match) {
+              matchedIds.add(match.id);
+              return {
+                ...amp,
+                baseFloodChance: match.floodChance !== undefined ? Number(match.floodChance) : amp.baseFloodChance,
+                floodChance: match.floodChance !== undefined ? Number(match.floodChance) : undefined,
+                firestoreStatus: match.status,
+                firestoreLevel: match.level
+              };
+            }
+            return amp;
+          });
+
+          // Also append any new locations added directly in Firestore
+          remoteList.forEach((r: any) => {
+            if (!matchedIds.has(r.id)) {
+              updated.push({
+                id: r.id || `loc_${Math.random()}`,
+                name: r.districtNameTh || r.name || r.id,
+                engName: r.districtNameEn || r.engName || r.id,
+                baseFloodChance: r.floodChance !== undefined ? Number(r.floodChance) : 50,
+                floodChance: r.floodChance !== undefined ? Number(r.floodChance) : undefined,
+                rainfallFactor: 0.4,
+                riverFactor: 0.4,
+                firestoreStatus: r.status,
+                firestoreLevel: r.level
+              });
+            }
+          });
+
+          setAmphoesList(updated);
+        }
+      } catch (err) {
+        console.error("Failed to fetch firestore flood data:", err);
+      }
+    };
+    fetchRemoteFloodData();
+  }, []);
 
   // Accessibility State Setup & Theme Selector
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
@@ -158,10 +219,14 @@ export default function App() {
 
 
   // Handler 1: Simulator Quick switcher
-  const handleSelectSimulatedUser = (userUid: string | null) => {
+  const handleSelectSimulatedUser = async (userUid: string | null) => {
     if (userUid === null) {
       setCurrentUser(null);
       setActiveTab("dashboard");
+      try {
+        const { logout } = await import("./utils/firebase");
+        await logout();
+      } catch(e) {}
     } else {
       const u = usersList.find((usr) => usr.uid === userUid);
       if (u) {
@@ -346,7 +411,17 @@ export default function App() {
         {/* Render Tab Content based on active state */}
         {activeTab === "dashboard" && (
           <div className="space-y-8">
-            {/* Split top: Welcome panel with mini Sentinel Watch Setup (Section 3.2.1) + Interactive Map */}
+            <FloodPrediction
+              amphoes={amphoesList}
+              weatherStations={weatherStations}
+              thresholdSettings={thresholdSettings}
+              isDarkMode={isDarkMode}
+              isHighContrast={isHighContrast}
+              onSelectAmphoe={setSelectedAmphoe}
+              selectedAmphoe={selectedAmphoe}
+            />
+
+            {/* Map and Sentinel Watch Setup */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
               {/* Map Column (Spans 2 on desktop) */}
@@ -457,18 +532,25 @@ export default function App() {
               </div>
             </div>
 
-            {/* Standard Dashboard Charts & Analytics (Sections 1.2, 1.4, 2.0) */}
-            <Dashboard
-              amphoes={initialAmphoes}
+            <OverviewDashboard
+              amphoes={amphoesList}
               weatherStations={weatherStations}
               riverGauges={riverGauges}
               thresholdSettings={thresholdSettings}
-              isDarkMode={isDarkMode}
               isHighContrast={isHighContrast}
               onSelectAmphoe={setSelectedAmphoe}
-              selectedAmphoe={selectedAmphoe}
+              detectedAmphoeId={selectedAmphoe}
             />
           </div>
+        )}
+
+        {/* 2.0 Water Analytics dashboard */}
+        {activeTab === "analytics" && (
+          <WaterTrackingDashboard
+            riverGauges={riverGauges}
+            isDarkMode={isDarkMode}
+            isHighContrast={isHighContrast}
+          />
         )}
 
         {activeTab === "auth" && (
