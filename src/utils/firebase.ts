@@ -5,7 +5,7 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB1fwWlX9j2WexGexUxmk8z8aV9-4y01Dc",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
   authDomain: "khanesuan.firebaseapp.com",
   projectId: "khanesuan",
   storageBucket: "khanesuan.firebasestorage.app",

@@ -3,8 +3,8 @@
 
 import crypto from 'crypto';
 
-const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || "84213ca64b1656122ea71d07a5ecfeb7";
-const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "BexUjB5P0eLKE6hQfKypwO8159pKbKSAICWPz5ntGiNTTInrVwfDmzGh3YbVw7fEKWu11dezORP/DKKebTJEAMaF/9UOTpdnFj5MKG89KMVvsxqcZ7PT790Rj6IdwYvRjqCkHHiZ0QzUE5eHxWeFmQdB04t89/1O/w1cDnyilFU=";
+const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || "";
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 const WEB_APP_URL = "https://nakon-seven.vercel.app/";
 
 // Helper: Generate stunning Daily Summary Flex Message
@@ -197,7 +197,7 @@ export default async function handler(req: any, res: any) {
     const bodyString = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
 
     // Verify LINE Signature
-    if (signature && LINE_CHANNEL_SECRET !== "84213ca64b1656122ea71d07a5ecfeb7") {
+    if (signature && LINE_CHANNEL_SECRET) {
       const hash = crypto.createHmac('sha256', LINE_CHANNEL_SECRET).update(bodyString).digest('base64');
       if (hash !== signature) {
         console.warn("Invalid LINE Webhook Signature");
@@ -214,7 +214,7 @@ export default async function handler(req: any, res: any) {
 
         const flexMsg = getDailySummaryFlexMessage("เพื่อนสมาชิก");
 
-        if (LINE_CHANNEL_ACCESS_TOKEN && LINE_CHANNEL_ACCESS_TOKEN !== "YOUR_LINE_CHANNEL_ACCESS_TOKEN_HERE") {
+        if (LINE_CHANNEL_ACCESS_TOKEN) {
           await fetch("https://api.line.me/v2/bot/message/reply", {
             method: "POST",
             headers: {

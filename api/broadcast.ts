@@ -3,7 +3,7 @@
 
 import { getDailySummaryFlexMessage } from './webhook';
 
-const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "BexUjB5P0eLKE6hQfKypwO8159pKbKSAICWPz5ntGiNTTInrVwfDmzGh3YbVw7fEKWu11dezORP/DKKebTJEAMaF/9UOTpdnFj5MKG89KMVvsxqcZ7PT790Rj6IdwYvRjqCkHHiZ0QzUE5eHxWeFmQdB04t89/1O/w1cDnyilFU=";
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -15,7 +15,7 @@ export default async function handler(req: any, res: any) {
   try {
     const flexMsg = getDailySummaryFlexMessage("ประชาชนชาวนครฯ ทุกท่าน");
 
-    if (LINE_CHANNEL_ACCESS_TOKEN && LINE_CHANNEL_ACCESS_TOKEN !== "YOUR_LINE_CHANNEL_ACCESS_TOKEN_HERE") {
+    if (LINE_CHANNEL_ACCESS_TOKEN) {
       const response = await fetch("https://api.line.me/v2/bot/message/broadcast", {
         method: "POST",
         headers: {
