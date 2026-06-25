@@ -1,7 +1,7 @@
 // Vercel Serverless Function: /api/broadcast
 // Triggers Daily Broadcast Push to ALL followers of LINE OA (@590auynk "น้องน้ำหวาน")
 
-import { getDailySummaryFlexMessage } from './webhook';
+import { getDailySummaryFlexMessage, getQuickReplyMenu } from './webhook';
 
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 
@@ -14,6 +14,10 @@ export default async function handler(req: any, res: any) {
 
   try {
     const flexMsg = getDailySummaryFlexMessage("ประชาชนชาวนครฯ ทุกท่าน");
+    const broadcastMsg = {
+      ...flexMsg,
+      quickReply: getQuickReplyMenu()
+    };
 
     if (LINE_CHANNEL_ACCESS_TOKEN) {
       const response = await fetch("https://api.line.me/v2/bot/message/broadcast", {
@@ -23,7 +27,7 @@ export default async function handler(req: any, res: any) {
           "Authorization": `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
         },
         body: JSON.stringify({
-          messages: [flexMsg]
+          messages: [broadcastMsg]
         })
       });
 
@@ -43,7 +47,7 @@ export default async function handler(req: any, res: any) {
         success: true, 
         simulated: true,
         message: "จำลองยิงบรอดแคสต์สำเร็จ (ยังไม่ได้ใส่ LINE_CHANNEL_ACCESS_TOKEN ใน .env)", 
-        payload: flexMsg 
+        payload: broadcastMsg 
       });
     }
   } catch (err: any) {
