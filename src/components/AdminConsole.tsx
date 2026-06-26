@@ -80,68 +80,74 @@ export default function AdminConsole({
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-          <Hammer className="w-5 h-5 text-violet-550" /> 7.0 ระบบจัดการควบคุมหลังบ้านสำหรับผู้ดูแลระบบ (Admin Console)
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
+      {/* Big Blue Heading Box Stretched Full Width */}
+      <div className="p-5 md:p-6 rounded-3xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg w-full flex flex-col justify-between select-none">
+        <h3 className="font-black text-base md:text-xl flex flex-wrap items-center gap-2 leading-snug">
+          <Hammer className="w-6 h-6 shrink-0 text-white animate-pulse" />
+          <span>7.0 ระบบจัดการควบคุมหลังบ้านสำหรับผู้ดูแลระบบ (Admin Console)</span>
         </h3>
-        <p className="text-xs opacity-75">
+        <p className="text-xs md:text-sm opacity-90 mt-1.5 leading-relaxed">
           ห้องบัญชาการระบบวิเคราะห์ประมวลเกณฑ์ตรวจสากล และดูแลความปลอดภัยพนักงานกอ.ปภ.
         </p>
       </div>
 
-      {/* Mini internal subtab */}
-      <div className="flex gap-2">
+      {/* Mini internal subtab fitting 1 phone screen */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 w-full">
         <button
           onClick={() => setActiveTab("thresholds")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
             activeTab === "thresholds"
               ? isHighContrast
                 ? "bg-white text-black font-extrabold border-white"
-                : "bg-blue-600 text-white border-transparent shadow"
-              : "bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80"
+                : "bg-blue-600 text-white border-transparent shadow-md"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
           }`}
         >
-          ⚙️ 7.3 เกณฑ์วิเคราะห์คำนวณภัย (Risk Thresholds)
+          <span>⚙️</span>
+          <span className="truncate">7.3 เกณฑ์วิเคราะห์คำนวณภัย</span>
         </button>
 
         <button
           onClick={() => setActiveTab("users")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
             activeTab === "users"
               ? isHighContrast
                 ? "bg-white text-black font-extrabold border-white"
-                : "bg-blue-600 text-white border-transparent shadow"
-              : "bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80"
+                : "bg-blue-600 text-white border-transparent shadow-md"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
           }`}
         >
-          👤 7.1 จัดการสิทธิ์&พนักงาน (Personnel Manager)
+          <span>👤</span>
+          <span className="truncate">7.1 จัดการสิทธิ์&พนักงาน</span>
         </button>
 
         <button
           onClick={() => setActiveTab("apis")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
             activeTab === "apis"
               ? isHighContrast
                 ? "bg-white text-black font-extrabold border-white"
-                : "bg-blue-600 text-white border-transparent shadow"
-              : "bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-705"
+                : "bg-blue-600 text-white border-transparent shadow-md"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
           }`}
         >
-          📡 7.2 จุดเชื่อมต่อข่าวสารภายนอก (API Gateways)
+          <span>📡</span>
+          <span className="truncate">7.2 จุดเชื่อมต่อข่าวสาร</span>
         </button>
 
         <button
           onClick={() => setActiveTab("line_broadcast")}
-          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
             activeTab === "line_broadcast"
               ? isHighContrast
                 ? "bg-white text-black font-extrabold border-white"
-                : "bg-green-600 text-white border-transparent shadow"
-              : "bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-705"
+                : "bg-green-600 text-white border-transparent shadow-md"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
           }`}
         >
-          📢 8.0 บรอดแคสต์ LINE OA (@590auynk)
+          <span>📢</span>
+          <span className="truncate">8.0 บรอดแคสต์ LINE OA</span>
         </button>
       </div>
 
@@ -150,11 +156,12 @@ export default function AdminConsole({
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-6 ${
           isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800/60"
         }`}>
-          <div>
-            <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
-              <Sliders className="w-5 h-5 text-blue-500" /> หน้าตั้งค่าเกณฑ์ความเสี่ยงสำหรับการคํานวณโอกาสเกิดน้ำท่วมวันนี้
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-950/50 dark:to-blue-900/40 border border-blue-500/20 w-full">
+            <h4 className="font-extrabold text-sm md:text-base flex flex-wrap items-center gap-2 text-blue-900 dark:text-blue-100">
+              <Sliders className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span>หน้าตั้งค่าเกณฑ์ความเสี่ยงสำหรับการคํานวณโอกาสเกิดน้ำท่วมวันนี้</span>
             </h4>
-            <p className="text-xs opacity-75 mt-1 leading-relaxed">
+            <p className="text-xs text-blue-800 dark:text-blue-300 opacity-90 mt-1 leading-relaxed">
               *การปรับเกณฑ์ด้านล่างส่งผลโดยตรงต่อการแสดงผลแดชบอร์ดความเสี่ยง (%) รายอำเภอของประชาชนทุกคนในเวลาจริง (Real-time recalculations)
             </p>
           </div>
@@ -238,14 +245,15 @@ export default function AdminConsole({
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-4 ${
           isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800"
         }`}>
-          <div>
-            <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
-              <Users className="w-5 h-5 text-blue-500" /> 7.1 ตารางจัดการพนักงานและอนุมัติกลุ่มสิทธิ์กู้ภัยกอ.ปภ.
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-950/50 dark:to-blue-900/40 border border-blue-500/20 w-full">
+            <h4 className="font-extrabold text-sm md:text-base flex flex-wrap items-center gap-2 text-blue-900 dark:text-blue-100">
+              <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span>7.1 ตารางจัดการพนักงานและอนุมัติกลุ่มสิทธิ์กู้ภัยกอ.ปภ.</span>
             </h4>
-            <p className="text-xs opacity-75 mt-0.5">อนุมัติระดับสิทธิ์สายตรวจหรือเพิ่มตำแหน่งข่ายสายกู้ภัยภาคพิเศษรายสังกัด</p>
+            <p className="text-xs text-blue-800 dark:text-blue-300 opacity-90 mt-0.5">อนุมัติระดับสิทธิ์สายตรวจหรือเพิ่มตำแหน่งข่ายสายกู้ภัยภาคพิเศษรายสังกัด</p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border dark:border-slate-800 select-none">
+          <div className="w-full max-w-[calc(100vw-3rem)] sm:max-w-full overflow-x-auto rounded-2xl border dark:border-slate-800 select-none">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-900 border-b dark:border-slate-800 text-[10px] uppercase font-bold text-slate-500">
                 <tr>
@@ -337,11 +345,12 @@ export default function AdminConsole({
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-4 ${
           isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800"
         }`}>
-          <div>
-            <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
-              <Network className="w-5 h-5 text-blue-500" /> 7.2 ระบบทดลองคัดกรองสัญญาณ API ดาต้าแลนด์เวย์ภายนอก
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-950/50 dark:to-blue-900/40 border border-blue-500/20 w-full">
+            <h4 className="font-extrabold text-sm md:text-base flex flex-wrap items-center gap-2 text-blue-900 dark:text-blue-100">
+              <Network className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span>7.2 ระบบทดลองคัดกรองสัญญาณ API ดาต้าแลนด์เวย์ภายนอก</span>
             </h4>
-            <p className="text-xs opacity-75 mt-0.5">รวมจุดสัญญานตรวจสุขภาพความแลทเซนดึงแผนสำรอง TMD, HAII และดาวเทียม GISTDA</p>
+            <p className="text-xs text-blue-800 dark:text-blue-300 opacity-90 mt-0.5">รวมจุดสัญญานตรวจสุขภาพความแลทเซนดึงแผนสำรอง TMD, HAII และดาวเทียม GISTDA</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-bold select-none text-xs">
@@ -411,15 +420,15 @@ export default function AdminConsole({
             ? "bg-black border-white text-white"
             : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
         }`}>
-          <div className="flex items-center gap-3 pb-4 border-b">
-            <div className="w-10 h-10 rounded-2xl bg-green-500/10 text-green-600 flex items-center justify-center font-bold text-xl">
+          <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-600/10 dark:from-green-950/50 dark:to-emerald-900/40 border border-green-500/20 w-full flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow">
               LINE
             </div>
             <div>
-              <h4 className="font-extrabold text-base md:text-lg text-slate-800 dark:text-white">
+              <h4 className="font-black text-sm md:text-base text-green-900 dark:text-green-100">
                 ศูนย์บัญชาการส่งแจ้งเตือนรายวันผ่าน LINE Official Account (@590auynk)
               </h4>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-green-800 dark:text-green-300 opacity-90 mt-0.5">
                 ยิงการ์ดรายงาน Flex Message ไปยังมือถือประชาชนผู้ติดตามทุกคนในคราวเดียวแบบ Real-time Push
               </p>
             </div>

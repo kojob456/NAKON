@@ -429,7 +429,7 @@ export default function App() {
   return (
     <div 
       style={{ '--font-scale': fontSizeScale / 100 } as React.CSSProperties}
-      className={`min-h-screen flex flex-col font-sans transition-all selection:bg-blue-500 selection:text-white ${themeStyle.bg} ${themeStyle.text} ${getBoldClass()}`}
+      className={`min-h-screen flex flex-col font-sans transition-all selection:bg-blue-500 selection:text-white overflow-x-hidden w-full max-w-full ${themeStyle.bg} ${themeStyle.text} ${getBoldClass()}`}
     >
       
       {/* Dynamic Header Component */}
@@ -463,7 +463,7 @@ export default function App() {
       />
 
       {/* Main Core Content Stage Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 md:py-8 space-y-6 md:space-y-8 overflow-x-hidden">
         
         {/* Render Tab Content based on active state */}
         {activeTab === "dashboard" && (
