@@ -72,10 +72,10 @@ export default function Header({
   const isDebug = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debug") === "true";
 
   return (
-    <header className={`border-b sticky top-0 z-50 transition-all duration-300 glass-panel ${
+    <header className={`border-b sticky top-0 z-50 transition-all duration-300 backdrop-blur-xl ${
         isHidden ? "-translate-y-full shadow-none" : "translate-y-0 shadow-sm"
     } ${
-        isHighContrast ? "bg-black border-white" : "border-slate-200/50 dark:border-slate-800/50"
+        isHighContrast ? "bg-black border-white" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-md"
     }`}>
       {/* 🛠️ Top Simulator Bar (Only visible when ?debug=true) */}
       {isDebug && (

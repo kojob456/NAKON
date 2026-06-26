@@ -39,6 +39,11 @@ export default function App() {
   });
 
   const [reports, setReports] = useState<FloodReport[]>(() => {
+    if (localStorage.getItem("reports_real_gps_v1") !== "true") {
+      localStorage.setItem("reports_real_gps_v1", "true");
+      localStorage.removeItem("reports");
+      return initialFloodReports;
+    }
     const saved = localStorage.getItem("reports");
     return saved ? JSON.parse(saved) : initialFloodReports;
   });
@@ -124,7 +129,7 @@ export default function App() {
           setAmphoesList(updated);
         }
       } catch (err) {
-        console.error("Failed to fetch firestore flood data:", err);
+        console.warn("Using local seed flood reports (Firestore permission fallback)");
       }
     };
     fetchRemoteFloodData();
@@ -385,7 +390,8 @@ export default function App() {
           phone: "-",
           email: "citizen_line@nakhon.go.th",
           role: UserRole.CITIZEN,
-          watchZones: ["ในเมือง", "เขาหลวง"]
+          watchZones: ["ในเมือง", "เขาหลวง"],
+          avatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=line"
         };
         setCurrentUser(autoLineUser);
         logUserAccess(autoLineUser, "LOGIN", "LINE_LIFF_AUTO");
@@ -395,7 +401,7 @@ export default function App() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-center items-center p-4 selection:bg-blue-500 font-sans">
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-center items-center p-4 selection:bg-blue-500 font-sans dark">
         <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-center">
             <h2 className="font-bold text-lg text-white">🌊 ศูนย์สารสนเทศเตือนภัยน้ำท่วมนครศรีธรรมราช</h2>

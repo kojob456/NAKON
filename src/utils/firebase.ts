@@ -1,11 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, initializeFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  apiKey: (import.meta as any).env?.VITE_FIREBASE_API_KEY || "",
   authDomain: "khanesuan.firebaseapp.com",
   projectId: "khanesuan",
   storageBucket: "khanesuan.firebasestorage.app",
@@ -23,7 +23,9 @@ let analytics;
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
-  db = getFirestore(app);
+  db = initializeFirestore(app, {
+    experimentalAutoDetectLongPolling: true
+  });
   if (typeof window !== "undefined") {
     analytics = getAnalytics(app);
   }
@@ -41,7 +43,7 @@ export const fetchCollectionData = async (colName: string) => {
     });
     return data;
   } catch (error) {
-    console.error(`Error fetching ${colName} from Firestore:`, error);
+    console.warn(`Fallback local seed for ${colName} (Firestore permission/not setup)`);
     return [];
   }
 };
@@ -137,8 +139,8 @@ const defaultSeedCenters: EvacCenter[] = [
     capacity: 500,
     currentPeople: 320,
     phone: "075-511011",
-    latitude: 8.358,
-    longitude: 100.198,
+    latitude: 8.3533,
+    longitude: 100.2012,
     registrations: [
       { id: "reg_1", citizenName: "นาย สมชาย รักบ้านเกิด", phone: "081-234-5678", headcount: 4, timestamp: "2026-06-24T10:30:00Z" },
       { id: "reg_2", citizenName: "นาง สมศรี มั่งมีศรีสุข", phone: "089-876-5432", headcount: 3, timestamp: "2026-06-24T11:15:00Z" },
@@ -152,8 +154,8 @@ const defaultSeedCenters: EvacCenter[] = [
     capacity: 1000,
     currentPeople: 840,
     phone: "075-342880",
-    latitude: 8.442,
-    longitude: 99.962,
+    latitude: 8.4465,
+    longitude: 99.9552,
     registrations: [
       { id: "reg_4", citizenName: "คุณ วิชัย น้ำใจงาม", phone: "083-111-2222", headcount: 5, timestamp: "2026-06-23T14:20:00Z" },
       { id: "reg_5", citizenName: "นางสาว มาลี ศรีนคร", phone: "084-555-6666", headcount: 2, timestamp: "2026-06-24T09:10:00Z" }
@@ -166,8 +168,8 @@ const defaultSeedCenters: EvacCenter[] = [
     capacity: 250,
     currentPeople: 245, // เกือบเต็ม
     phone: "075-391211",
-    latitude: 8.368,
-    longitude: 99.782,
+    latitude: 8.3415,
+    longitude: 99.7820,
     registrations: [
       { id: "reg_6", citizenName: "นาย บุญมี พิทักษ์ป่า", phone: "085-999-8888", headcount: 6, timestamp: "2026-06-24T16:00:00Z" }
     ]
@@ -179,8 +181,8 @@ const defaultSeedCenters: EvacCenter[] = [
     capacity: 800,
     currentPeople: 150, // ว่างเยอะ
     phone: "075-673000",
-    latitude: 8.643,
-    longitude: 99.897,
+    latitude: 8.6432,
+    longitude: 99.8970,
     registrations: [
       { id: "reg_7", citizenName: "อาจารย์ มนัส ท่าศาลา", phone: "086-777-1111", headcount: 3, timestamp: "2026-06-25T07:30:00Z" }
     ]
@@ -203,7 +205,7 @@ export const fetchEvacCentersFromFirebase = async (): Promise<EvacCenter[]> => {
     snapshot.forEach((d) => list.push({ id: d.id, ...d.data() } as EvacCenter));
     return list;
   } catch (err) {
-    console.error("Error fetching evacuation centers, using local seed:", err);
+    console.warn("Using local seed evacuation centers (Firestore permission fallback)");
     return defaultSeedCenters;
   }
 };

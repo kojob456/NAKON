@@ -149,28 +149,32 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
         </div>
 
         {/* Tab Methods Navs */}
-        <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl mb-6 text-xs font-bold leading-none">
+        <div className="grid grid-cols-4 gap-1 bg-slate-200 dark:bg-slate-800 p-1.5 rounded-2xl mb-6 text-xs font-black leading-none border border-slate-300 dark:border-slate-700 select-none">
           <button
+            type="button"
             onClick={() => { setMethod("phone"); setOtpSent(false); }}
-            className={`py-2 rounded-xl transition-all ${method === "phone" ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm" : "opacity-7F"}`}
+            className={`py-2.5 rounded-xl transition-all ${method === "phone" ? "bg-white text-black shadow-md border border-slate-300 dark:border-transparent" : "text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white"}`}
           >
             เบอร์มือถือ
           </button>
           <button
+            type="button"
             onClick={() => setMethod("line")}
-            className={`py-2 rounded-xl transition-all ${method === "line" ? "bg-white dark:bg-slate-700 text-green-600 dark:text-green-400 shadow-sm" : "opacity-7F"}`}
+            className={`py-2.5 rounded-xl transition-all ${method === "line" ? "bg-white text-black shadow-md border border-slate-300 dark:border-transparent" : "text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white"}`}
           >
             LINE
           </button>
           <button
+            type="button"
             onClick={() => setMethod("google")}
-            className={`py-2 rounded-xl transition-all ${method === "google" ? "bg-white dark:bg-slate-700 text-red-500 shadow-sm" : "opacity-7F"}`}
+            className={`py-2.5 rounded-xl transition-all ${method === "google" ? "bg-white text-black shadow-md border border-slate-300 dark:border-transparent" : "text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white"}`}
           >
             Google
           </button>
           <button
+            type="button"
             onClick={() => setMethod("email")}
-            className={`py-2 rounded-xl transition-all ${method === "email" ? "bg-white dark:bg-slate-700 text-stone-600 dark:text-stone-300 shadow-sm" : "opacity-7F"}`}
+            className={`py-2.5 rounded-xl transition-all ${method === "email" ? "bg-white text-black shadow-md border border-slate-300 dark:border-transparent" : "text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white"}`}
           >
             Email
           </button>
@@ -191,10 +195,10 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold ${
                         isHighContrast
                           ? "bg-black text-white border-white"
-                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800"
+                          : "bg-white text-slate-950 border-slate-300 placeholder:text-slate-400 placeholder:font-normal"
                       }`}
                     />
                   </div>
@@ -224,10 +228,10 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value)}
                     required
-                    className={`w-full p-2.5 rounded-xl text-center text-lg tracking-widest font-mono border ${
+                    className={`w-full p-2.5 rounded-xl text-center text-lg tracking-widest font-mono font-bold border-2 ${
                       isHighContrast
                         ? "bg-black text-white border-white"
-                        : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800"
+                        : "bg-white text-slate-950 border-slate-300 placeholder:text-slate-400 placeholder:font-normal placeholder:text-sm"
                     }`}
                   />
                 </div>
@@ -331,10 +335,10 @@ export default function AuthPage({ onLogin, isDarkMode, isHighContrast }: AuthPa
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className={`w-full pl-9 pr-4 py-2.5 rounded-xl border focus:outline-none text-xs ${
+                  className={`w-full pl-9 pr-4 py-2.5 rounded-xl border-2 focus:outline-none text-xs font-bold ${
                     isHighContrast
                       ? "bg-black text-white border-white"
-                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800"
+                      : "bg-white text-slate-950 border-slate-300 placeholder:text-slate-400 placeholder:font-normal"
                   }`}
                 />
               </div>

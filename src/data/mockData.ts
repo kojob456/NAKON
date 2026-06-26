@@ -96,8 +96,8 @@ export const initialEvacuationCenters = [
     capacity: 250,
     currentPeople: 120,
     phone: "075-511011",
-    latitude: 8.358,
-    longitude: 100.198
+    latitude: 8.3533,
+    longitude: 100.2012
   },
   {
     id: "evac_2",
@@ -106,8 +106,8 @@ export const initialEvacuationCenters = [
     capacity: 150,
     currentPeople: 45,
     phone: "075-391211",
-    latitude: 8.368,
-    longitude: 99.782
+    latitude: 8.3415,
+    longitude: 99.7820
   },
   {
     id: "evac_3",
@@ -116,8 +116,8 @@ export const initialEvacuationCenters = [
     capacity: 400,
     currentPeople: 210,
     phone: "075-342880",
-    latitude: 8.442,
-    longitude: 99.962
+    latitude: 8.4465,
+    longitude: 99.9552
   }
 ];
 
@@ -132,8 +132,8 @@ export const initialFloodReports: FloodReport[] = [
     tambon: "ในเมือง",
     landmark: "หลังวัดพระมหาธาตุวรมหาวิหาร ตรอกมะขาม",
     severity: FloodSeverity.HIGH,
-    latitude: 8.432,
-    longitude: 99.968,
+    latitude: 8.4112,
+    longitude: 99.9664,
     waterLevelCm: 45,
     strandedPeopleCount: 3,
     neededHelp: ["food", "medicine", "sandbags"],
@@ -156,8 +156,8 @@ export const initialFloodReports: FloodReport[] = [
     tambon: "บางพระ",
     landmark: "ริมแม่น้ำปากพนัง ถ.สุขาภิบาล 2",
     severity: FloodSeverity.CRITICAL,
-    latitude: 8.351,
-    longitude: 100.192,
+    latitude: 8.3512,
+    longitude: 100.1885,
     waterLevelCm: 85,
     strandedPeopleCount: 5,
     neededHelp: ["boat", "evac"],
@@ -180,8 +180,8 @@ export const initialFloodReports: FloodReport[] = [
     tambon: "กำโลน",
     landmark: "จุดท่องเที่ยวหนานหินท่าหา บ้านคีรีวง",
     severity: FloodSeverity.LOW,
-    latitude: 8.362,
-    longitude: 99.791,
+    latitude: 8.4365,
+    longitude: 99.7610,
     waterLevelCm: 15,
     strandedPeopleCount: 0,
     neededHelp: [],
@@ -204,8 +204,8 @@ export const initialFloodReports: FloodReport[] = [
     tambon: "ท่าประจะ",
     landmark: "ใตสะพานรถไฟฝั่งตะวันออก",
     severity: FloodSeverity.MEDIUM,
-    latitude: 8.012,
-    longitude: 100.015,
+    latitude: 7.9780,
+    longitude: 99.9825,
     waterLevelCm: 35,
     strandedPeopleCount: 2,
     neededHelp: ["food", "sandbags"],
