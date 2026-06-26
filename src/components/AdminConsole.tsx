@@ -249,10 +249,10 @@ export default function AdminConsole({
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-900 border-b dark:border-slate-800 text-[10px] uppercase font-bold text-slate-500">
                 <tr>
-                  <th className="p-3.5">รายบุคคลผู้ใช้</th>
-                  <th className="p-3.5">สิทธิบทบาทปัจจัย</th>
-                  <th className="p-3.5">สำนักงานสังกัดสังกัด</th>
-                  <th className="p-3.5 text-right">ดำเนินการแก้ไขระดับค่าย</th>
+                  <th className="p-3.5">รายชื่อผู้ใช้</th>
+                  <th className="p-3.5">ระดับสิทธิ์ (Role)</th>
+                  <th className="p-3.5">สังกัด / ตำแหน่ง (Agency)</th>
+                  <th className="p-3.5 text-right">จัดการปรับเพิ่ม-ลดสิทธิ์</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
@@ -266,36 +266,63 @@ export default function AdminConsole({
                       </div>
                     </td>
                     <td className="p-3.5">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase border ${
                         u.role === UserRole.ADMIN
-                          ? "bg-violet-105 text-violet-700"
+                          ? "bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-300"
                           : u.role === UserRole.RESPONDER
-                          ? "bg-red-105 text-red-655"
-                          : "bg-blue-105 text-blue-700"
+                          ? "bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-300"
+                          : "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-300"
                       }`}>
                         {u.role}
                       </span>
                     </td>
                     <td className="p-3.5">
-                      <p className="truncate max-w-[200px] opacity-80">{u.agency || "ประชาชนทั่วไป (Citizen)"}</p>
+                      <p className="truncate max-w-[200px] font-bold text-xs text-slate-700 dark:text-slate-200">
+                        {u.agency || "ประชาชนทั่วไป (Citizen)"}
+                      </p>
                     </td>
-                    <td className="p-3.5 text-right space-x-1.5">
-                      {u.role !== UserRole.ADMIN && (
-                        <button
-                          onClick={() => onUpdateUserRole(u.uid, UserRole.RESPONDER, "มูลนิธิกู้ภัยมหาชนนครพลาเซนเตอร์")}
-                          className="px-2 py-1 bg-red-610 hover:bg-red-700 text-white rounded text-[10px] font-bold"
+                    <td className="p-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        <select
+                          value={
+                            u.role === UserRole.ADMIN
+                              ? "admin"
+                              : u.agency?.includes("ผู้ใหญ่บ้าน")
+                              ? "village_head"
+                              : u.agency?.includes("นายอำเภอ")
+                              ? "district_chief"
+                              : u.agency?.includes("ปภ")
+                              ? "ddpm"
+                              : u.role === UserRole.RESPONDER
+                              ? "rescue"
+                              : "citizen"
+                          }
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === "citizen") {
+                              onUpdateUserRole(u.uid, UserRole.CITIZEN, "");
+                            } else if (val === "village_head") {
+                              onUpdateUserRole(u.uid, UserRole.RESPONDER, "ผู้ใหญ่บ้าน (ฝ่ายปกครองท้องที่)");
+                            } else if (val === "district_chief") {
+                              onUpdateUserRole(u.uid, UserRole.RESPONDER, "นายอำเภอ (ศูนย์บัญชาการเหตุการณ์อำเภอ)");
+                            } else if (val === "ddpm") {
+                              onUpdateUserRole(u.uid, UserRole.RESPONDER, "กรมป้องกันและบรรเทาสาธารณภัย (ปภ.)");
+                            } else if (val === "rescue") {
+                              onUpdateUserRole(u.uid, UserRole.RESPONDER, "มูลนิธิกู้ภัยมหาชนนครฯ");
+                            } else if (val === "admin") {
+                              onUpdateUserRole(u.uid, UserRole.ADMIN, "ผู้ดูแลระบบกลาง (System Admin)");
+                            }
+                          }}
+                          className="text-[11px] font-bold px-2.5 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-sm"
                         >
-                          ตั้งเป็นกู้ภัย (Agency)
-                        </button>
-                      )}
-                      {u.role !== UserRole.CITIZEN && (
-                        <button
-                          onClick={() => onUpdateUserRole(u.uid, UserRole.CITIZEN)}
-                          className="px-2 py-1 bg-slate-205 hover:bg-slate-300 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded text-[10px]"
-                        >
-                          ลดสิทธิ์เป็นเสรีชน
-                        </button>
-                      )}
+                          <option value="citizen">👤 ประชาชนทั่วไป (ลดสิทธิ์)</option>
+                          <option value="village_head">🏡 ผู้ใหญ่บ้าน (ฝ่ายปกครอง)</option>
+                          <option value="district_chief">🏛️ นายอำเภอ (ศูนย์บัญชาการ)</option>
+                          <option value="ddpm">🛡️ กรมป้องกันและบรรเทาสาธารณภัย (ปภ.)</option>
+                          <option value="rescue">🚑 มูลนิธิกู้ภัยมหาชนนครฯ</option>
+                          <option value="admin">⚙️ ผู้ดูแลระบบกลาง (Admin)</option>
+                        </select>
+                      </div>
                     </td>
                   </tr>
                 ))}
