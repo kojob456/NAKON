@@ -67,15 +67,16 @@ export default function ResponderDashboard({
     setAgencyInput(agencyName);
   };
 
-  const handleUpdate = (status: ReportStatus) => {
-    if (!selectedCase) return;
+  const handleUpdate = (status: ReportStatus, targetObj?: FloodReport) => {
+    const activeObj = targetObj || selectedCase;
+    if (!activeObj) return;
     onUpdateReportStatus(
-      selectedCase.id,
+      activeObj.id,
       status,
-      agencyInput || selectedCase.assignedAgency || "ปภ. ส่วนกลาง",
+      agencyInput || activeObj.assignedAgency || "ปภ. ส่วนกลาง",
       noteInput || `รับปฏิบัติกู้ภัยแล้วโดย ${currentUser?.displayName}`
     );
-    alert(`อัปเดตแฟ้มงานคดี #${selectedCase.id.substring(0, 8)} สู่สถานะใหม่เรียบร้อย`);
+    alert(`อัปเดตแฟ้มงานคดี #${activeObj.id.substring(0, 8)} สู่สถานะใหม่เรียบร้อย`);
   };
 
   // Set inputs appropriately when selecting a new case
@@ -96,6 +97,172 @@ export default function ResponderDashboard({
     "หน่วยเฉพาะกิจทหารราบที่ 5 มณฑลทหารบกที่ 41"
   ];
 
+  const renderInspectionConsole = (caseObj: FloodReport | null) => {
+    if (!caseObj) {
+      return (
+        <div className="text-center py-12 bg-slate-50 dark:bg-slate-900 border rounded-3xl opacity-80">
+          <CheckCircle className="w-12 h-12 text-slate-400 mx-auto opacity-70 mb-3" />
+          <h4 className="font-bold">ไม่มีเคสค้างคิวในแดชบอร์ดกู้ภัย</h4>
+          <p className="text-xs opacity-70 mt-1">คดีทั้งหมดถูกดูแลจัดส่งเรียบร้อย ตลิ่งจังหวัดระบายพ้นวิกฤต</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`p-5 md:p-6 rounded-3xl border shadow-lg space-y-5 ${
+        isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800"
+      }`}>
+        {/* Header */}
+        <div className="border-b pb-4 border-slate-100 dark:border-slate-800 flex justify-between items-start gap-4">
+          <div>
+            <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+              🔍 6.2 รายละเอียดตรวจสอบหลักฐานภาพถ่าย และพิกัดเคส
+            </span>
+            <h3 className="font-extrabold text-base md:text-lg mt-1 text-slate-800 dark:text-slate-100">
+              ต.{caseObj.tambon}, อ.{caseObj.amphoe}
+            </h3>
+          </div>
+          <span className={`text-xs px-3 py-1 rounded-full font-bold ${
+            caseObj.status === ReportStatus.COMPLETED
+              ? "bg-green-100 text-green-700"
+              : "bg-red-50 text-red-600"
+          }`}>
+            ระดับเสี่ยง: {getThaiSeverity(caseObj.severity).split(" (")[0]}
+          </span>
+        </div>
+
+        {/* 6.2.1 Photo evidence */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 space-y-2">
+            <h4 className="text-xs font-bold text-slate-500 block">ภาพถ่ายหลักฐานผู้ประสบภัยส่งเข้ามาจริง :</h4>
+            <div className="aspect-video rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-800 relative shadow-inner">
+              <img
+                src={caseObj.images[0]}
+                alt="ภัยพิบัติหน้างานสัมผัส"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute bottom-2 left-2 bg-black/60 text-[9px] text-white px-2 py-0.5 rounded">
+                ระดับนํ้าในภาพประมาณ {caseObj.waterLevelCm} ซม.
+              </div>
+            </div>
+          </div>
+
+          {/* Reporter profile details */}
+          <div className="space-y-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border text-xs">
+            <h4 className="font-bold text-blue-600 dark:text-blue-400">👤 ข้อมูลผู้ประสบภัยแจ้งเร่งด่วน</h4>
+            <p><strong>ชื่อผู้รับแจ้ง:</strong><br /> {caseObj.reporterName}</p>
+            <p><strong>จุดสังเกตเด่น:</strong><br /> {caseObj.landmark}</p>
+            <p className="border-t border-dashed border-slate-200 py-1.5 opacity-80">
+              *เบอร์ติดต่อสายกู้ภัยส่งกลับทันควัน
+            </p>
+
+            <a
+              href={`tel:${caseObj.reporterPhone}`}
+              className="w-full text-center py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow"
+            >
+              <Phone className="w-3.5 h-3.5" /> โทรหาศูนย์ผู้แจ้งด่วน
+            </a>
+          </div>
+        </div>
+
+        {/* Coordinates and routing gps */}
+        <div className="p-3 bg-slate-50 dark:bg-slate-800/30 border rounded-2xl text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 font-semibold">
+          <div className="space-y-1">
+            <p className="flex items-center gap-1 opacity-80"><Navigation className="w-4 h-4 text-blue-500 animate-pulse" /> พิกัดดาวเทียมคดีแจ้งภัย (GPS Coordinates)</p>
+            <p className="font-mono text-slate-700 dark:text-slate-300">
+              ละติจูด: {caseObj.latitude.toFixed(5)} , ลองจิจูด: {caseObj.longitude.toFixed(5)}
+            </p>
+          </div>
+
+          {/* 6.2.2 Google maps navigator logic */}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${caseObj.latitude},${caseObj.longitude}`}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl font-extrabold flex items-center gap-1.5 shadow"
+          >
+            🗺️ ส่งออกนำทางผ่าน Google Maps
+          </a>
+        </div>
+
+        {/* 6.3 🔄 Dispatch and State updates Controller */}
+        <div className="border-t pt-5 border-slate-100 dark:border-slate-800 space-y-4 text-xs font-semibold">
+          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest block">
+            🔄 6.3 ระบบส่งต่อพิกัดงาน & อัปเดตข้อมูลกู้หน้าตลิ่ง (Dispatch Status)
+          </h4>
+
+          {/* Fast forwarding preset clicks */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold opacity-80 block">ประสานกระจายงานต่อหน่วยกู้ภัยข้ามจังหวัด :</label>
+            <div className="flex flex-wrap gap-1.5">
+              {rescueAgencies.map((agency, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleApplyForward(agency)}
+                  className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-bold tracking-wide transition-all ${
+                    agencyInput === agency
+                      ? "bg-blue-600 text-white border-transparent"
+                      : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 border-slate-200 dark:border-slate-800"
+                  }`}
+                >
+                  {agency.replace("นครศรีธรรมราช", "")}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom input forms */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label className="text-xs font-bold opacity-80 block mb-1">หรือกรอกชื่อหน่วยรับงานเฉพาะกิจ :</label>
+              <input
+                type="text"
+                placeholder="เช่น กู้ภัยใต้เต็กคึ๊งทุ่งสง..."
+                value={agencyInput}
+                onChange={(e) => setAgencyInput(e.target.value)}
+                className={`w-full p-2 rounded-xl text-xs border ${
+                  isHighContrast ? "bg-black text-white border-white" : "bg-slate-50 dark:bg-slate-800 border-slate-200"
+                }`}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold opacity-80 block mb-1">เขียนบันทึกกำกับงานให้ประชาชนติดตาม :</label>
+              <input
+                type="text"
+                placeholder="เช่น จัดส่งอาหารแห้งชุดแรกด้วยกู้เรือด่วนแล้ว..."
+                value={noteInput}
+                onChange={(e) => setNoteInput(e.target.value)}
+                className={`w-full p-2 rounded-xl text-xs border ${
+                  isHighContrast ? "bg-black text-white border-white" : "bg-slate-50 dark:bg-slate-800 border-slate-200"
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Active dispatcher status dropdown selector */}
+          <div className="pt-3 border-t dark:border-slate-800">
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2">
+              🔄 เลือกเปลี่ยนสถานะการช่วยเหลือ (เปลี่ยนและบันทึกทันทีเมื่อกดเลือก):
+            </label>
+            <select
+              value={caseObj.status}
+              onChange={(e) => handleUpdate(e.target.value as ReportStatus, caseObj)}
+              className="w-full py-3 px-4 rounded-2xl text-sm font-extrabold border-2 border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 shadow-md transition-all cursor-pointer select-none"
+            >
+              <option value={ReportStatus.PENDING}>🔴 รอดำเนินการ (Pending)</option>
+              <option value={ReportStatus.DISPATCHED}>🟡 ประสานงานแล้ว / ส่งต่อหน่วยงาน (Dispatched)</option>
+              <option value={ReportStatus.UNDERWAY}>🔵 กำลังลงพื้นที่ช่วยเหลือเร่งด่วน (Underway)</option>
+              <option value={ReportStatus.COMPLETED}>🟢 ช่วยเหลือสำเร็จปลอดภัย (Completed)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -107,31 +274,33 @@ export default function ResponderDashboard({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Left 2 Cols: Incoming emergency list feeds sorted */}
-        <div className="lg:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-            🚨 6.1 รายการแจ้งเหตุฉุกเฉินล่าสุด ({sortedReports.length} รายการจริง)
-          </h4>
+      <div className="w-full max-w-4xl mx-auto space-y-4">
+        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+          🚨 6.1 รายการแจ้งเหตุฉุกเฉินล่าสุด ({sortedReports.length} รายการจริง) — กดที่รายการเพื่อดูรายละเอียดและเปลี่ยนสถานะงาน
+        </h4>
 
-          <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1">
-            {sortedReports.map((r) => {
-              const isSelected = selectedCaseId === r.id;
-              const pending = r.status === ReportStatus.PENDING;
+        <div className="space-y-4 pr-1">
+          {sortedReports.map((r) => {
+            const isSelected = selectedCaseId === r.id;
+            const pending = r.status === ReportStatus.PENDING;
 
-              return (
+            return (
+              <div
+                key={r.id}
+                className={`rounded-2xl border transition-all relative overflow-hidden ${
+                  isSelected
+                    ? isHighContrast
+                      ? "bg-zinc-900 border-yellow-400 border-2 text-white shadow-xl"
+                      : "bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 dark:border-blue-600 shadow-md ring-1 ring-blue-500/20"
+                    : isHighContrast
+                    ? "bg-black border-white text-white hover:border-slate-400 cursor-pointer"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800/80 hover:border-slate-400 hover:shadow cursor-pointer"
+                }`}
+              >
+                {/* Header Button Card */}
                 <div
-                  key={r.id}
                   onClick={() => selectCaseAndLoad(r.id)}
-                  className={`p-3.5 rounded-2xl border cursor-pointer hover:border-slate-400 hover:shadow transition-all relative overflow-hidden ${
-                    isSelected
-                      ? isHighContrast
-                        ? "bg-zinc-800 border-yellow-400 border-2 text-white"
-                        : "bg-blue-50/50 dark:bg-blue-950/20 border-blue-400 dark:border-blue-800"
-                      : isHighContrast
-                      ? "bg-black border-white text-white"
-                      : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800/80"
-                  }`}
+                  className={`p-4 ${isSelected ? "cursor-pointer border-b border-blue-200 dark:border-blue-800/60 bg-blue-100/40 dark:bg-blue-900/30" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span className="text-[10px] opacity-75 font-bold">แจ้งเมื่อ: {new Date(r.timestamp).toLocaleTimeString("th-TH")} น.</span>
@@ -166,172 +335,16 @@ export default function ResponderDashboard({
                     {r.strandedPeopleCount > 0 && <span className="text-red-500">ติดค้าง {r.strandedPeopleCount} คน!</span>}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* Right 3 Cols: Active case inspection console */}
-        <div className="lg:col-span-3">
-          {selectedCase ? (
-            <div className={`p-5 md:p-6 rounded-3xl border shadow-lg space-y-5 ${
-              isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800"
-            }`}>
-              {/* Header */}
-              <div className="border-b pb-4 border-slate-100 dark:border-slate-800 flex justify-between items-start gap-4">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                    🔍 6.2 รายละเอียดตรวจสอบหลักฐานภาพถ่าย และพิกัดเคส
-                  </span>
-                  <h3 className="font-extrabold text-base md:text-lg mt-1 text-slate-800 dark:text-slate-100">
-                    ต.{selectedCase.tambon}, อ.{selectedCase.amphoe}
-                  </h3>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                  selectedCase.status === ReportStatus.COMPLETED
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-50 text-red-600"
-                }`}>
-                  ระดับเสี่ยง: {getThaiSeverity(selectedCase.severity).split(" (")[0]}
-                </span>
-              </div>
-
-              {/* 6.2.1 Photo evidence */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2 space-y-2">
-                  <h4 className="text-xs font-bold text-slate-500 block">ภาพถ่ายหลักฐานผู้ประสบภัยส่งเข้ามาจริง :</h4>
-                  <div className="aspect-video rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-800 relative shadow-inner">
-                    <img
-                      src={selectedCase.images[0]}
-                      alt="ภัยพิบัติหน้างานสัมผัส"
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute bottom-2 left-2 bg-black/60 text-[9px] text-white px-2 py-0.5 rounded">
-                      ระดับนํ้าในภาพประมาณ {selectedCase.waterLevelCm} ซม.
-                    </div>
+                {/* 🔽 แผงรายละเอียดและเปลี่ยนสถานะงานกู้ภัย (เปิดขึ้นติดกันไปเลยกับปุ่ม) */}
+                {isSelected && (
+                  <div className="p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {renderInspectionConsole(r)}
                   </div>
-                </div>
-
-                {/* Reporter profile details */}
-                <div className="space-y-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border text-xs">
-                  <h4 className="font-bold text-blue-600 dark:text-blue-400">👤 ข้อมูลผู้ประสบภัยแจ้งเร่งด่วน</h4>
-                  <p><strong>ชื่อผู้รับแจ้ง:</strong><br /> {selectedCase.reporterName}</p>
-                  <p><strong>จุดสังเกตเด่น:</strong><br /> {selectedCase.landmark}</p>
-                  <p className="border-t border-dashed border-slate-200 py-1.5 opacity-80">
-                    *เบอร์ติดต่อสายกู้ภัยส่งกลับทันควัน
-                  </p>
-
-                  <a
-                    href={`tel:${selectedCase.reporterPhone}`}
-                    className="w-full text-center py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow"
-                  >
-                    <Phone className="w-3.5 h-3.5" /> โทรหาศูนย์ผู้แจ้งด่วน
-                  </a>
-                </div>
+                )}
               </div>
-
-              {/* Coordinates and routing gps */}
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/30 border rounded-2xl text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 font-semibold">
-                <div className="space-y-1">
-                  <p className="flex items-center gap-1 opacity-80"><Navigation className="w-4 h-4 text-blue-500 animate-pulse" /> พิกัดดาวเทียมคดีแจ้งภัย (GPS Coordinates)</p>
-                  <p className="font-mono text-slate-700 dark:text-slate-300">
-                    ละติจูด: {selectedCase.latitude.toFixed(5)} , ลองจิจูด: {selectedCase.longitude.toFixed(5)}
-                  </p>
-                </div>
-
-                {/* 6.2.2 Google maps navigator logic */}
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${selectedCase.latitude},${selectedCase.longitude}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl font-extrabold flex items-center gap-1.5 shadow"
-                >
-                  🗺️ ส่งออกนำทางผ่าน Google Maps
-                </a>
-              </div>
-
-              {/* 6.3 🔄 Dispatch and State updates Controller */}
-              <div className="border-t pt-5 border-slate-100 dark:border-slate-800 space-y-4 text-xs font-semibold">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest block">
-                  🔄 6.3 ระบบส่งต่อพิกัดงาน & อัปเดตข้อมูลกู้หน้าตลิ่ง (Dispatch Status)
-                </h4>
-
-                {/* Fast forwarding preset clicks */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold opacity-80 block">ประสานกระจายงานต่อหน่วยกู้ภัยข้ามจังหวัด :</label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {rescueAgencies.map((agency, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleApplyForward(agency)}
-                        className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-bold tracking-wide transition-all ${
-                          agencyInput === agency
-                            ? "bg-blue-600 text-white border-transparent"
-                            : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 border-slate-200 dark:border-slate-800"
-                        }`}
-                      >
-                        {agency.replace("นครศรีธรรมราช", "")}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Custom input forms */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                  <div>
-                    <label className="text-xs font-bold opacity-80 block mb-1">หรือกรอกชื่อหน่วยรับงานเฉพาะกิจ :</label>
-                    <input
-                      type="text"
-                      placeholder="เช่น กู้ภัยใต้เต็กคึ๊งทุ่งสง..."
-                      value={agencyInput}
-                      onChange={(e) => setAgencyInput(e.target.value)}
-                      className={`w-full p-2 rounded-xl text-xs border ${
-                        isHighContrast ? "bg-black text-white border-white" : "bg-slate-50 dark:bg-slate-800 border-slate-200"
-                      }`}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold opacity-80 block mb-1">เขียนบันทึกกำกับงานให้ประชาชนติดตาม :</label>
-                    <input
-                      type="text"
-                      placeholder="เช่น จัดส่งอาหารแห้งชุดแรกด้วยกู้เรือด่วนแล้ว..."
-                      value={noteInput}
-                      onChange={(e) => setNoteInput(e.target.value)}
-                      className={`w-full p-2 rounded-xl text-xs border ${
-                        isHighContrast ? "bg-black text-white border-white" : "bg-slate-50 dark:bg-slate-800 border-slate-200"
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                {/* Active dispatcher status dropdown selector */}
-                <div className="pt-3 border-t dark:border-slate-800">
-                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2">
-                    🔄 เลือกเปลี่ยนสถานะการช่วยเหลือ (เปลี่ยนและบันทึกทันทีเมื่อกดเลือก):
-                  </label>
-                  <select
-                    value={selectedCase.status}
-                    onChange={(e) => handleUpdate(e.target.value as ReportStatus)}
-                    className="w-full py-3 px-4 rounded-2xl text-sm font-extrabold border-2 border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 shadow-md transition-all cursor-pointer select-none"
-                  >
-                    <option value={ReportStatus.PENDING}>🔴 รอดำเนินการ (Pending)</option>
-                    <option value={ReportStatus.DISPATCHED}>🟡 ประสานงานแล้ว / ส่งต่อหน่วยงาน (Dispatched)</option>
-                    <option value={ReportStatus.UNDERWAY}>🔵 กำลังลงพื้นที่ช่วยเหลือเร่งด่วน (Underway)</option>
-                    <option value={ReportStatus.COMPLETED}>🟢 ช่วยเหลือสำเร็จปลอดภัย (Completed)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-slate-50 dark:bg-slate-900 border rounded-3xl opacity-80">
-              <CheckCircle className="w-12 h-12 text-slate-400 mx-auto opacity-70 mb-3" />
-              <h4 className="font-bold">ไม่มีเคสค้างคิวในแดชบอร์ดกู้ภัย</h4>
-              <p className="text-xs opacity-70 mt-1">คดีทั้งหมดถูกดูแลจัดส่งเรียบร้อย ตลิ่งจังหวัดระบายพ้นวิกฤต</p>
-            </div>
-          )}
+            );
+          })}
         </div>
       </div>
     </div>
