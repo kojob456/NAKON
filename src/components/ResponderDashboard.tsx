@@ -307,31 +307,21 @@ export default function ResponderDashboard({
                   </div>
                 </div>
 
-                {/* Active dispatcher buttons update triggers */}
-                <div className="flex gap-2.5 pt-2 flex-wrap md:flex-nowrap justify-between">
-                  {/* Status 2: Dispatched */}
-                  <button
-                    onClick={() => handleUpdate(ReportStatus.DISPATCHED)}
-                    className="flex-1 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold flex items-center justify-center gap-1 shadow"
+                {/* Active dispatcher status dropdown selector */}
+                <div className="pt-3 border-t dark:border-slate-800">
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2">
+                    🔄 เลือกเปลี่ยนสถานะการช่วยเหลือ (เปลี่ยนและบันทึกทันทีเมื่อกดเลือก):
+                  </label>
+                  <select
+                    value={selectedCase.status}
+                    onChange={(e) => handleUpdate(e.target.value as ReportStatus)}
+                    className="w-full py-3 px-4 rounded-2xl text-sm font-extrabold border-2 border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 shadow-md transition-all cursor-pointer select-none"
                   >
-                    ประสานงานแล้ว ➡️
-                  </button>
-
-                  {/* Status 3: Underway */}
-                  <button
-                    onClick={() => handleUpdate(ReportStatus.UNDERWAY)}
-                    className="flex-1 py-2.5 bg-blue-605 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-1 shadow"
-                  >
-                    เคลื่อนพลพื้นที่ 🌊
-                  </button>
-
-                  {/* Status 4: Completed */}
-                  <button
-                    onClick={() => handleUpdate(ReportStatus.COMPLETED)}
-                    className="flex-1 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold flex items-center justify-center gap-1 shadow"
-                  >
-                    ช่วยสำเร็จปลอดภัย 🟢
-                  </button>
+                    <option value={ReportStatus.PENDING}>🔴 รอดำเนินการ (Pending)</option>
+                    <option value={ReportStatus.DISPATCHED}>🟡 ประสานงานแล้ว / ส่งต่อหน่วยงาน (Dispatched)</option>
+                    <option value={ReportStatus.UNDERWAY}>🔵 กำลังลงพื้นที่ช่วยเหลือเร่งด่วน (Underway)</option>
+                    <option value={ReportStatus.COMPLETED}>🟢 ช่วยเหลือสำเร็จปลอดภัย (Completed)</option>
+                  </select>
                 </div>
               </div>
             </div>
