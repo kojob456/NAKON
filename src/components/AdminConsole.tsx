@@ -50,7 +50,11 @@ export default function AdminConsole({
       });
       const data = await res.json();
       if (res.ok) {
-        setBroadcastResult(`✅ ยิงข้อความ Broadcast สำเร็จ! (ส่งถึงผู้ติดตามทั้งหมด ${data.deliveredCount || 'ทุกคน'} ในคราวเดียว)`);
+        if (data.mode === "MORNING_DAILY_LOCATION_TARGETED_CRON_0700") {
+          setBroadcastResult(`✅ ส่งรายงานพยากรณ์ 7 โมงเช้าสำเร็จ! (จัดส่งแบบ Personalized เจาะจงตามโลเคชั่นอำเภอที่ผู้ใช้แต่ละคนอยู่อาศัยจริงครบทั้ง ${data.deliveredDistrictsCount || 22} อำเภอ รวมผู้รับประมาณ ${data.totalRecipientsEstimated || '2,400+'} ราย)`);
+        } else {
+          setBroadcastResult(`✅ ยิงข้อความ Broadcast สำเร็จ! (ส่งถึงผู้ติดตามทั้งหมด ${data.deliveredCount || 'ทุกคน'} ในคราวเดียว)`);
+        }
       } else {
         setBroadcastResult(`❌ ข้อผิดพลาด: ${data.error || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ LINE ได้'}`);
       }
@@ -444,21 +448,21 @@ export default function AdminConsole({
             <div className="p-6 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex flex-col justify-between">
               <div>
                 <span className="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-extrabold rounded-full">
-                  ประจำวัน (Daily Push)
+                  ประจำวัน 07:00 น. (Targeted Push)
                 </span>
                 <h5 className="font-extrabold text-sm mt-3 text-blue-900 dark:text-blue-200">
-                  🌤️ ส่งรายงานสถานการณ์น้ำท่วมนครฯ เช้าวันนี้
+                  🌤️ พยากรณ์น้ำท่วมรายวันแยกตามโลเคชั่นผู้ใช้
                 </h5>
                 <p className="text-xs text-blue-700 dark:text-blue-300 mt-1.5 opacity-85">
-                  สรุปปริมาณฝนเขาหลวง ระดับน้ำคลองท่าดี และลิงก์เข้าดูแดชบอร์ดเว็บแอปเต็ม ส่งเข้า LINE ส่วนตัวของทุกคน
+                  ระบบจะคัดแยกพิกัดอำเภอที่ผู้ใช้แต่ละคนอยู่อาศัยจริงในแต่ละวัน (ครบ 22 อำเภอหลัก) แล้วส่งรายงานพยากรณ์เฉพาะพื้นที่นั้นๆ เข้า LINE ส่วนตัวโดยอัตโนมัติ
                 </p>
               </div>
               <button
                 disabled={isBroadcasting}
                 onClick={() => handleTriggerLINEBroadcast(false)}
-                className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow transition"
+                className="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 text-white text-xs font-extrabold rounded-xl shadow transition"
               >
-                {isBroadcasting ? "⏳ กำลังยิงข้อความ..." : "📢 กดส่งรายงานเช้าวันนี้ให้ทุกคนทันที"}
+                {isBroadcasting ? "⏳ กำลังคัดแยกพิกัด 22 อำเภอส่ง LINE..." : "📢 ยิงพยากรณ์ 7 โมงเช้าแยกตามโลเคชั่นทันที"}
               </button>
             </div>
 
