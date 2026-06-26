@@ -72,66 +72,66 @@ export const initialRiverGauges: RiverGauge[] = [
   },
   {
     id: "river_kathun_res",
-    name: "อ่างเก็บน้ำคลองกระทูน (พิปูน)",
-    currentLevel: 145.2, // ล้าน ลบ.ม. (93% ของความจุ)
-    warningLevel: 140.0,
-    criticalLevel: 155.0,
+    name: "อ่างเก็บน้ำคลองกะทูน (พิปูน - โครงการพระราชดำริ)",
+    currentLevel: 62.4, // ล้าน ลบ.ม. (88% ของความจุ)
+    warningLevel: 65.0,
+    criticalLevel: 70.50,
     trend: "stable"
   },
   {
     id: "river_dindaeng_res",
     name: "อ่างเก็บน้ำคลองดินแดง (พิปูน)",
-    currentLevel: 61.8, // ล้าน ลบ.ม. (95% ของความจุ)
-    warningLevel: 58.0,
-    criticalLevel: 65.0,
+    currentLevel: 54.6, // ล้าน ลบ.ม. (91% ของความจุ)
+    warningLevel: 56.0,
+    criticalLevel: 60.00,
     trend: "rising"
-  },
-  {
-    id: "river_sametchuan_res",
-    name: "อ่างเก็บน้ำเสม็ดจวน (ทุ่งใหญ่)",
-    currentLevel: 24.5, // ล้าน ลบ.ม. (70% ของความจุ)
-    warningLevel: 30.0,
-    criticalLevel: 35.0,
-    trend: "falling"
-  },
-  {
-    id: "river_khlongsang_res",
-    name: "อ่างเก็บน้ำคลองสังข์ (ทุ่งใหญ่)",
-    currentLevel: 18.2, // ล้าน ลบ.ม. (48% ของความจุ)
-    warningLevel: 32.0,
-    criticalLevel: 38.0,
-    trend: "stable"
   },
   {
     id: "river_huainamsai_res",
     name: "อ่างเก็บน้ำห้วยน้ำใส (ชะอวด)",
-    currentLevel: 72.4, // ล้าน ลบ.ม. (90% ของความจุ)
+    currentLevel: 72.8, // ล้าน ลบ.ม. (91% ของความจุ)
     warningLevel: 75.0,
-    criticalLevel: 80.0,
+    criticalLevel: 80.00,
     trend: "rising"
+  },
+  {
+    id: "river_sametchuan_res",
+    name: "อ่างเก็บน้ำบ้านเสม็ดจวน (ทุ่งใหญ่ - อ่างขนาดเล็ก)",
+    currentLevel: 1.35, // ล้าน ลบ.ม. (79% ของความจุ)
+    warningLevel: 1.50,
+    criticalLevel: 1.70,
+    trend: "falling"
+  },
+  {
+    id: "river_khlongsang_res",
+    name: "อ่างเก็บน้ำคลองสังข์ (ทุ่งใหญ่ - โครงการพระราชดำริ)",
+    currentLevel: 18.2, // ล้าน ลบ.ม. (50% ของความจุ)
+    warningLevel: 32.0,
+    criticalLevel: 36.50,
+    trend: "stable"
   },
   {
     id: "river_kapang_res",
     name: "อ่างเก็บน้ำคลองกะปาง (ทุ่งสง)",
-    currentLevel: 12.8, // ล้าน ลบ.ม. (85% ของความจุ)
-    warningLevel: 13.5,
-    criticalLevel: 15.0,
+    currentLevel: 11.2, // ล้าน ลบ.ม. (77% ของความจุ)
+    warningLevel: 13.0,
+    criticalLevel: 14.50,
     trend: "stable"
   },
   {
     id: "river_khlongtrai_res",
     name: "อ่างเก็บน้ำคลองตราย (พรหมคีรี)",
-    currentLevel: 8.9, // ล้าน ลบ.ม. (89% ของความจุ)
-    warningLevel: 9.0,
-    criticalLevel: 10.0,
+    currentLevel: 3.1, // ล้าน ลบ.ม. (74% ของความจุ)
+    warningLevel: 3.8,
+    criticalLevel: 4.20,
     trend: "stable"
   },
   {
     id: "river_khlongkhut_res",
     name: "อ่างเก็บน้ำคลองคุด (สิชล)",
-    currentLevel: 11.2, // ล้าน ลบ.ม. (77% ของความจุ)
-    warningLevel: 12.0,
-    criticalLevel: 14.5,
+    currentLevel: 2.4, // ล้าน ลบ.ม. (68% ของความจุ)
+    warningLevel: 3.0,
+    criticalLevel: 3.50,
     trend: "falling"
   }
 ];

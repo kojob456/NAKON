@@ -54,6 +54,11 @@ export default function App() {
   });
 
   const [riverGauges, setRiverGauges] = useState<RiverGauge[]>(() => {
+    const upgradedVer = localStorage.getItem("res_v2_royal");
+    if (!upgradedVer) {
+      localStorage.setItem("res_v2_royal", "true");
+      return initialRiverGauges;
+    }
     const saved = localStorage.getItem("riverGauges");
     if (saved) {
       try {
