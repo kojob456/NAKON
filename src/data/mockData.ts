@@ -101,6 +101,38 @@ export const initialRiverGauges: RiverGauge[] = [
     warningLevel: 32.0,
     criticalLevel: 38.0,
     trend: "stable"
+  },
+  {
+    id: "river_huainamsai_res",
+    name: "อ่างเก็บน้ำห้วยน้ำใส (ชะอวด)",
+    currentLevel: 72.4, // ล้าน ลบ.ม. (90% ของความจุ)
+    warningLevel: 75.0,
+    criticalLevel: 80.0,
+    trend: "rising"
+  },
+  {
+    id: "river_kapang_res",
+    name: "อ่างเก็บน้ำคลองกะปาง (ทุ่งสง)",
+    currentLevel: 12.8, // ล้าน ลบ.ม. (85% ของความจุ)
+    warningLevel: 13.5,
+    criticalLevel: 15.0,
+    trend: "stable"
+  },
+  {
+    id: "river_khlongtrai_res",
+    name: "อ่างเก็บน้ำคลองตราย (พรหมคีรี)",
+    currentLevel: 8.9, // ล้าน ลบ.ม. (89% ของความจุ)
+    warningLevel: 9.0,
+    criticalLevel: 10.0,
+    trend: "stable"
+  },
+  {
+    id: "river_khlongkhut_res",
+    name: "อ่างเก็บน้ำคลองคุด (สิชล)",
+    currentLevel: 11.2, // ล้าน ลบ.ม. (77% ของความจุ)
+    warningLevel: 12.0,
+    criticalLevel: 14.5,
+    trend: "falling"
   }
 ];
 
