@@ -95,10 +95,10 @@ export default function FloodPrediction({
   };
 
   const getAmphoeRiskBadge = (chance: number) => {
-    if (chance >= 80) return { label: "วิกฤต (อันตรายสูงสุด)", color: "bg-red-500 text-white ring-red-400" };
-    if (chance >= 60) return { label: "เสี่ยงภัยสูง (ระดับส้ม)", color: "bg-orange-500 text-white" };
-    if (chance >= 40) return { label: "เฝ้าระวัง (ระดับเหลือง)", color: "bg-yellow-450 text-black" };
-    return { label: "ปลอดภัยต่ำ (ระดับเขียว)", color: "bg-green-500 text-white" };
+    if (chance >= 80) return { label: "วิกฤต (อันตรายสูงสุด)", color: "bg-red-600 text-white font-black shadow-sm ring-2 ring-red-300" };
+    if (chance >= 60) return { label: "เสี่ยงภัยสูง (ระดับส้ม)", color: "bg-orange-500 text-white font-black shadow-sm" };
+    if (chance >= 40) return { label: "เฝ้าระวัง (ระดับเหลือง)", color: "bg-amber-400 text-slate-950 font-black shadow-sm" };
+    return { label: "ปลอดภัยสูง (ระดับเขียว)", color: "bg-green-600 text-white font-black shadow-sm" };
   };
 
   return (
@@ -179,7 +179,7 @@ export default function FloodPrediction({
               const query = searchQuery.trim().toLowerCase();
               if (!query) return true;
               return a.name.toLowerCase().includes(query) || a.engName.toLowerCase().includes(query);
-            });
+            }).sort((a, b) => calculateFloodChance(b) - calculateFloodChance(a));
 
             if (filtered.length === 0) {
               return (

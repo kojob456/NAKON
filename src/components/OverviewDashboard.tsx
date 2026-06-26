@@ -39,10 +39,10 @@ export default function OverviewDashboard({
   };
 
   const getAmphoeRiskBadge = (chance: number) => {
-    if (chance >= 80) return { label: "วิกฤต (อันตรายสูงสุด)", color: "bg-red-500 text-white ring-red-400" };
-    if (chance >= 60) return { label: "เสี่ยงภัยสูง (ระดับส้ม)", color: "bg-orange-500 text-white" };
-    if (chance >= 40) return { label: "เฝ้าระวัง (ระดับเหลือง)", color: "bg-yellow-450 text-black" };
-    return { label: "ปลอดภัยต่ำ (ระดับเขียว)", color: "bg-green-500 text-white" };
+    if (chance >= 80) return { label: "วิกฤต (อันตรายสูงสุด)", color: "bg-red-600 text-white font-black shadow-sm ring-2 ring-red-300" };
+    if (chance >= 60) return { label: "เสี่ยงภัยสูง (ระดับส้ม)", color: "bg-orange-500 text-white font-black shadow-sm" };
+    if (chance >= 40) return { label: "เฝ้าระวัง (ระดับเหลือง)", color: "bg-amber-400 text-slate-950 font-black shadow-sm" };
+    return { label: "ปลอดภัยสูง (ระดับเขียว)", color: "bg-green-600 text-white font-black shadow-sm" };
   };
 
   const criticalRivers = riverGauges.filter(g => g.currentLevel >= g.criticalLevel);
@@ -186,7 +186,7 @@ export default function OverviewDashboard({
               <strong>ระบบจะส่งสัญญาณเตือน 3 ชั่วโมงล่วงหน้า</strong> อย่างแม่นยำเมื่อระดับเซนเซอร์เทือกเขาหลวงพุ่งสูง เตรียมยกของและนำอุปกรณ์เครื่องนอนขึ้นที่สูงทันที
             </li>
             <li>
-              <strong>เช็คสีสติ๊กเกอร์บนแผนที่</strong>: <span className="bg-green-500 text-white px-1 py-0.5 rounded text-[10px]">เขียว - ปลอดภัย</span> / <span className="bg-yellow-450 text-black px-1 py-0.5 rounded text-[10px]">เหลือง - ระแวดระวัง</span> / <span className="bg-orange-500 text-white px-1 py-0.5 rounded text-[10px]">ส้ม - เตรียมอพยพ</span> / <span className="bg-red-500 text-white px-1 py-0.5 rounded text-[10px]">แดง - อพยพด่วนที่สุด</span>
+              <strong>เช็คสีสติ๊กเกอร์บนแผนที่</strong>: <span className="bg-green-600 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">เขียว - ปลอดภัยสูง</span> / <span className="bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">เหลือง - เฝ้าระวัง</span> / <span className="bg-orange-500 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">ส้ม - เตรียมอพยพ</span> / <span className="bg-red-600 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">แดง - อพยพด่วนที่สุด</span>
             </li>
             <li>
               <strong>หากมีเหตุด่วน</strong> กดปุ่ม 🔴 <strong>"แจ้งภัยพิบัติ"</strong> ด้านล่างเพื่อขอทีมกู้ภัยอพยพ พร้อมระบบประสานงานแจ้งคูปองและสถานบริการศูนย์ภัยได้ทันท่วงที
