@@ -483,12 +483,13 @@ export default function App() {
               
               {/* Map Column (Spans 2 on desktop) */}
               <div className="lg:col-span-2 space-y-4">
-                <div className="flex justify-between items-center select-none">
-                  <div>
-                    <h2 className="text-base md:text-lg font-extrabold flex items-center gap-1.5">
-                      <MapPin className="w-5 h-5 text-blue-500 animate-bounce" /> 1.3 แผนที่สถานการณ์น้ำท่วมจังหวัด และจุดความช่วยเหลือปัจจุบัน (Interactive Flood Map)
+                <div className="flex flex-wrap justify-between items-center gap-2 select-none">
+                  <div className="w-full md:w-auto">
+                    <h2 className="text-base md:text-lg font-extrabold flex flex-wrap items-center gap-1.5 leading-snug">
+                      <MapPin className="w-5 h-5 text-blue-500 animate-bounce shrink-0" />
+                      <span>1.3 แผนที่สถานการณ์น้ำท่วมจังหวัด และจุดความช่วยเหลือปัจจุบัน (Interactive Flood Map)</span>
                     </h2>
-                    <p className="text-xs opacity-75 mt-0.5">คลิกพินหรือหัวเมืองย่อยบนแผนผังจำลองเพื่อลอร์ดรายละเอียดเชิงสืบค้น</p>
+                    <p className="text-xs opacity-75 mt-0.5 leading-relaxed">คลิกพินหรือหัวเมืองย่อยบนแผนผังจำลองเพื่อโหลดรายละเอียดเชิงสืบค้น</p>
                   </div>
                 </div>
 

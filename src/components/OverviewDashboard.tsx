@@ -60,56 +60,61 @@ export default function OverviewDashboard({
             ? "border-yellow-400 bg-black text-yellow-400"
             : "border-red-200/50 bg-red-50/80 dark:bg-red-950/40 text-red-900 dark:text-red-200"
           }`}>
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-red-600 text-white rounded-2xl">
+          <div className="flex items-start md:items-center gap-3.5 flex-1">
+            <div className="p-3 bg-red-600 text-white rounded-2xl shrink-0">
               <AlertTriangle className="w-6 h-6 animate-bounce" />
             </div>
-            <div>
-              <span className="bg-red-600 text-white font-extrabold text-[10px] md:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                แจ้งเตือนภัยวิกฤตด่วนที่สุด (3-HOUR WARNING)
-              </span>
-              <h2 className="text-sm md:text-base font-extrabold mt-1.5 leading-snug">
-                ชลประทานพบมวลน้ำป่าไหลหลากล้นตลิ่งที่{" "}
-                {criticalRivers.map(r => r.name.split(" ")[0]).join(" และ ")} เตรียมยกกระเป๋าขึ้นที่สูงด่วนภายใน 3 ชม.!
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-red-600 text-white font-extrabold text-[10px] md:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
+                  แจ้งเตือนภัยวิกฤตด่วนที่สุด (3-HOUR WARNING)
+                </span>
+              </div>
+              <h2 className="text-sm md:text-base font-extrabold mt-1.5 leading-snug flex flex-wrap items-center gap-1.5">
+                <span>ชลประทานพบมวลน้ำป่าไหลหลากล้นตลิ่งที่</span>
+                <span className="text-yellow-300 underline font-black">{criticalRivers.map(r => r.name.split(" ")[0]).join(" และ ")}</span>
+                <span>เตรียมยกกระเป๋าขึ้นที่สูงด่วนภายใน 3 ชม.!</span>
               </h2>
-              <p className="text-xs opacity-80 mt-1">
-                เป้าหมายอพยพหลบภัยหนีขึ้นที่ดอนดอน ตำบลในเมือง, ท่าวัง, ปากนคร, และปากพนังตะวันออก ตรวจสอบพิกัดด้านล่าง
+              <p className="text-xs opacity-80 mt-1 leading-relaxed">
+                เป้าหมายอพยพหลบภัยหนีขึ้นที่ดอน ตำบลในเมือง, ท่าวัง, ปากนคร, และปากพนังตะวันออก ตรวจสอบพิกัดด้านล่าง
               </p>
             </div>
           </div>
           <button
             onClick={onCheckEvacRights}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center gap-1.5 shadow"
+            className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow w-full md:w-auto transition-transform active:scale-95"
           >
-            เช็คจุดสิทธิ์อพยพ <ArrowRight className="w-4 h-4" />
+            <span>เช็คจุดสิทธิ์อพยพ</span> <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       ) : (
-        <div className={`p-5 rounded-3xl border flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm transition-all glass-panel ${isHighContrast
+        <div className={`p-5 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm transition-all glass-panel ${isHighContrast
             ? "border-white bg-black text-white"
             : "border-green-200/50 bg-green-50/80 dark:bg-green-950/30 text-green-900 dark:text-green-200"
           }`}>
-          <div className="flex items-center gap-3">
+          <div className="flex items-start md:items-center gap-3 flex-1">
             <div className="p-3 bg-green-600 text-white rounded-2xl shrink-0">
               <Check className="w-6 h-6 animate-pulse" />
             </div>
-            <div>
-              <span className="bg-green-650 text-white font-black text-[9px] md:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                สถานการณ์ภาพรวมปกติ (SAFE STATUS)
-              </span>
-              <h2 className="text-sm md:text-base font-extrabold mt-1 leading-snug">
-                ไม่มีแม่น้ำล้นตลิ่งระดับวิกฤต หรือปริมาณน้ำฝนเกินเกณฑ์เฝ้าระวัง 3 ชม.
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-green-600 text-white font-black text-[9px] md:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  สถานการณ์ภาพรวมปกติ (SAFE STATUS)
+                </span>
+              </div>
+              <h2 className="text-sm md:text-base font-extrabold mt-1 leading-snug flex flex-wrap items-center gap-1.5">
+                <span>ไม่มีแม่น้ำล้นตลิ่งระดับวิกฤต หรือปริมาณน้ำฝนเกินเกณฑ์เฝ้าระวัง 3 ชม.</span>
               </h2>
-              <p className="text-xs opacity-80 mt-0.5">
+              <p className="text-xs opacity-80 mt-0.5 leading-relaxed">
                 ระดับแม่น้ำสายหลักยังอยู่ใต้แนวป้องกันตลิ่ง ขอให้ประชาชนเฝ้าสังเกตการณ์รายงานสภาพอากาศรายชั่วโมงด้านล่าง
               </p>
             </div>
           </div>
           <button
             onClick={onCheckEvacRights}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center gap-1.5 shadow"
+            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow w-full md:w-auto transition-transform active:scale-95"
           >
-            เช็คจุดสิทธิ์อพยพ <ArrowRight className="w-4 h-4" />
+            <span>เช็คจุดสิทธิ์อพยพ</span> <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       )}
@@ -119,35 +124,39 @@ export default function OverviewDashboard({
           ? "bg-black border-white text-white"
           : "border-white/50 dark:border-slate-800/50"
         }`}>
-        <div className="flex items-center gap-2 mb-4">
-          <Info className="w-5 h-5 text-blue-500 animate-pulse" />
-          <div>
-            <span className="text-[10px] font-bold text-blue-650 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-full uppercase">
-              ภาพรวมผู้สูงอายุและประชาชนทั่วไป
-            </span>
-            <h2 className="text-base md:text-lg font-black tracking-tight mt-0.5">
-              หน้าต่างเช็คสถานะน้ำท่วม & โอกาสเสี่ยงพิกัดคุณด่วน
-            </h2>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
+          <div className="flex items-start gap-2.5">
+            <Info className="w-5 h-5 text-blue-500 animate-pulse shrink-0 mt-0.5" />
+            <div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-0.5 rounded-full uppercase">
+                  ภาพรวมผู้สูงอายุและประชาชนทั่วไป
+                </span>
+              </div>
+              <h2 className="text-base md:text-lg font-black tracking-tight mt-1 flex flex-wrap items-center gap-1.5 leading-snug">
+                หน้าต่างเช็คสถานะน้ำท่วม & โอกาสเสี่ยงพิกัดคุณด่วน
+              </h2>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-6">
           <motion.div whileHover={{ scale: 1.02 }} className={`p-5 rounded-2xl border flex flex-col justify-between glass-panel ${isHighContrast ? "bg-black border-white text-white" : "border-white/40 dark:border-slate-700/50 bg-white/40 dark:bg-slate-800/40"}`}>
-            <span className="text-sm opacity-80 font-bold">🌊 พื้นที่น้ำท่วมสะสมปัจจุบัน:</span>
-            <div className="flex items-baseline gap-1.5 mt-3">
+            <span className="text-sm opacity-80 font-bold flex flex-wrap items-center gap-1">🌊 พื้นที่น้ำท่วมสะสมปัจจุบัน:</span>
+            <div className="flex flex-wrap items-baseline gap-1.5 mt-3">
               <span className="text-4xl font-black font-mono text-red-500 drop-shadow-sm">12.5%</span>
               <span className="text-xs opacity-70 font-medium">ของจังหวัด</span>
             </div>
-            <p className="text-xs opacity-75 mt-2 font-medium">เฝ้าระวังพิเศษ 6 อำเภอริมชายฝั่งปากพนัง</p>
+            <p className="text-xs opacity-75 mt-2 font-medium leading-relaxed">เฝ้าระวังพิเศษ 6 อำเภอริมชายฝั่งปากพนัง</p>
           </motion.div>
 
           <motion.div whileHover={{ scale: 1.02 }} className={`p-5 rounded-2xl border flex flex-col justify-between glass-panel ${isHighContrast ? "bg-black border-white text-white" : "border-white/40 dark:border-slate-700/50 bg-white/40 dark:bg-slate-800/40"}`}>
-            <span className="text-sm opacity-80 font-bold">☔ โอกาสฝนท่วมสูงสุดรายอำเภอ:</span>
-            <div className="flex items-baseline gap-1.5 mt-3">
+            <span className="text-sm opacity-80 font-bold flex flex-wrap items-center gap-1">☔ โอกาสฝนท่วมสูงสุดรายอำเภอ:</span>
+            <div className="flex flex-wrap items-baseline gap-1.5 mt-3">
               <span className="text-4xl font-black font-mono text-yellow-500 drop-shadow-sm">58%</span>
               <span className="text-xs opacity-70 font-medium">สูงสุดเวลานี้</span>
             </div>
-            <p className="text-xs opacity-75 mt-2 font-medium">ประเมินจากปริมาณน้ำฝนเหนือแนวเขาหลวง</p>
+            <p className="text-xs opacity-75 mt-2 font-medium leading-relaxed">ประเมินจากปริมาณน้ำฝนเหนือแนวเขาหลวง</p>
           </motion.div>
 
           {(() => {
@@ -156,40 +165,50 @@ export default function OverviewDashboard({
             const userRisk = getAmphoeRiskBadge(userChance);
             return (
               <motion.div whileHover={{ scale: 1.02 }} className={`p-5 rounded-2xl border flex flex-col justify-between transition-all glass-panel ${isHighContrast ? "bg-black border-white text-white shadow-md" : "border-blue-200/50 bg-blue-50/50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200"}`}>
-                <span className="text-xs font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
-                  📍 พิกัด GPS สัญญาณบ้านคุณ:
+                <span className="text-xs font-bold flex flex-wrap items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-ping shrink-0"></span>
+                  <span>📍 พิกัด GPS สัญญาณบ้านคุณ:</span>
                 </span>
-                <div className="flex justify-between items-baseline mt-2">
-                  <span className="text-xl font-bold uppercase truncate max-w-[120px]">
+                <div className="flex flex-wrap justify-between items-baseline gap-2 mt-2">
+                  <span className="text-xl font-bold uppercase truncate max-w-[140px]">
                     {userAmp.name}
                   </span>
-                  <span className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400">
+                  <span className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400 shrink-0">
                     {userChance}%
                   </span>
                 </div>
-                <p className="text-[10px] opacity-80 mt-1 flex justify-between items-center">
+                <div className="text-[10px] opacity-80 mt-1 flex flex-wrap justify-between items-center gap-1">
                   <span>โอกาสท่วมพิกัดจริง</span>
-                  <span className="font-extrabold text-[9px] underline">{userRisk.label.split(" (")[0]}</span>
-                </p>
+                  <span className="font-extrabold text-[9px] underline shrink-0">{userRisk.label.split(" (")[0]}</span>
+                </div>
               </motion.div>
             );
           })()}
         </div>
 
-        <div className="mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-300">
-          <h4 className="font-extrabold flex items-center gap-1.5 mb-2 text-sm">
-            🚨 3 ข้อควรรู้สำหรับเตือนภัยล่วงหน้า 3 ชั่วโมง คุ้มภัยชีวิตพ้นน้ำ
+        <div className="mt-4 p-4 md:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-300">
+          <h4 className="font-extrabold flex flex-wrap items-center gap-1.5 mb-3 text-sm leading-snug">
+            🚨 <span>3 ข้อควรรู้สำหรับเตือนภัยล่วงหน้า 3 ชั่วโมง คุ้มภัยชีวิตพ้นน้ำ</span>
           </h4>
-          <ol className="list-decimal list-inside space-y-1.5 opacity-90 leading-relaxed">
-            <li>
-              <strong>ระบบจะส่งสัญญาณเตือน 3 ชั่วโมงล่วงหน้า</strong> อย่างแม่นยำเมื่อระดับเซนเซอร์เทือกเขาหลวงพุ่งสูง เตรียมยกของและนำอุปกรณ์เครื่องนอนขึ้นที่สูงทันที
+          <ol className="list-decimal list-inside space-y-2.5 opacity-90 leading-relaxed">
+            <li className="flex flex-wrap items-baseline gap-1">
+              <strong className="text-slate-900 dark:text-amber-200">ระบบจะส่งสัญญาณเตือน 3 ชั่วโมงล่วงหน้า</strong>
+              <span>อย่างแม่นยำเมื่อระดับเซนเซอร์เทือกเขาหลวงพุ่งสูง เตรียมยกของและนำอุปกรณ์เครื่องนอนขึ้นที่สูงทันที</span>
             </li>
-            <li>
-              <strong>เช็คสีสติ๊กเกอร์บนแผนที่</strong>: <span className="bg-green-600 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">เขียว - ปลอดภัยสูง</span> / <span className="bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">เหลือง - เฝ้าระวัง</span> / <span className="bg-orange-500 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">ส้ม - เตรียมอพยพ</span> / <span className="bg-red-600 text-white font-black px-1.5 py-0.5 rounded text-[10px] shadow-sm">แดง - อพยพด่วนที่สุด</span>
+            <li className="flex flex-wrap items-center gap-1.5">
+              <strong className="text-slate-900 dark:text-amber-200">เช็คสีสติ๊กเกอร์บนแผนที่:</strong>
+              <div className="flex flex-wrap items-center gap-1.5 my-1 w-full md:w-auto">
+                <span className="bg-green-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🟢 เขียว - ปลอดภัยสูง</span>
+                <span className="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🟡 เหลือง - เฝ้าระวัง</span>
+                <span className="bg-orange-500 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🟠 ส้ม - เตรียมอพยพ</span>
+                <span className="bg-red-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🔴 แดง - อพยพด่วนที่สุด</span>
+              </div>
             </li>
-            <li>
-              <strong>หากมีเหตุด่วน</strong> กดปุ่ม 🔴 <strong>"แจ้งภัยพิบัติ"</strong> ด้านล่างเพื่อขอทีมกู้ภัยอพยพ พร้อมระบบประสานงานแจ้งคูปองและสถานบริการศูนย์ภัยได้ทันท่วงที
+            <li className="flex flex-wrap items-baseline gap-1">
+              <strong className="text-slate-900 dark:text-amber-200">หากมีเหตุด่วน</strong>
+              <span>กดปุ่ม</span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-red-600 text-white font-bold rounded text-[10px]">🔴 แจ้งเหตุน้ำท่วม</span>
+              <span>ด้านล่างเพื่อขอทีมกู้ภัยอพยพ พร้อมระบบประสานงานศูนย์ภัยได้ทันท่วงที</span>
             </li>
           </ol>
         </div>
