@@ -55,7 +55,18 @@ export default function App() {
 
   const [riverGauges, setRiverGauges] = useState<RiverGauge[]>(() => {
     const saved = localStorage.getItem("riverGauges");
-    return saved ? JSON.parse(saved) : initialRiverGauges;
+    if (saved) {
+      try {
+        const parsed: RiverGauge[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length < initialRiverGauges.length) {
+          return initialRiverGauges;
+        }
+        return parsed;
+      } catch (e) {
+        return initialRiverGauges;
+      }
+    }
+    return initialRiverGauges;
   });
 
   const [thresholdSettings, setThresholdSettings] = useState<ThresholdSettings>(() => {
