@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AlertTriangle, Check, Info, ArrowRight } from "lucide-react";
+import { AlertTriangle, Check, Info, ArrowRight, Waves, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { WeatherStation, RiverGauge, ThresholdSettings } from "../types";
 import { motion } from "motion/react";
 
@@ -211,6 +211,163 @@ export default function OverviewDashboard({
               <span>ด้านล่างเพื่อขอทีมกู้ภัยอพยพ พร้อมระบบประสานงานศูนย์ภัยได้ทันท่วงที</span>
             </li>
           </ol>
+        </div>
+      </div>
+
+      {/* 🌊 แดชบอร์ดติดตามปริมาณน้ำอ่างเก็บน้ำสำคัญจังหวัดนครศรีธรรมราช (Reservoirs Live Storage Board) */}
+      <div className={`p-6 md:p-8 rounded-3xl border transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] glass-panel ${
+        isHighContrast
+          ? "bg-black border-white text-white"
+          : "bg-gradient-to-br from-blue-900/10 via-slate-900/5 to-cyan-900/10 dark:from-blue-950/30 dark:via-slate-900 dark:to-cyan-950/30 border-blue-200/60 dark:border-blue-800/60"
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-6 border-b pb-4 border-blue-200/40 dark:border-blue-800/40">
+          <div className="flex items-start gap-3">
+            <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-md shrink-0 mt-0.5">
+              <Waves className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-extrabold text-white bg-blue-600 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                  RESERVOIR LIVE TELEMETRY
+                </span>
+                <span className="text-[10px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                  อัปเดตเรียลไทม์
+                </span>
+              </div>
+              <h2 className="text-base md:text-lg font-black tracking-tight text-slate-900 dark:text-white mt-1.5 leading-snug">
+                🌊 แดชบอร์ดบอกระดับปริมาณน้ำอ่างเก็บน้ำสำคัญจังหวัดนครศรีธรรมราช
+              </h2>
+              <p className="text-xs opacity-75 mt-0.5 leading-relaxed">
+                ติดตามเปอร์เซ็นต์ความจุเขื่อนสำคัญแบบเรียลไทม์ เพื่อประเมินมวลน้ำป่าหลากเหนือเขื่อน และสัญญาณเตือนการพร่องน้ำลงสู่ลำน้ำสายหลัก
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-extrabold px-3.5 py-2 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-300 shrink-0 select-none">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+            </span>
+            <span>สถานีโทรมาตรชลประทาน ปภ.</span>
+          </div>
+        </div>
+
+        {/* Reservoir Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          {riverGauges
+            .filter((g) => g.name.includes("อ่างเก็บน้ำ"))
+            .map((res) => {
+              const capPct = Math.min(Math.round((res.currentLevel / res.criticalLevel) * 100), 100);
+              const isCrit = capPct >= 90;
+              const isWarn = capPct >= 80 && !isCrit;
+
+              return (
+                <motion.div
+                  whileHover={{ y: -4, scale: 1.01 }}
+                  key={res.id}
+                  className={`p-4 md:p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden transition-all shadow-sm hover:shadow-md ${
+                    isHighContrast
+                      ? "bg-[#111] border-white text-white"
+                      : isCrit
+                      ? "bg-red-50/90 dark:bg-red-950/40 border-red-400 dark:border-red-600 ring-2 ring-red-500/20"
+                      : isWarn
+                      ? "bg-orange-50/90 dark:bg-orange-950/30 border-orange-400 dark:border-orange-600"
+                      : "bg-white/90 dark:bg-slate-800/90 border-slate-200 dark:border-slate-700"
+                  }`}
+                >
+                  {/* Card Header */}
+                  <div>
+                    <div className="flex justify-between items-start gap-1">
+                      <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 truncate">
+                        {res.name.includes("(") ? res.name.split("(")[1].replace(")", "") : "นครศรีฯ"}
+                      </span>
+                      <span
+                        className={`text-[9px] px-2 py-0.5 rounded-full font-black leading-none shrink-0 ${
+                          isCrit
+                            ? "bg-red-600 text-white animate-pulse shadow-sm"
+                            : isWarn
+                            ? "bg-orange-500 text-white shadow-sm"
+                            : "bg-green-600 text-white shadow-sm"
+                        }`}
+                      >
+                        {isCrit ? "🔴 ใกล้เต็มวิกฤต!" : isWarn ? "🟠 พร่องน้ำเฝ้าระวัง" : "🟢 รับมวลน้ำได้มาก"}
+                      </span>
+                    </div>
+
+                    <h4 className="font-bold text-sm md:text-base text-slate-900 dark:text-white mt-1.5 leading-snug truncate">
+                      {res.name.split(" ")[0]}
+                    </h4>
+                  </div>
+
+                  {/* Big Number Storage */}
+                  <div className="my-4">
+                    <div className="flex items-baseline gap-1.5">
+                      <span
+                        className={`text-3xl md:text-4xl font-black font-mono tracking-tighter ${
+                          isCrit ? "text-red-600 dark:text-red-400" : isWarn ? "text-orange-600 dark:text-orange-400" : "text-blue-600 dark:text-blue-400"
+                        }`}
+                      >
+                        {res.currentLevel}
+                      </span>
+                      <span className="text-xs font-bold opacity-75">ล้าน ลบ.ม.</span>
+                    </div>
+
+                    {/* Progress Capacity Bar */}
+                    <div className="space-y-1.5 mt-3">
+                      <div className="flex justify-between text-[10px] font-extrabold opacity-80">
+                        <span>ระดับความจุเขื่อน</span>
+                        <span className="font-mono">{capPct}% ({res.criticalLevel} ลบ.ม.)</span>
+                      </div>
+                      <div className="w-full h-3 bg-slate-200 dark:bg-slate-700/80 rounded-full overflow-hidden p-0.5 border border-slate-300/60 dark:border-slate-600/60">
+                        <div
+                          style={{ width: `${capPct}%` }}
+                          className={`h-full rounded-full transition-all duration-1000 ${
+                            isCrit
+                              ? "bg-gradient-to-r from-red-500 to-rose-600 animate-pulse"
+                              : isWarn
+                              ? "bg-gradient-to-r from-amber-400 to-orange-500"
+                              : "bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500"
+                          }`}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Stats & Trend */}
+                  <div className="pt-3 border-t border-slate-200/80 dark:border-slate-700/80 flex justify-between items-center text-[10px] font-bold">
+                    <span className="flex items-center gap-1">
+                      <span>แนวโน้ม:</span>
+                      <span className={`flex items-center gap-0.5 ${res.trend === "rising" ? "text-red-500" : res.trend === "falling" ? "text-green-600 dark:text-green-400" : "text-blue-500"}`}>
+                        {res.trend === "rising" ? (
+                          <>
+                            <TrendingUp className="w-3 h-3" /> เพิ่มขึ้น
+                          </>
+                        ) : res.trend === "falling" ? (
+                          <>
+                            <TrendingDown className="w-3 h-3" /> ลดลง
+                          </>
+                        ) : (
+                          <>
+                            <Minus className="w-3 h-3" /> ทรงตัว
+                          </>
+                        )}
+                      </span>
+                    </span>
+                    <span className="opacity-65 font-mono">เตือนที่ {res.warningLevel}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+        </div>
+
+        {/* Impact Analysis Banner */}
+        <div className="mt-5 p-4 rounded-2xl bg-blue-600/10 dark:bg-blue-900/30 border border-blue-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs leading-relaxed text-blue-950 dark:text-blue-200">
+          <div className="flex items-start md:items-center gap-2.5">
+            <span className="text-lg shrink-0">📊</span>
+            <span>
+              <strong>สรุปสถานการณ์บริหารจัดการน้ำอ่างเก็บน้ำ:</strong> ขณะนี้เขื่อนคลองดินแดงมีความจุแตะเกณฑ์ 95% ชลประทานได้ปรับเพิ่มอัตราการระบายน้ำลงสู่คลองสายหลักเฉลี่ย 15 ลบ.ม./วินาที ส่วนเขื่อนคลองกระทูน เสม็ดจวน และคลองสังข์ ยังอยู่ในเกณฑ์ปลอดภัยสามารถรองรับปริมาณน้ำฝนบนเขาหลวงได้อีกกว่า 40 ล้าน ลบ.ม.
+            </span>
+          </div>
         </div>
       </div>
     </motion.div>

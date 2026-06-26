@@ -73,7 +73,7 @@ export const initialRiverGauges: RiverGauge[] = [
   {
     id: "river_kathun_res",
     name: "อ่างเก็บน้ำคลองกระทูน (พิปูน)",
-    currentLevel: 145.2, // ล้าน ลบ.ม. (89% ของความจุ)
+    currentLevel: 145.2, // ล้าน ลบ.ม. (93% ของความจุ)
     warningLevel: 140.0,
     criticalLevel: 155.0,
     trend: "stable"
@@ -81,9 +81,25 @@ export const initialRiverGauges: RiverGauge[] = [
   {
     id: "river_dindaeng_res",
     name: "อ่างเก็บน้ำคลองดินแดง (พิปูน)",
-    currentLevel: 61.8, // ล้าน ลบ.ม. (92% ของความจุ)
+    currentLevel: 61.8, // ล้าน ลบ.ม. (95% ของความจุ)
     warningLevel: 58.0,
     criticalLevel: 65.0,
+    trend: "rising"
+  },
+  {
+    id: "river_sametchuan_res",
+    name: "อ่างเก็บน้ำเสม็ดจวน (ทุ่งใหญ่)",
+    currentLevel: 24.5, // ล้าน ลบ.ม. (70% ของความจุ)
+    warningLevel: 30.0,
+    criticalLevel: 35.0,
+    trend: "falling"
+  },
+  {
+    id: "river_khlongsang_res",
+    name: "อ่างเก็บน้ำคลองสังข์ (ทุ่งใหญ่)",
+    currentLevel: 18.2, // ล้าน ลบ.ม. (48% ของความจุ)
+    warningLevel: 32.0,
+    criticalLevel: 38.0,
     trend: "stable"
   }
 ];
