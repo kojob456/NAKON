@@ -235,7 +235,7 @@ export default function ResponderDashboard({
               <div className="p-3 bg-slate-50 dark:bg-slate-800/30 border rounded-2xl text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 font-semibold">
                 <div className="space-y-1">
                   <p className="flex items-center gap-1 opacity-80"><Navigation className="w-4 h-4 text-blue-500 animate-pulse" /> พิกัดดาวเทียมคดีแจ้งภัย (GPS Coordinates)</p>
-                  <p className="font-mono text-slate-700 dark:text-slate-350">
+                  <p className="font-mono text-slate-700 dark:text-slate-300">
                     ละติจูด: {selectedCase.latitude.toFixed(5)} , ลองจิจูด: {selectedCase.longitude.toFixed(5)}
                   </p>
                 </div>
@@ -327,7 +327,7 @@ export default function ResponderDashboard({
             </div>
           ) : (
             <div className="text-center py-12 bg-slate-50 dark:bg-slate-900 border rounded-3xl opacity-80">
-              <CheckCircle className="w-12 h-12 text-slate-350 mx-auto opacity-70 mb-3" />
+              <CheckCircle className="w-12 h-12 text-slate-400 mx-auto opacity-70 mb-3" />
               <h4 className="font-bold">ไม่มีเคสค้างคิวในแดชบอร์ดกู้ภัย</h4>
               <p className="text-xs opacity-70 mt-1">คดีทั้งหมดถูกดูแลจัดส่งเรียบร้อย ตลิ่งจังหวัดระบายพ้นวิกฤต</p>
             </div>

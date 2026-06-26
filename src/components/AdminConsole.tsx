@@ -148,7 +148,7 @@ export default function AdminConsole({
       {/* TAB CONTENT: 7.3 THRESHOLDS */}
       {activeTab === "thresholds" && (
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-6 ${
-          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-850/60"
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800/60"
         }`}>
           <div>
             <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
@@ -164,7 +164,7 @@ export default function AdminConsole({
             <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border">
               <span className="text-[10px] opacity-70 block">PARAMETER 1 :</span>
               <p className="font-bold text-slate-800 dark:text-slate-250">ระดับน้ำฝนสะสมวิกฤตเทือกเขาหลวง</p>
-              <span className="block text-xl font-mono font-extrabold text-blue-550 dark:text-blue-400">
+              <span className="block text-xl font-mono font-extrabold text-blue-600 dark:text-blue-400">
                 {rainCrit} มม.
               </span>
               <input
@@ -185,7 +185,7 @@ export default function AdminConsole({
             <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border">
               <span className="text-[10px] opacity-70 block">PARAMETER 2 :</span>
               <p className="font-bold text-slate-800 dark:text-slate-250">อัตราส่วนขอบตลิ่งเตือนภัยคลองท่าดี</p>
-              <span className="block text-xl font-mono font-extrabold text-orange-550">
+              <span className="block text-xl font-mono font-extrabold text-orange-500">
                 {waterRatio}% ของขอบตลิ่ง
               </span>
               <input
@@ -206,7 +206,7 @@ export default function AdminConsole({
             <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border">
               <span className="text-[10px] opacity-70 block">PARAMETER 3 :</span>
               <p className="font-bold text-slate-800 dark:text-slate-250">ความเร็วการเอ่อเพิ่มของสัญญาณล้าน ลบ.ม.</p>
-              <span className="block text-xl font-mono font-extrabold text-red-550">
+              <span className="block text-xl font-mono font-extrabold text-red-600">
                 {rapidRise} ซม. / ชั่วโมง
               </span>
               <input
@@ -216,7 +216,7 @@ export default function AdminConsole({
                 step={2}
                 value={rapidRise}
                 onChange={(e) => setRapidRise(Number(e.target.value))}
-                className="w-full accent-red-610 cursor-pointer"
+                className="w-full accent-red-600 cursor-pointer"
               />
               <p className="text-[10px] opacity-70 leading-relaxed font-normal">
                 อัตราการเพิ่มดิ่งสูงรวดเร็วเหนือนํ้าตลิ่งกู้ซ่อมแซม หากตรวจพบคลื่นปีนป่ายพุ่งสูงกว่าสเกลนี้ จะเตือนภัยล่วงหน้า 3 ชั่วโมงทันสมัย
@@ -226,7 +226,7 @@ export default function AdminConsole({
 
           <button
             onClick={handleSaveThresholds}
-            className="w-full py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-750 hover:to-indigo-750 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5"
           >
             <Check className="w-4 h-4" /> บันทึกสิทธิพารามิเตอร์สัญญาณเตือนภัยแปรผลสถิติหลวง
           </button>
@@ -236,7 +236,7 @@ export default function AdminConsole({
       {/* TAB CONTENT: 7.1 USER MANAGEMENT */}
       {activeTab === "users" && (
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-4 ${
-          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-850"
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800"
         }`}>
           <div>
             <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
@@ -335,10 +335,10 @@ export default function AdminConsole({
       {/* TAB CONTENT: 7.2 API CONNECTION STATUS */}
       {activeTab === "apis" && (
         <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-4 ${
-          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-850"
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800"
         }`}>
           <div>
-            <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-850">
+            <h4 className="font-bold text-sm md:text-base flex items-center gap-1.5 border-b pb-2 dark:border-slate-800">
               <Network className="w-5 h-5 text-blue-500" /> 7.2 ระบบทดลองคัดกรองสัญญาณ API ดาต้าแลนด์เวย์ภายนอก
             </h4>
             <p className="text-xs opacity-75 mt-0.5">รวมจุดสัญญานตรวจสุขภาพความแลทเซนดึงแผนสำรอง TMD, HAII และดาวเทียม GISTDA</p>
@@ -353,7 +353,7 @@ export default function AdminConsole({
                 <div
                   key={api.id}
                   className={`p-4 rounded-2xl border space-y-3 flex flex-col justify-between ${
-                    isHighContrast ? "border-white bg-[#111]" : "bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-801"
+                    isHighContrast ? "border-white bg-[#111]" : "bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800"
                   }`}
                 >
                   <div className="flex justify-between items-start gap-1">
@@ -376,10 +376,10 @@ export default function AdminConsole({
                   <div className="flex gap-1.5 pt-1">
                     <button
                       onClick={() => onToggleAPIStatus(api.id)}
-                      className={`flex-1 py-1 rounded text-[10px] ${
+                      className={`flex-1 py-1 rounded text-[10px] font-bold ${
                         connected
-                          ? "bg-red-105 text-red-655 hover:bg-red-200"
-                          : "bg-green-105 text-green-700 hover:bg-green-200"
+                          ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-950/50 dark:text-red-300"
+                          : "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/50 dark:text-green-300"
                       }`}
                     >
                       {connected ? "ปิดสัญญาณเกตเวย์" : "เปิดเกตเวย์"}
@@ -388,7 +388,7 @@ export default function AdminConsole({
                     <button
                       disabled={isPinging}
                       onClick={() => handleTestAPIConnection(api.id)}
-                      className="p-1 px-2.5 bg-blue-105 text-blue-650 hover:bg-blue-200 rounded text-[10px] flex items-center justify-center"
+                      className="p-1 px-2.5 bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-950/50 dark:text-blue-300 rounded text-[10px] flex items-center justify-center font-bold"
                     >
                       {isPinging ? (
                         <Activity className="w-3.5 h-3.5 animate-spin" />

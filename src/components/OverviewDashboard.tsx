@@ -62,7 +62,7 @@ export default function OverviewDashboard({
           }`}>
           <div className="flex items-start md:items-center gap-3.5 flex-1">
             <div className="p-3 bg-red-600 text-white rounded-2xl shrink-0">
-              <AlertTriangle className="w-6 h-6 animate-bounce" />
+              <AlertTriangle className="w-6 h-6 animate-pulse" />
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2">

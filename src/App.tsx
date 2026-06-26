@@ -486,7 +486,7 @@ export default function App() {
                 <div className="flex flex-wrap justify-between items-center gap-2 select-none">
                   <div className="w-full md:w-auto">
                     <h2 className="text-base md:text-lg font-extrabold flex flex-wrap items-center gap-1.5 leading-snug">
-                      <MapPin className="w-5 h-5 text-blue-500 animate-bounce shrink-0" />
+                      <MapPin className="w-5 h-5 text-blue-500 shrink-0" />
                       <span>1.3 แผนที่สถานการณ์น้ำท่วมจังหวัด และจุดความช่วยเหลือปัจจุบัน (Interactive Flood Map)</span>
                     </h2>
                     <p className="text-xs opacity-75 mt-0.5 leading-relaxed">คลิกพินหรือหัวเมืองย่อยบนแผนผังจำลองเพื่อโหลดรายละเอียดเชิงสืบค้น</p>
@@ -571,7 +571,7 @@ export default function App() {
                   <div className={`p-5 rounded-3xl border text-xs text-center space-y-4 ${
                     isHighContrast ? "bg-black border-white" : "bg-white dark:bg-slate-800/60 border-slate-200"
                   }`}>
-                    <Accessibility className="w-10 h-10 text-blue-500 mx-auto opacity-70 animate-bounce" />
+                    <Accessibility className="w-10 h-10 text-blue-500 mx-auto opacity-70 mb-2" />
                     <div>
                       <h4 className="font-bold text-sm">ต้องการรับ SMS / LINE แจ้งเตือนด่วนของตำบล?</h4>
                       <p className="opacity-75 leading-relaxed mt-1.5">

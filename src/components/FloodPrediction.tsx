@@ -234,8 +234,9 @@ export default function FloodPrediction({
 
       {/* Right 1 Col: iOS Style Weather Info Widget */}
       <div className="space-y-4">
-        <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-          <CloudRain className="w-5 h-5 text-blue-500 animate-bounce" /> 1.3 สภาพอากาศเรียลไทม์
+        <h3 className="font-bold text-base md:text-lg flex flex-wrap items-center gap-1.5 text-slate-800 dark:text-slate-100">
+          <CloudRain className="w-5 h-5 text-blue-500 shrink-0" />
+          <span>1.3 สภาพอากาศเรียลไทม์</span>
         </h3>
 
         {(() => {
@@ -245,16 +246,16 @@ export default function FloodPrediction({
           let weatherCondition = "มีเมฆส่วนใหญ่ ฝนฟ้าคะนอง";
           let tempVal = 26;
           let isHeavy = activeChance >= 75;
-          let iconComponent = <CloudLightning className="w-14 h-14 text-yellow-350 animate-pulse drop-shadow-lg" />;
+          let iconComponent = <CloudLightning className="w-14 h-14 text-yellow-400 animate-pulse drop-shadow-lg" />;
 
           if (isHeavy) {
             weatherCondition = "พายุฝนฟ้าคะนอง ตกหนักสะสม";
             tempVal = 24;
-            iconComponent = <CloudLightning className="w-14 h-14 text-yellow-505 animate-bounce drop-shadow" />;
+            iconComponent = <CloudLightning className="w-14 h-14 text-yellow-400 animate-pulse drop-shadow" />;
           } else if (activeChance >= 40) {
             weatherCondition = "ท้องฟ้าครึ้ม ฝนโปรยปรายทั่วไป";
             tempVal = 26;
-            iconComponent = <CloudDrizzle className="w-14 h-14 text-blue-350 animate-pulse drop-shadow" />;
+            iconComponent = <CloudDrizzle className="w-14 h-14 text-blue-400 animate-pulse drop-shadow" />;
           } else {
             weatherCondition = "มีเมฆบางส่วน อากาศค่อนข้างร้อน";
             tempVal = 29;

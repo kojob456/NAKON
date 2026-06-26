@@ -219,7 +219,7 @@ export default function ReportPortal({
         <div className={`p-8 text-center max-w-sm rounded-3xl border shadow-2xl ${
           isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-900 border-slate-200"
         }`}>
-          <Shield className="w-12 h-12 text-red-500 mx-auto animate-bounce mb-3" />
+          <Shield className="w-12 h-12 text-red-500 mx-auto mb-3" />
           <h3 className="font-extrabold text-sm md:text-base">ขออภัย: ไม่สามารถเข้าสู่ฟอร์มรายงานได้</h3>
           <p className="text-xs opacity-75 mt-2 leading-relaxed">
             ระบบความปลอดภัยกำหนดให้ประชาชนล็อกอินสมัครสมาชิกเพื่อยืนยันพิกัดและเบอร์สายด่วนกู้ภัยติดต่อกลับ
@@ -462,7 +462,7 @@ export default function ReportPortal({
                   <Camera className="w-4 h-4" /> ถ่ายภาพสถานการณ์สด (Live)
                 </button>
 
-                <label className="p-2 bg-slate-100 dark:bg-slate-800 border-dashed border border-slate-350 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-200 flex items-center justify-center shrink-0">
+                <label className="p-2 bg-slate-100 dark:bg-slate-800 border-dashed border border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-200 flex items-center justify-center shrink-0">
                   <ImageIcon className="w-4 h-4 text-slate-500" />
                   <input
                     type="file"
@@ -528,7 +528,7 @@ export default function ReportPortal({
           {/* Submit button */}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-red-650 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-xl text-sm font-extrabold transition-all shadow-md transform hover:translate-y-[-1px]"
+            className="w-full py-3.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-xl text-sm font-extrabold transition-all shadow-md active:scale-[0.99]"
           >
             🔊 ยืนยันการส่งรายงานกู้ภัย (Dispatch Report)
           </button>

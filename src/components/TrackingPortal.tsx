@@ -44,7 +44,7 @@ export default function TrackingPortal({
       case FloodSeverity.CRITICAL: return "bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-300 border-red-200";
       case FloodSeverity.HIGH: return "bg-orange-50 text-orange-700 dark:bg-orange-950/20 dark:text-orange-300 border-orange-200";
       case FloodSeverity.MEDIUM: return "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/20 dark:text-yellow-300 border-yellow-200";
-      case FloodSeverity.LOW: return "bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-350 border-green-200";
+      case FloodSeverity.LOW: return "bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-300 border-green-200";
     }
   };
 
@@ -267,7 +267,7 @@ export default function TrackingPortal({
                           </div>
                         ) : (
                           <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border rounded-2xl flex items-center gap-2">
-                            <HelpCircle className="w-5 h-5 text-slate-450 animate-pulse" />
+                            <HelpCircle className="w-5 h-5 text-slate-400 animate-pulse shrink-0" />
                             <p className="leading-snug opacity-75 text-[11px] font-semibold">
                               เจ้าหน้าที่กู้ภัยส่วนกำลังพล ปภ. จังหวัดกำลังพิจารณาคัดกรองจัดลำดับเรือส่งเข้าช่วยเหลือท่านอย่างเร่งรัด
                             </p>
@@ -293,7 +293,7 @@ export default function TrackingPortal({
         </div>
       ) : (
         <div className="text-center py-12">
-          <Clock className="w-12 h-12 text-slate-350 mx-auto opacity-70 mb-3" />
+          <Clock className="w-12 h-12 text-slate-400 mx-auto opacity-70 mb-3" />
           <h4 className="font-bold">ไม่พบเคสรายงานสถิติของท่าน</h4>
           <p className="text-xs opacity-70 mt-1 leading-relaxed">
             ท่านยังไม่ได้ส่งคำรายงานแจ้งเหตุน้ำท่วมในระบบข่าวมือถือ เข้าไปที่เมนู "แจ้งเหตุน้ำท่วม" เพื่อสร้างรายงานด่วนฉบับแรก

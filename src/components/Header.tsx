@@ -137,8 +137,8 @@ export default function Header({
           >
             <Menu className="w-6 h-6" />
           </button>
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onChangeTab("dashboard")}>
-          <div className="bg-blue-600 text-white p-2 rounded-xl shadow-md flex items-center justify-center animate-bounce">
+          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onChangeTab("dashboard")}>
+          <div className="bg-blue-600 text-white p-2 rounded-xl shadow-md flex items-center justify-center">
             <Shield className="w-6 h-6" />
           </div>
           <div>
@@ -164,7 +164,7 @@ export default function Header({
               className={`p-2 rounded-xl transition-all border ${
                 showAccessMenu
                   ? "bg-blue-50 dark:bg-slate-800"
-                  : "hover:bg-slate-50 dark:hover:bg-slate-850"
+                  : "hover:bg-slate-50 dark:hover:bg-slate-800"
               } ${isHighContrast ? "border-white" : "border-slate-200 dark:border-slate-800"}`}
             >
               <Accessibility className="w-5 h-5 text-blue-500 animate-pulse" />

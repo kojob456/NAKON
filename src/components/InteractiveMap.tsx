@@ -149,7 +149,7 @@ export default function InteractiveMap({
 
   const tempIcon = L.divIcon({
     className: "custom-temp-pin",
-    html: `<div class="w-8 h-8 rounded-full bg-yellow-400 text-black border-4 border-black animate-bounce shadow-2xl flex items-center justify-center font-bold">📍</div>`,
+    html: `<div class="w-8 h-8 rounded-full bg-yellow-400 text-black border-4 border-black animate-pulse shadow-2xl flex items-center justify-center font-bold">📍</div>`,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32]
