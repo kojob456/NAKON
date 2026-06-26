@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Camera, Image as ImageIcon, MapPin, Check, Plus, Trash2, Shield, Info, Compass } from "lucide-react";
 import { User, FloodReport, FloodSeverity, ReportStatus } from "../types";
 import InteractiveMap from "./InteractiveMap";
@@ -46,6 +46,63 @@ export default function ReportPortal({
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const randomizeForm = () => {
+    const amphoeKeys = Object.keys(nakhonDistrictsAndTambons);
+    const randAmphoe = amphoeKeys[Math.floor(Math.random() * amphoeKeys.length)];
+    const tambonList = nakhonDistrictsAndTambons[randAmphoe] || ["ตัวเมือง"];
+    const randTambon = tambonList[Math.floor(Math.random() * tambonList.length)];
+
+    const landmarks = [
+      "หน้าวัดพระมหาธาตุ วรมหาวิหาร",
+      "ตลาดสดเทศบาล ซอย 3 ตรงข้ามร้านชำ",
+      "ตรงข้ามโรงเรียนปากพนัง ชุมชนสะพานร่วมใจ",
+      "หมู่บ้านคีรีวง ใกล้สะพานบ้านคีรีวง",
+      "แยกสี่แยกหัวถนน ตรงข้ามปั๊ม ปตท.",
+      "ชุมชนเขาหลวงตอนล่าง ถ.สายหลัก",
+      "ซอยสันติสุข 2 ทางเข้าหมู่บ้านประชารัฐ"
+    ];
+    const randLandmark = landmarks[Math.floor(Math.random() * landmarks.length)];
+
+    const sevs = [FloodSeverity.LOW, FloodSeverity.MEDIUM, FloodSeverity.HIGH, FloodSeverity.CRITICAL];
+    const randSev = sevs[Math.floor(Math.random() * sevs.length)];
+
+    const randLevel = Math.floor(Math.random() * 150) + 30; // 30cm - 180cm
+    const randStranded = Math.floor(Math.random() * 10); // 0 - 9
+
+    const helps = ["evac", "food", "meds", "boat", "sandbag"];
+    const shuffledHelps = [...helps].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 1);
+
+    const descs = [
+      "น้ำป่าหลากทะลักเข้าท่วมชั้นล่างอย่างรวดเร็ว ขนของขึ้นที่สูงไม่ทัน",
+      "ฝนตกหนักต่อเนื่องเกือบ 4 ชั่วโมง ระดับน้ำพุ่งสูงขึ้นอย่างรวดเร็ว รถเล็กผ่านไม่ได้",
+      "มวลน้ำหลากเอ่อล้นตลิ่งเข้าท่วมชุมชน ต้องการความช่วยเหลืออพยพด่วน",
+      "ระดับน้ำทรงตัวสูงเกือบเมตร ตัดขาดทางเข้าออกหมู่บ้าน ไม่มีไฟฟ้าใช้",
+      "น้ำหลากเข้าบ้านชั้นล่าง มีผู้สูงอายุและเด็กเล็กติดอยู่ด้านใน"
+    ];
+    const randDesc = descs[Math.floor(Math.random() * descs.length)];
+
+    const randPic = demoFloodPhotos[Math.floor(Math.random() * demoFloodPhotos.length)];
+
+    const randLat = +(8.25 + Math.random() * 0.35).toFixed(4);
+    const randLng = +(99.75 + Math.random() * 0.45).toFixed(4);
+
+    setAmphoe(randAmphoe);
+    setTambon(randTambon);
+    setLandmark(randLandmark);
+    setSeverity(randSev);
+    setWaterLevelCm(randLevel);
+    setStrandedPeopleCount(randStranded);
+    setNeededHelp(shuffledHelps);
+    setDescription(randDesc);
+    setImages([randPic]);
+    setLatitude(randLat);
+    setLongitude(randLng);
+  };
+
+  useEffect(() => {
+    randomizeForm();
+  }, []);
 
   // 1. Get Auto GPS location coordinate
   const handleAutoGPS = () => {
@@ -203,14 +260,9 @@ export default function ReportPortal({
 
     onAddReport(reportPayload);
 
-    // Reset Form states
-    setTambon("");
-    setLandmark("");
-    setDescription("");
-    setImages([]);
-    setStrandedPeopleCount(0);
-    setNeededHelp([]);
-    setOtherHelpText("");
+    // Auto randomize for next test submission
+    randomizeForm();
+    alert("ส่งข้อมูลแจ้งเหตุน้ำท่วมเข้าสู่ระบบสำเร็จ! ระบบได้สุ่มข้อมูลเหตุการณ์จำลองใหม่เตรียมไว้ให้คุณสำหรับทดสอบรอบถัดไปแล้ว");
   };
 
   if (!currentUser) {
@@ -233,13 +285,21 @@ export default function ReportPortal({
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* Left 3 cols: Detailed entry Form */}
       <div className="lg:col-span-3 space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
               <Camera className="w-5 h-5 text-blue-500" /> ฟอร์มส่งรายงานกู้ภัยภัยพิบัติน้ำท่วมส่วนบุคคล
             </h3>
             <p className="text-xs opacity-75">กรุณากรอกข้อมูลระดับน้ำและคำขอพิเศษเพื่อกู้วิกฤตฉุกเฉิน</p>
           </div>
+          <button
+            type="button"
+            onClick={randomizeForm}
+            className="px-3.5 py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white rounded-xl text-xs font-black shadow-md hover:opacity-90 flex items-center gap-1.5 shrink-0 transition-all active:scale-95"
+          >
+            <span>🎲</span>
+            <span>สุ่มข้อมูลจำลองใหม่</span>
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className={`p-6 rounded-3xl border space-y-5 shadow ${
