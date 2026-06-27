@@ -85,8 +85,32 @@ export default function App() {
   });
 
   const [usersList, setUsersList] = useState<User[]>(() => {
+    const cleanVer = localStorage.getItem("users_clean_v4_admin");
+    if (!cleanVer) {
+      localStorage.setItem("users_clean_v4_admin", "true");
+      return mockUsers;
+    }
     const saved = localStorage.getItem("usersList");
-    return saved ? JSON.parse(saved) : mockUsers;
+    if (saved) {
+      try {
+        const parsed: User[] = JSON.parse(saved);
+        const seen = new Set();
+        const cleaned: User[] = [];
+        for (const usr of parsed) {
+          if (usr.uid === "user_it_admin") usr.role = UserRole.ADMIN;
+          if (usr.uid === "user_responder_1") usr.role = UserRole.RESPONDER;
+          const key = usr.uid || usr.displayName;
+          if (!seen.has(key)) {
+            seen.add(key);
+            cleaned.push(usr);
+          }
+        }
+        return cleaned.length > 0 ? cleaned : mockUsers;
+      } catch (e) {
+        return mockUsers;
+      }
+    }
+    return mockUsers;
   });
 
   const [selectedAmphoe, setSelectedAmphoe] = useState<string>("");
@@ -257,6 +281,8 @@ export default function App() {
     } else {
       const u = usersList.find((usr) => usr.uid === userUid);
       if (u) {
+        if (u.uid === "user_it_admin") u.role = UserRole.ADMIN;
+        if (u.uid === "user_responder_1") u.role = UserRole.RESPONDER;
         setCurrentUser(u);
         // Automatically switch page tabs corresponding to role to guide reviewers nicely!
         if (u.role === UserRole.ADMIN) {
@@ -428,7 +454,7 @@ export default function App() {
               onLogin={(user) => {
                 setCurrentUser(user);
                 logUserAccess(user, "LOGIN", "Web Login Portal");
-                if (!usersList.some((usr) => usr.uid === user.uid)) {
+                if (!usersList.some((usr) => usr.uid === user.uid || usr.displayName === user.displayName)) {
                   setUsersList((prev) => [...prev, user]);
                 }
                 setActiveTab("dashboard");
@@ -633,7 +659,7 @@ export default function App() {
             onLogin={(user) => {
               setCurrentUser(user);
               // Save to list
-              if (!usersList.some((usr) => usr.uid === user.uid)) {
+              if (!usersList.some((usr) => usr.uid === user.uid || usr.displayName === user.displayName)) {
                 setUsersList((prev) => [...prev, user]);
               }
               setActiveTab("dashboard");
