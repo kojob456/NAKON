@@ -545,19 +545,19 @@ export default function App() {
               </div>
             </div>
 
-            <FloodPrediction
-              amphoes={amphoesList}
-              weatherStations={weatherStations}
-              thresholdSettings={thresholdSettings}
-              isDarkMode={isDarkMode}
-              isHighContrast={isHighContrast}
-              onSelectAmphoe={setSelectedAmphoe}
-              selectedAmphoe={selectedAmphoe}
-            />
-
             {/* Subview 1: Interactive Map Mode */}
             {(dashboardMode === "map" && activeTab !== "report") && (
               <div className="space-y-8">
+                <FloodPrediction
+                  amphoes={amphoesList}
+                  weatherStations={weatherStations}
+                  thresholdSettings={thresholdSettings}
+                  isDarkMode={isDarkMode}
+                  isHighContrast={isHighContrast}
+                  onSelectAmphoe={setSelectedAmphoe}
+                  selectedAmphoe={selectedAmphoe}
+                />
+
                 {/* Map and Sentinel Watch Setup */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
@@ -690,6 +690,7 @@ export default function App() {
                 onAddReport={handleAddReportCase}
                 isDarkMode={isDarkMode}
                 isHighContrast={isHighContrast}
+                onOpenAuth={() => setActiveTab("auth")}
               />
             )}
           </div>

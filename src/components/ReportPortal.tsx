@@ -9,6 +9,7 @@ interface ReportPortalProps {
   onAddReport: (report: FloodReport) => void;
   isDarkMode: boolean;
   isHighContrast: boolean;
+  onOpenAuth?: () => void;
 }
 
 // Preset flood photos for easy demo uploads
@@ -23,7 +24,8 @@ export default function ReportPortal({
   currentUser,
   onAddReport,
   isDarkMode,
-  isHighContrast
+  isHighContrast,
+  onOpenAuth
 }: ReportPortalProps) {
   const [amphoe, setAmphoe] = useState("เมืองนครศรีธรรมราช");
   const [tambon, setTambon] = useState("");
@@ -219,15 +221,23 @@ export default function ReportPortal({
 
   if (!currentUser) {
     return (
-      <div className="absolute inset-x-0 w-full flex items-center justify-center p-8 select-none">
-        <div className={`p-8 text-center max-w-sm rounded-3xl border shadow-2xl ${
-          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-900 border-slate-200"
+      <div className="w-full flex items-center justify-center py-12 select-none">
+        <div className={`p-8 text-center max-w-md rounded-3xl border shadow-2xl space-y-4 ${
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
         }`}>
-          <Shield className="w-12 h-12 text-red-500 mx-auto mb-3" />
-          <h3 className="font-extrabold text-sm md:text-base">ขออภัย: ไม่สามารถเข้าสู่ฟอร์มรายงานได้</h3>
-          <p className="text-xs opacity-75 mt-2 leading-relaxed">
-            ระบบความปลอดภัยกำหนดให้ประชาชนล็อกอินสมัครสมาชิกเพื่อยืนยันพิกัดและเบอร์สายด่วนกู้ภัยติดต่อกลับ
+          <Shield className="w-14 h-14 text-red-500 mx-auto animate-pulse" />
+          <h3 className="font-extrabold text-base md:text-lg">กรุณาล็อกอินก่อนเปิดแบบฟอร์มแจ้งเหตุ</h3>
+          <p className="text-xs opacity-75 leading-relaxed">
+            เพื่อความปลอดภัย ป้องกันข้อมูลเท็จ และช่วยให้เจ้าหน้าที่กู้ภัยสามารถยืนยันพิกัดและติดต่อกลับตามเบอร์โทรศัพท์ของคุณได้ทันทีเมื่อรับแจ้งเหตุครับ
           </p>
+          {onOpenAuth && (
+            <button
+              onClick={onOpenAuth}
+              className="w-full py-3.5 bg-gradient-to-r from-red-600 to-orange-600 text-white font-extrabold rounded-2xl shadow-lg hover:opacity-95 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
+            >
+              🔓 ล็อกอินเพื่อแจ้งเหตุกู้ภัยด่วนทันที
+            </button>
+          )}
         </div>
       </div>
     );
