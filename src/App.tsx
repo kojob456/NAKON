@@ -39,7 +39,21 @@ export default function App() {
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem("currentUser");
-    return saved ? JSON.parse(saved) : null;
+    if (saved) return JSON.parse(saved);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") === "report" || params.get("tab") === "report" || params.get("source")?.includes("line")) {
+      const lineUser: User = {
+        uid: "line_oa_" + Date.now(),
+        email: "citizen_line@line.me",
+        displayName: "คุณพลเมือง นครศรีฯ (LINE OA น้องน้ำหวาน)",
+        role: "citizen",
+        phone: "089-999-9999",
+        watchZones: ["เมืองนครศรีธรรมราช", "ลานสกา", "ปากพนัง"]
+      };
+      localStorage.setItem("currentUser", JSON.stringify(lineUser));
+      return lineUser;
+    }
+    return null;
   });
 
   const [reports, setReports] = useState<FloodReport[]>(() => {
@@ -755,6 +769,8 @@ export default function App() {
             isHighContrast={isHighContrast}
             isDarkMode={isDarkMode}
             onAddReport={handleAddReportCase}
+            reports={reports}
+            onUpdateReportStatus={handleUpdateReportStatus}
           />
         )}
       </main>

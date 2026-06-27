@@ -77,6 +77,10 @@ export default function ReportPortal({
     }
   };
 
+  React.useEffect(() => {
+    handleAutoGPS();
+  }, []);
+
   // 2. Map Tapping Selector
   const handleMapTapPlacement = (lat: number, lng: number) => {
     setLatitude(lat);
@@ -427,16 +431,18 @@ export default function ReportPortal({
           {/* Coordinates area & Uploader */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 border-slate-100 dark:border-slate-800/80">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold flex justify-between items-center">
-                <span>📍 ดึงพิกัด GPS อ้างอิงทางดาวเทียม</span>
+              <div className="space-y-2">
                 <button
                   type="button"
                   onClick={handleAutoGPS}
-                  className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline font-bold"
+                  className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 shadow transition-all active:scale-95"
                 >
-                  [ ดึง GPS ปัจจุบัน ]
+                  <MapPin className="w-4 h-4 animate-bounce" /> 📍 แชร์พิกัด GPS เรียลไทม์จุดที่น้ำท่วม (Real-time Location)
                 </button>
-              </label>
+                <label className="text-xs font-bold flex justify-between items-center opacity-75">
+                  <span>📍 พิกัดดาวเทียมปัจจุบัน</span>
+                </label>
+              </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
                 <input
@@ -465,28 +471,48 @@ export default function ReportPortal({
             </div>
 
             {/* Photo upload */}
-            <div>
-              <label className="text-xs font-bold block mb-1">📸 แผงอัปโหลดหลักฐานรูปถ่าย (สูงสุด 5 ใบ)</label>
-              <div className="flex gap-2 items-center flex-wrap">
-                <button
-                  type="button"
-                  onClick={startCameraStream}
-                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow"
-                >
-                  <Camera className="w-4 h-4" /> ถ่ายภาพสถานการณ์สด (Live)
-                </button>
-
-                <label className="p-2 bg-slate-100 dark:bg-slate-800 border-dashed border border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-200 flex items-center justify-center shrink-0">
-                  <ImageIcon className="w-4 h-4 text-slate-500" />
+            <div className="space-y-2">
+              <label className="text-xs font-bold block">📸 ถ่ายภาพน้ำท่วมจากกล้องใน LINE OA หรืออัปโหลดรูป (สูงสุด 5 ใบ)</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <label className="py-3 px-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95">
+                  <Camera className="w-5 h-5 shrink-0" />
+                  <span>📲 เปิดกล้องถ่ายรูปน้ำท่วมส่งทันที (LINE OA Camera)</span>
                   <input
                     type="file"
                     accept="image/*"
+                    capture="environment"
                     multiple
                     onChange={handleFileUpload}
                     className="hidden"
                   />
                 </label>
+
+                <button
+                  type="button"
+                  onClick={startCameraStream}
+                  className="py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow transition-all active:scale-95"
+                >
+                  <Camera className="w-5 h-5 shrink-0" /> ถ่ายภาพจากเว็บแคม (Live Webcam)
+                </button>
               </div>
+              
+              {images.length > 0 && (
+                <div className="flex gap-2 items-center flex-wrap pt-2">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">✅ แนบรูปแล้ว {images.length} ใบ:</span>
+                  {images.map((img, idx) => (
+                    <div key={idx} className="relative group">
+                      <img src={img} alt="preview" className="w-12 h-12 rounded-lg object-cover border border-slate-300" />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(idx)}
+                        className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shadow"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

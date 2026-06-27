@@ -14,6 +14,8 @@ interface AdminConsoleProps {
   isHighContrast: boolean;
   isDarkMode: boolean;
   onAddReport?: (report: FloodReport) => void;
+  reports?: FloodReport[];
+  onUpdateReportStatus?: (reportId: string, status: ReportStatus) => void;
 }
 
 export default function AdminConsole({
@@ -26,14 +28,16 @@ export default function AdminConsole({
   onUpdateThresholds,
   isHighContrast,
   isDarkMode,
-  onAddReport
+  onAddReport,
+  reports = [],
+  onUpdateReportStatus
 }: AdminConsoleProps) {
   // Local state copy of thresholds for instant editing before saving
   const [rainCrit, setRainCrit] = useState(thresholdSettings.minRainfallCritical);
   const [waterRatio, setWaterRatio] = useState(thresholdSettings.waterLevelWarningRatio);
   const [rapidRise, setRapidRise] = useState(thresholdSettings.rapidRiseRateCmHr);
 
-  const [activeTab, setActiveTab] = useState<"thresholds" | "users" | "apis" | "line_broadcast" | "simulate">("thresholds");
+  const [activeTab, setActiveTab] = useState<"reports_feed" | "thresholds" | "users" | "apis" | "line_broadcast" | "simulate">("reports_feed");
 
   const handleSimulateReport = () => {
     if (!onAddReport) {
@@ -174,7 +178,20 @@ export default function AdminConsole({
       </div>
 
       {/* Mini internal subtab fitting 1 phone screen */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 w-full">
+        <button
+          onClick={() => setActiveTab("reports_feed")}
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
+            activeTab === "reports_feed"
+              ? isHighContrast
+                ? "bg-white text-black font-extrabold border-white ring-2 ring-white"
+                : "bg-red-600 text-white border-transparent shadow-md animate-pulse"
+              : "bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800"
+          }`}
+        >
+          <span>🚨</span>
+          <span className="truncate">แจ้งเหตุ LINE OA ({reports.length})</span>
+        </button>
         <button
           onClick={() => setActiveTab("thresholds")}
           className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
@@ -245,6 +262,106 @@ export default function AdminConsole({
           <span className="truncate">จำลองเหตุการณ์</span>
         </button>
       </div>
+
+      {/* TAB CONTENT: REAL-TIME REPORTS FEED (LINE OA & WEB) */}
+      {activeTab === "reports_feed" && (
+        <div className={`p-5 md:p-6 rounded-3xl border shadow-md space-y-6 ${
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800/60"
+        }`}>
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-red-500/10 to-orange-600/10 dark:from-red-950/50 dark:to-orange-900/40 border border-red-500/20 w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h4 className="font-extrabold text-sm md:text-base flex items-center gap-2 text-red-900 dark:text-red-100">
+                <ShieldAlert className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 animate-bounce" />
+                <span>ศูนย์ติดตามและแจ้งเตือนเหตุน้ำท่วมเรียลไทม์ (LINE OA & Live Feed)</span>
+              </h4>
+              <p className="text-xs text-red-800 dark:text-red-300 opacity-90 mt-1">
+                แสดงรายการแจ้งเหตุน้ำท่วม พร้อมรูปถ่ายจากกล้องและพิกัด GPS จริงจากประชาชน เพื่อสั่งการกู้ภัยและแจ้งเตือนกลับไปยัง LINE OA น้องน้ำหวาน
+              </p>
+            </div>
+            <span className="px-3 py-1.5 bg-red-600 text-white font-black text-xs rounded-full shadow shrink-0">
+              เคสทั้งหมด: {reports.length} เหตุการณ์
+            </span>
+          </div>
+
+          {reports.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed rounded-3xl opacity-60">
+              <p className="text-sm font-bold">📭 ยังไม่มีข้อมูลการแจ้งเหตุเข้ามาในขณะนี้</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {reports.map((r) => {
+                const isCrit = r.severity === FloodSeverity.CRITICAL;
+                const isHigh = r.severity === FloodSeverity.HIGH;
+                const badgeColor = isCrit ? "bg-red-600 text-white animate-pulse" : isHigh ? "bg-orange-500 text-white" : "bg-yellow-500 text-black";
+                const sevLabel = isCrit ? "🔴 วิกฤตหนัก (อพยพด่วน)" : isHigh ? "🟠 น้ำท่วมสูง" : "🟡 น้ำท่วมขัง";
+
+                return (
+                  <div key={r.id} className={`p-4 rounded-2xl border space-y-3 shadow-sm transition-all ${
+                    isHighContrast ? "bg-black border-white" : "bg-slate-50 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800"
+                  }`}>
+                    <div className="flex justify-between items-start gap-2">
+                      <div>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black inline-block mb-1.5 ${badgeColor}`}>
+                          {sevLabel}
+                        </span>
+                        <h5 className="font-extrabold text-sm flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
+                          <span>📍 อ.{r.amphoe} {r.tambon ? `ต.${r.tambon}` : ""}</span>
+                        </h5>
+                        <p className="text-xs opacity-75 mt-0.5">🏷️ จุดสังเกต: {r.landmark || "-"}</p>
+                      </div>
+                      <span className="text-[10px] font-bold opacity-60 bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                        {r.timeAgo || "เมื่อสักครู่"}
+                      </span>
+                    </div>
+
+                    <p className="text-xs bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 font-medium">
+                      "{r.description || "ขอความช่วยเหลือด่วน"}"
+                    </p>
+
+                    {/* Images display */}
+                    {r.images && r.images.length > 0 && (
+                      <div>
+                        <span className="text-[10px] font-bold opacity-75 block mb-1">📸 รูปถ่ายหลักฐานจากกล้อง / LINE OA:</span>
+                        <div className="flex gap-2 overflow-x-auto pb-1">
+                          {r.images.map((img, idx) => (
+                            <a key={idx} href={img} target="_blank" rel="noreferrer" className="shrink-0 block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:opacity-90">
+                              <img src={img} alt="Flood evidence" className="w-20 h-20 object-cover" />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Real-time GPS & Actions */}
+                    <div className="border-t pt-3 border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                      <a
+                        href={`https://maps.google.com/?q=${r.latitude},${r.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+                      >
+                        <span>📍 เปิดดูพิกัด GPS จริงบนแผนที่</span>
+                      </a>
+
+                      <button
+                        onClick={() => {
+                          if (onUpdateReportStatus) {
+                            onUpdateReportStatus(r.id, ReportStatus.VERIFIED);
+                          }
+                          alert(`📢 ส่งข้อความแจ้งเตือนความคืบหน้าเข้า LINE OA น้องน้ำหวาน สำหรับเคสพิกัด อ.${r.amphoe} เรียบร้อยแล้ว!`);
+                        }}
+                        className="px-3 py-1.5 bg-[#06C755] hover:bg-[#05b34c] text-white text-xs font-extrabold rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+                      >
+                        <span>💬 แจ้งเตือนสถานะกลับไปยัง LINE OA</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* TAB CONTENT: 7.3 THRESHOLDS */}
       {activeTab === "thresholds" && (
