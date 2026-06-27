@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Hammer, Users, RefreshCw, Sliders, Check, Network, Activity, Trash, ShieldAlert, Heart } from "lucide-react";
-import { User, UserRole, ThresholdSettings, IntegrationAPI } from "../types";
+import { User, UserRole, ThresholdSettings, IntegrationAPI, FloodReport, FloodSeverity, ReportStatus } from "../types";
+import { nakhonDistrictsAndTambons } from "../data/mockData";
 
 interface AdminConsoleProps {
   currentUser: User | null;
@@ -12,6 +13,7 @@ interface AdminConsoleProps {
   onUpdateThresholds: (settings: ThresholdSettings) => void;
   isHighContrast: boolean;
   isDarkMode: boolean;
+  onAddReport?: (report: FloodReport) => void;
 }
 
 export default function AdminConsole({
@@ -23,14 +25,89 @@ export default function AdminConsole({
   thresholdSettings,
   onUpdateThresholds,
   isHighContrast,
-  isDarkMode
+  isDarkMode,
+  onAddReport
 }: AdminConsoleProps) {
   // Local state copy of thresholds for instant editing before saving
   const [rainCrit, setRainCrit] = useState(thresholdSettings.minRainfallCritical);
   const [waterRatio, setWaterRatio] = useState(thresholdSettings.waterLevelWarningRatio);
   const [rapidRise, setRapidRise] = useState(thresholdSettings.rapidRiseRateCmHr);
 
-  const [activeTab, setActiveTab] = useState<"thresholds" | "users" | "apis" | "line_broadcast">("thresholds");
+  const [activeTab, setActiveTab] = useState<"thresholds" | "users" | "apis" | "line_broadcast" | "simulate">("thresholds");
+
+  const handleSimulateReport = () => {
+    if (!onAddReport) {
+      alert("กรุณาเปิดระบบรับรายงานก่อนสร้างข้อมูลจำลอง");
+      return;
+    }
+    const amphoeKeys = Object.keys(nakhonDistrictsAndTambons);
+    const randAmphoe = amphoeKeys[Math.floor(Math.random() * amphoeKeys.length)];
+    const tambonList = nakhonDistrictsAndTambons[randAmphoe] || ["ตัวเมือง"];
+    const randTambon = tambonList[Math.floor(Math.random() * tambonList.length)];
+
+    const landmarks = [
+      "หน้าวัดพระมหาธาตุ วรมหาวิหาร",
+      "ตลาดสดเทศบาล ซอย 3 ตรงข้ามร้านชำ",
+      "ตรงข้ามโรงเรียนปากพนัง ชุมชนสะพานร่วมใจ",
+      "หมู่บ้านคีรีวง ใกล้สะพานบ้านคีรีวง",
+      "แยกสี่แยกหัวถนน ตรงข้ามปั๊ม ปตท.",
+      "ชุมชนเขาหลวงตอนล่าง ถ.สายหลัก",
+      "ซอยสันติสุข 2 ทางเข้าหมู่บ้านประชารัฐ"
+    ];
+    const randLandmark = landmarks[Math.floor(Math.random() * landmarks.length)];
+
+    const sevs = [FloodSeverity.LOW, FloodSeverity.MEDIUM, FloodSeverity.HIGH, FloodSeverity.CRITICAL];
+    const randSev = sevs[Math.floor(Math.random() * sevs.length)];
+
+    const randLevel = Math.floor(Math.random() * 150) + 30;
+    const randStranded = Math.floor(Math.random() * 10);
+
+    const helps = ["evac", "food", "meds", "boat", "sandbag"];
+    const shuffledHelps = [...helps].sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 1);
+
+    const descs = [
+      "น้ำป่าหลากทะลักเข้าท่วมชั้นล่างอย่างรวดเร็ว ขนของขึ้นที่สูงไม่ทัน",
+      "ฝนตกหนักต่อเนื่องเกือบ 4 ชั่วโมง ระดับน้ำพุ่งสูงขึ้นอย่างรวดเร็ว รถเล็กผ่านไม่ได้",
+      "มวลน้ำหลากเอ่อล้นตลิ่งเข้าท่วมชุมชน ต้องการความช่วยเหลืออพยพด่วน",
+      "ระดับน้ำทรงตัวสูงเกือบเมตร ตัดขาดทางเข้าออกหมู่บ้าน ไม่มีไฟฟ้าใช้",
+      "น้ำหลากเข้าบ้านชั้นล่าง มีผู้สูงอายุและเด็กเล็กติดอยู่ด้านใน"
+    ];
+    const randDesc = descs[Math.floor(Math.random() * descs.length)];
+
+    const demoPhotos = [
+      "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&q=80&w=600"
+    ];
+    const randPic = demoPhotos[Math.floor(Math.random() * demoPhotos.length)];
+
+    const randLat = +(8.25 + Math.random() * 0.35).toFixed(4);
+    const randLng = +(99.75 + Math.random() * 0.45).toFixed(4);
+
+    const reportPayload: FloodReport = {
+      id: `rep_sim_${Date.now()}`,
+      reporterId: currentUser?.uid || "admin_sim",
+      reporterName: `[จำลอง] ${currentUser?.displayName || "แอดมินทดสอบระบบ"}`,
+      reporterPhone: "080-999-9999",
+      timestamp: new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }) + " น. (วันนี้)",
+      amphoe: randAmphoe,
+      tambon: randTambon,
+      landmark: randLandmark,
+      severity: randSev,
+      latitude: randLat,
+      longitude: randLng,
+      waterLevelCm: randLevel,
+      strandedPeopleCount: randStranded,
+      neededHelp: shuffledHelps,
+      description: randDesc,
+      images: [randPic],
+      status: ReportStatus.PENDING,
+      assignedAgency: ""
+    };
+
+    onAddReport(reportPayload);
+    alert(`🎲 สร้างข้อมูลจำลองแจ้งเหตุน้ำท่วมสุ่มลงระบบเรียบร้อย!\n📍 พื้นที่: อ.${randAmphoe} ต.${randTambon}\n🌊 ระดับน้ำ: ${randLevel} ซม.`);
+  };
 
   const [pingingId, setPingingId] = useState<string | null>(null);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
@@ -97,7 +174,7 @@ export default function AdminConsole({
       </div>
 
       {/* Mini internal subtab fitting 1 phone screen */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 w-full">
         <button
           onClick={() => setActiveTab("thresholds")}
           className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
@@ -109,7 +186,7 @@ export default function AdminConsole({
           }`}
         >
           <span>⚙️</span>
-          <span className="truncate">7.3 เกณฑ์วิเคราะห์คำนวณภัย</span>
+          <span className="truncate">7.3 เกณฑ์คำนวณภัย</span>
         </button>
 
         <button
@@ -123,7 +200,7 @@ export default function AdminConsole({
           }`}
         >
           <span>👤</span>
-          <span className="truncate">7.1 จัดการสิทธิ์&พนักงาน</span>
+          <span className="truncate">7.1 จัดการสิทธิ์</span>
         </button>
 
         <button
@@ -137,7 +214,7 @@ export default function AdminConsole({
           }`}
         >
           <span>📡</span>
-          <span className="truncate">7.2 จุดเชื่อมต่อข่าวสาร</span>
+          <span className="truncate">7.2 ข่าวสาร</span>
         </button>
 
         <button
@@ -151,7 +228,21 @@ export default function AdminConsole({
           }`}
         >
           <span>📢</span>
-          <span className="truncate">8.0 บรอดแคสต์ LINE OA</span>
+          <span className="truncate">8.0 บรอดแคสต์ LINE</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("simulate")}
+          className={`w-full px-3.5 py-2.5 text-xs font-bold rounded-xl border transition-all text-left flex items-center gap-2 ${
+            activeTab === "simulate"
+              ? isHighContrast
+                ? "bg-white text-black font-extrabold border-white"
+                : "bg-purple-600 text-white border-transparent shadow-md"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+          }`}
+        >
+          <span>🎲</span>
+          <span className="truncate">7.4 จำลองเหตุการณ์</span>
         </button>
       </div>
 
@@ -486,6 +577,42 @@ export default function AdminConsole({
                 {isBroadcasting ? "⏳ กำลังยิงข้อความ..." : "🚨 กดประกาศเตือนภัยฉุกเฉินด่วนที่สุด"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT: 7.4 SIMULATE REPORTS */}
+      {activeTab === "simulate" && (
+        <div className={`p-6 rounded-3xl border shadow-md space-y-6 ${
+          isHighContrast ? "bg-black border-white text-white" : "bg-white dark:bg-slate-800/60"
+        }`}>
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 to-indigo-600/10 dark:from-purple-950/50 dark:to-indigo-900/40 border border-purple-500/20">
+            <h4 className="font-extrabold text-base flex items-center gap-2 text-purple-900 dark:text-purple-100">
+              <span>🎲</span>
+              <span>7.4 ระบบจำลองข้อมูลเหตุการณ์ฉุกเฉินน้ำท่วม (Simulated Mock Generator)</span>
+            </h4>
+            <p className="text-xs text-purple-800 dark:text-purple-300 mt-1">
+              สร้างรายงานเหตุการณ์น้ำท่วมเสมือนจริงแบบสุ่มอำเภอ ตำบล ระดับน้ำ และพิกัด GPS เพื่อใช้ทดสอบระบบติดตามเคสและหน่วยงานกู้ภัย
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-purple-300 dark:border-purple-800 rounded-3xl text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-3xl shadow-inner">
+              🎲
+            </div>
+            <div>
+              <h5 className="font-bold text-base">กดปุ่มด้านล่างเพื่อสุ่มสร้างเคสรายงานใหม่ทันที</h5>
+              <p className="text-xs opacity-75 max-w-md mt-1 mx-auto">
+                ระบบจะทำการสุ่มพื้นที่ใน 22 อำเภอ พร้อมรูปภาพและคำขอความช่วยเหลือเสมือนจริง และส่งเข้าสู่ระบบรายงานกู้ภัยทันที
+              </p>
+            </div>
+            <button
+              onClick={handleSimulateReport}
+              className="px-6 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:opacity-90 active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg transition-all flex items-center gap-2"
+            >
+              <span>🎲</span>
+              <span>สุ่มสร้างข้อมูลจำลองแจ้งเหตุลงระบบเดี๋ยวนี้</span>
+            </button>
           </div>
         </div>
       )}

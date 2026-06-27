@@ -102,7 +102,7 @@ export default function FloodPrediction({
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -113,7 +113,7 @@ export default function FloodPrediction({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
           <div>
             <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-              <Layers className="w-5 h-5 text-blue-500" /> 1.2 เปอร์เซ็นต์ (%) โอกาสเกิดน้ำท่วมประจำวันนี้
+              <Layers className="w-5 h-5 text-blue-500" /> โอกาสน้ำท่วมประจำวันนี้
             </h3>
             <p className="text-xs opacity-75 mt-0.5">คำนวณอัตโนมัติสัมพันธ์กับปริมาณฝนสะสมเทือกเขาหลวง ({thresholdSettings.minRainfallCritical}mm เกณฑ์ตรวจวัด)</p>
           </div>
@@ -153,7 +153,7 @@ export default function FloodPrediction({
         </div>
 
         {/* Current Location matched notification banner */}
-        <motion.div 
+        <motion.div
           layout
           className={`p-4 md:p-5 rounded-3xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] glass-panel ${isHighContrast ? "bg-black border-white text-white" : "border-blue-200/50 dark:border-slate-700/50 bg-blue-50/50 dark:bg-slate-800/40 text-blue-900 dark:text-blue-100"}`}
         >
@@ -202,12 +202,12 @@ export default function FloodPrediction({
                   key={a.id}
                   onClick={() => onSelectAmphoe(a.id)}
                   className={`p-5 rounded-3xl border cursor-pointer transition-all flex justify-between items-center glass-panel ${isSelected
-                      ? isHighContrast
-                        ? "border-yellow-400 bg-zinc-950 text-white ring-2 ring-white scale-[1.02] shadow-lg"
-                        : "border-blue-400/60 dark:border-blue-400/60 bg-blue-100/60 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 scale-[1.02] shadow-[0_8px_30px_rgb(59,130,246,0.15)]"
-                      : isHighContrast
-                        ? "border-white bg-[#111] text-white hover:bg-[#222]"
-                        : "border-white/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md"
+                    ? isHighContrast
+                      ? "border-yellow-400 bg-zinc-950 text-white ring-2 ring-white scale-[1.02] shadow-lg"
+                      : "border-blue-400/60 dark:border-blue-400/60 bg-blue-100/60 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 scale-[1.02] shadow-[0_8px_30px_rgb(59,130,246,0.15)]"
+                    : isHighContrast
+                      ? "border-white bg-[#111] text-white hover:bg-[#222]"
+                      : "border-white/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md"
                     }`}
                 >
                   <div>
@@ -236,7 +236,7 @@ export default function FloodPrediction({
       <div className="space-y-4">
         <h3 className="font-bold text-base md:text-lg flex flex-wrap items-center gap-1.5 text-slate-800 dark:text-slate-100">
           <CloudRain className="w-5 h-5 text-blue-500 shrink-0" />
-          <span>1.3 สภาพอากาศเรียลไทม์</span>
+          <span>สภาพอากาศแบบเรียลไทม์</span>
         </h3>
 
         {(() => {
@@ -263,14 +263,14 @@ export default function FloodPrediction({
           }
 
           return (
-            <motion.div 
+            <motion.div
               whileHover={{ y: -5 }}
               className={`p-6 rounded-3xl relative overflow-hidden flex flex-col justify-between shadow-xl border select-none transition-all duration-500 min-h-[400px] ${isHighContrast
                 ? "bg-black border-white text-white"
                 : isHeavy
                   ? "bg-gradient-to-br from-slate-800 via-indigo-950 to-slate-900 text-slate-100 border-indigo-900/60"
                   : "bg-gradient-to-br from-blue-500 via-sky-600 to-indigo-700 text-white border-sky-400/30"
-              }`}
+                }`}
             >
               <div className="absolute top-0 right-0 w-44 h-44 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
 

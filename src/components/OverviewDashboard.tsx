@@ -134,7 +134,7 @@ export default function OverviewDashboard({
                 </span>
               </div>
               <h2 className="text-base md:text-lg font-black tracking-tight mt-1 flex flex-wrap items-center gap-1.5 leading-snug">
-                หน้าต่างเช็คสถานะน้ำท่วม & โอกาสเสี่ยงพิกัดคุณด่วน
+                ตรวจสอบสถานการณ์น้ำท่วมและระดับความเสี่ยงในพื้นที่ของคุณ
               </h2>
             </div>
           </div>
