@@ -405,6 +405,37 @@ export default async function handler(req: any, res: any) {
         });
       }
 
+      // Build a Carousel of representative zones so every follower receives their location forecast via LINE Broadcast
+      const keyZones = ["เมืองนครศรีธรรมราช", "ปากพนัง", "ลานสกา", "ทุ่งสง", "สิชล"];
+      const carouselBubbles = keyZones.map(zone => getDistrictMorningForecastFlex(`อำเภอ${zone}`).contents);
+
+      const morningBroadcastMsg = {
+        type: "flex",
+        altText: "🌅 พยากรณ์น้ำท่วมรายวัน 07:00 น. แยกตามพื้นที่ในนครศรีธรรมราช (เลื่อนขวาดูอำเภอของคุณ)",
+        contents: {
+          type: "carousel",
+          contents: carouselBubbles
+        },
+        quickReply: getQuickReplyMenu()
+      };
+
+      if (LINE_CHANNEL_ACCESS_TOKEN) {
+        const response = await fetch("https://api.line.me/v2/bot/message/broadcast", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
+          },
+          body: JSON.stringify({ messages: [morningBroadcastMsg] })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          console.error("LINE Morning Broadcast failed:", errText);
+          throw new Error(`LINE Broadcast API failed: ${errText}`);
+        }
+      }
+
       const totalDispatched = dispatchLogs.reduce((acc, curr) => acc + curr.recipientsCount, 0);
 
       return res.status(200).json({
