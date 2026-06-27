@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Shield, HelpCircle, Phone, MapPin, Check, Plus, AlertCircle, Volume2, HelpCircle as HelpIcon, Accessibility } from "lucide-react";
+import { Shield, HelpCircle, Phone, MapPin, Check, Plus, AlertCircle, Volume2, HelpCircle as HelpIcon, Accessibility, Camera } from "lucide-react";
 import { User, UserRole, FloodReport, ReportStatus, FloodSeverity, WeatherStation, RiverGauge, ThresholdSettings, IntegrationAPI } from "./types";
 import {
   initialAmphoes,
@@ -31,6 +31,10 @@ export default function App() {
   // Global States loaded from LocalStorage if available
   const [activeTab, setActiveTab] = useState<string>(() => {
     return localStorage.getItem("activeTab") || "dashboard";
+  });
+
+  const [dashboardMode, setDashboardMode] = useState<"map" | "report">(() => {
+    return localStorage.getItem("activeTab") === "report" ? "report" : "map";
   });
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
@@ -291,6 +295,7 @@ export default function App() {
           setActiveTab("responder");
         } else {
           setActiveTab("report");
+          setDashboardMode("report");
         }
       }
     }
@@ -312,9 +317,23 @@ export default function App() {
     }
   };
 
+  const handleNavigationTabChange = (tab: string) => {
+    if (tab === "report") {
+      setActiveTab("report");
+      setDashboardMode("report");
+    } else if (tab === "dashboard") {
+      setActiveTab("dashboard");
+      setDashboardMode("map");
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
   // Handler 3: Add new user submitted flood report case
   const handleAddReportCase = (newReport: FloodReport) => {
     setReports((prev) => [newReport, ...prev]);
+    setDashboardMode("map");
+    setActiveTab("dashboard");
 
     // Fast-trigger automatic notification simulated SMS/LINE alert to matched Sentinel Watch zones
     // Search active users that subscribed to this tambon watchZone
@@ -470,7 +489,7 @@ export default function App() {
         isBoldText={isBoldText}
         onToggleBoldText={() => setIsBoldText(!isBoldText)}
         activeTab={activeTab}
-        onChangeTab={setActiveTab}
+        onChangeTab={handleNavigationTabChange}
         appTheme={appTheme}
         onChangeAppTheme={setAppTheme}
       />
@@ -480,7 +499,7 @@ export default function App() {
         onClose={() => setIsSidebarOpen(false)}
         currentUser={currentUser}
         activeTab={activeTab}
-        onChangeTab={setActiveTab}
+        onChangeTab={handleNavigationTabChange}
         appTheme={appTheme}
         isHighContrast={isHighContrast}
       />
@@ -489,8 +508,43 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 md:py-8 space-y-6 md:space-y-8 overflow-x-hidden">
         
         {/* Render Tab Content based on active state */}
-        {activeTab === "dashboard" && (
-          <div className="space-y-8">
+        {(activeTab === "dashboard" || activeTab === "report") && (
+          <div className="space-y-6 md:space-y-8">
+            {/* Main Section Mode Switcher (Combined Dashboard & Report) - Moved to TOP */}
+            <div className={`p-3 sm:p-4 rounded-3xl border shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 transition-all ${
+              isHighContrast ? "bg-black border-white" : "bg-gradient-to-r from-blue-50/80 via-white to-slate-50 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-900 border-blue-200/60 dark:border-slate-700"
+            }`}>
+              <div className="flex items-center gap-2 px-2 text-center sm:text-left">
+                <span className="text-sm md:text-base font-extrabold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                  📌 เลือกเมนูหลัก: หน้าหลัก & แจ้งเหตุด่วน
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto min-w-[300px]">
+                <button
+                  onClick={() => { setDashboardMode("map"); setActiveTab("dashboard"); }}
+                  className={`py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer ${
+                    (dashboardMode === "map" && activeTab !== "report")
+                      ? isHighContrast ? "bg-white text-black font-black ring-2 ring-white" : "bg-blue-600 text-white shadow-md scale-[1.02]"
+                      : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                  }`}
+                >
+                  <MapPin className="w-4 h-4 shrink-0 text-blue-500" />
+                  <span>🗺️ แผนที่สถานการณ์</span>
+                </button>
+                <button
+                  onClick={() => { setDashboardMode("report"); setActiveTab("report"); }}
+                  className={`py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer ${
+                    (dashboardMode === "report" || activeTab === "report")
+                      ? isHighContrast ? "bg-white text-black font-black ring-2 ring-white" : "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-md scale-[1.02] animate-pulse"
+                      : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                  }`}
+                >
+                  <Camera className="w-4 h-4 shrink-0 text-red-500" />
+                  <span>🔊 แจ้งเหตุกู้ภัยด่วน</span>
+                </button>
+              </div>
+            </div>
+
             <FloodPrediction
               amphoes={amphoesList}
               weatherStations={weatherStations}
@@ -501,8 +555,11 @@ export default function App() {
               selectedAmphoe={selectedAmphoe}
             />
 
-            {/* Map and Sentinel Watch Setup */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Subview 1: Interactive Map Mode */}
+            {(dashboardMode === "map" && activeTab !== "report") && (
+              <div className="space-y-8">
+                {/* Map and Sentinel Watch Setup */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
               {/* Map Column (Spans 2 on desktop) */}
               <div className="lg:col-span-2 space-y-4">
@@ -623,6 +680,18 @@ export default function App() {
               detectedAmphoeId={selectedAmphoe}
               onCheckEvacRights={() => setIsEvacPortalOpen(true)}
             />
+              </div>
+            )}
+
+            {/* Subview 2: Report Flooding Portal Mode */}
+            {(dashboardMode === "report" || activeTab === "report") && (
+              <ReportPortal
+                currentUser={currentUser}
+                onAddReport={handleAddReportCase}
+                isDarkMode={isDarkMode}
+                isHighContrast={isHighContrast}
+              />
+            )}
           </div>
         )}
 
@@ -645,16 +714,6 @@ export default function App() {
               }
               setActiveTab("dashboard");
             }}
-            isDarkMode={isDarkMode}
-            isHighContrast={isHighContrast}
-          />
-        )}
-
-        {/* 4.0 Report Flooding portal */}
-        {activeTab === "report" && (
-          <ReportPortal
-            currentUser={currentUser}
-            onAddReport={handleAddReportCase}
             isDarkMode={isDarkMode}
             isHighContrast={isHighContrast}
           />

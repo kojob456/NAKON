@@ -1,7 +1,7 @@
 import React from "react";
 import { User, UserRole } from "../types";
 import { getThemeStyle, AppThemeType } from "../utils/theme";
-import { X, Home, AlertTriangle, Activity, MessageCircle, Bot, User as UserIcon } from "lucide-react";
+import { X, Home, Activity, MessageCircle, Bot, User as UserIcon } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -70,12 +70,12 @@ export default function Sidebar({
           <button
             onClick={() => handleNavClick("dashboard")}
             className={`${navButtonBaseClass} ${
-              activeTab === "dashboard"
+              activeTab === "dashboard" || activeTab === "report"
                 ? isHighContrast ? "bg-white text-black" : "bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
                 : isHighContrast ? "hover:bg-zinc-800 text-white" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
             }`}
           >
-            <Home className="w-5 h-5" /> 📊 หน้าแรก
+            <Home className="w-5 h-5" /> 📊 หน้าหลัก & แจ้งเหตุด่วน
           </button>
 
           <button
@@ -87,17 +87,6 @@ export default function Sidebar({
             }`}
           >
             <Activity className="w-5 h-5" /> 📈 ศูนย์ติดตามทางน้ำ
-          </button>
-
-          <button
-            onClick={() => handleNavClick("report")}
-            className={`${navButtonBaseClass} ${
-              activeTab === "report"
-                ? isHighContrast ? "bg-white text-black" : "bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
-                : isHighContrast ? "hover:bg-zinc-800 text-white" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
-            }`}
-          >
-            <AlertTriangle className="w-5 h-5" /> 📸 แจ้งเหตุน้ำท่วม
           </button>
 
           {currentUser && (
