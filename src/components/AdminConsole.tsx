@@ -166,7 +166,7 @@ export default function AdminConsole({
       <div className="p-5 md:p-6 rounded-3xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg w-full flex flex-col justify-between select-none">
         <h3 className="font-black text-base md:text-xl flex flex-wrap items-center gap-2 leading-snug">
           <Hammer className="w-6 h-6 shrink-0 text-white animate-pulse" />
-          <span>7.0 ระบบจัดการควบคุมหลังบ้านสำหรับผู้ดูแลระบบ (Admin Console)</span>
+          <span>ระบบจัดการควบคุมหลังบ้านสำหรับผู้ดูแลระบบ (Admin Console)</span>
         </h3>
         <p className="text-xs md:text-sm opacity-90 mt-1.5 leading-relaxed">
           ห้องบัญชาการระบบวิเคราะห์ประมวลเกณฑ์ตรวจสากล และดูแลความปลอดภัยพนักงานกอ.ปภ.
@@ -186,7 +186,7 @@ export default function AdminConsole({
           }`}
         >
           <span>⚙️</span>
-          <span className="truncate">7.3 เกณฑ์คำนวณภัย</span>
+          <span className="truncate">เกณฑ์คำนวณภัย</span>
         </button>
 
         <button
@@ -200,7 +200,7 @@ export default function AdminConsole({
           }`}
         >
           <span>👤</span>
-          <span className="truncate">7.1 จัดการสิทธิ์</span>
+          <span className="truncate">จัดการสิทธิ์</span>
         </button>
 
         <button
@@ -214,7 +214,7 @@ export default function AdminConsole({
           }`}
         >
           <span>📡</span>
-          <span className="truncate">7.2 ข่าวสาร</span>
+          <span className="truncate">ข่าวสาร</span>
         </button>
 
         <button
@@ -228,7 +228,7 @@ export default function AdminConsole({
           }`}
         >
           <span>📢</span>
-          <span className="truncate">8.0 บรอดแคสต์ LINE</span>
+          <span className="truncate">บรอดแคสต์ LINE</span>
         </button>
 
         <button
@@ -242,7 +242,7 @@ export default function AdminConsole({
           }`}
         >
           <span>🎲</span>
-          <span className="truncate">7.4 จำลองเหตุการณ์</span>
+          <span className="truncate">จำลองเหตุการณ์</span>
         </button>
       </div>
 
@@ -343,7 +343,7 @@ export default function AdminConsole({
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-950/50 dark:to-blue-900/40 border border-blue-500/20 w-full">
             <h4 className="font-extrabold text-sm md:text-base flex flex-wrap items-center gap-2 text-blue-900 dark:text-blue-100">
               <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
-              <span>7.1 ตารางจัดการพนักงานและอนุมัติกลุ่มสิทธิ์กู้ภัยกอ.ปภ.</span>
+              <span>ตารางจัดการพนักงานและอนุมัติกลุ่มสิทธิ์กู้ภัยกอ.ปภ.</span>
             </h4>
             <p className="text-xs text-blue-800 dark:text-blue-300 opacity-90 mt-0.5">อนุมัติระดับสิทธิ์สายตรวจหรือเพิ่มตำแหน่งข่ายสายกู้ภัยภาคพิเศษรายสังกัด</p>
           </div>
@@ -443,7 +443,7 @@ export default function AdminConsole({
           <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-950/50 dark:to-blue-900/40 border border-blue-500/20 w-full">
             <h4 className="font-extrabold text-sm md:text-base flex flex-wrap items-center gap-2 text-blue-900 dark:text-blue-100">
               <Network className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
-              <span>7.2 ระบบทดลองคัดกรองสัญญาณ API ดาต้าแลนด์เวย์ภายนอก</span>
+              <span>ระบบทดลองคัดกรองสัญญาณ API ดาต้าแลนด์เวย์ภายนอก</span>
             </h4>
             <p className="text-xs text-blue-800 dark:text-blue-300 opacity-90 mt-0.5">รวมจุดสัญญานตรวจสุขภาพความแลทเซนดึงแผนสำรอง TMD, HAII และดาวเทียม GISTDA</p>
           </div>
@@ -589,7 +589,7 @@ export default function AdminConsole({
           <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 to-indigo-600/10 dark:from-purple-950/50 dark:to-indigo-900/40 border border-purple-500/20">
             <h4 className="font-extrabold text-base flex items-center gap-2 text-purple-900 dark:text-purple-100">
               <span>🎲</span>
-              <span>7.4 ระบบจำลองข้อมูลเหตุการณ์ฉุกเฉินน้ำท่วม (Simulated Mock Generator)</span>
+              <span>ระบบจำลองข้อมูลเหตุการณ์ฉุกเฉินน้ำท่วม (Simulated Mock Generator)</span>
             </h4>
             <p className="text-xs text-purple-800 dark:text-purple-300 mt-1">
               สร้างรายงานเหตุการณ์น้ำท่วมเสมือนจริงแบบสุ่มอำเภอ ตำบล ระดับน้ำ และพิกัด GPS เพื่อใช้ทดสอบระบบติดตามเคสและหน่วยงานกู้ภัย

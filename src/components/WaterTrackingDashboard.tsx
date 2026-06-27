@@ -33,7 +33,7 @@ export default function WaterTrackingDashboard({
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b pb-4 mb-6 border-slate-100 dark:border-slate-800">
         <div>
           <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-            <Calendar className="w-5 h-5 text-blue-600" /> 2.0 ศูนย์ติดตามทางน้ำสายหลัก & วิเคราะห์ข้อมูลปฏิทินย้อนหลัง
+            <Calendar className="w-5 h-5 text-blue-600" /> ศูนย์ติดตามทางน้ำสายหลัก & วิเคราะห์ข้อมูลปฏิทินย้อนหลัง
           </h3>
           <p className="text-xs opacity-75 mt-0.5">เลือกวันที่ต้องการประมวลเทียบเคียงกับปริมาณน้ําฝนสถิติก่อนหน้าสะสม</p>
         </div>

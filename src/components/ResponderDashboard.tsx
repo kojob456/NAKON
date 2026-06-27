@@ -116,7 +116,7 @@ export default function ResponderDashboard({
         <div className="border-b pb-4 border-slate-100 dark:border-slate-800 flex justify-between items-start gap-4">
           <div>
             <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-              🔍 6.2 รายละเอียดตรวจสอบหลักฐานภาพถ่าย และพิกัดเคส
+              🔍 รายละเอียดตรวจสอบหลักฐานภาพถ่าย และพิกัดเคส
             </span>
             <h3 className="font-extrabold text-base md:text-lg mt-1 text-slate-800 dark:text-slate-100">
               ต.{caseObj.tambon}, อ.{caseObj.amphoe}
@@ -189,7 +189,7 @@ export default function ResponderDashboard({
         {/* 6.3 🔄 Dispatch and State updates Controller */}
         <div className="border-t pt-5 border-slate-100 dark:border-slate-800 space-y-4 text-xs font-semibold">
           <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest block">
-            🔄 6.3 ระบบส่งต่อพิกัดงาน & อัปเดตข้อมูลกู้หน้าตลิ่ง (Dispatch Status)
+            🔄 ระบบส่งต่อพิกัดงาน & อัปเดตข้อมูลกู้หน้าตลิ่ง (Dispatch Status)
           </h4>
 
           {/* Fast forwarding preset clicks */}
@@ -267,7 +267,7 @@ export default function ResponderDashboard({
     <div className="space-y-6">
       <div>
         <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-          <AlertCircle className="w-5 h-5 text-red-600" /> 6.0 แดชบอร์ดหน่วยงานกู้ภัยจังหวัด (Responder Command Center)
+          <AlertCircle className="w-5 h-5 text-red-600" /> แดชบอร์ดหน่วยงานกู้ภัยจังหวัด (Responder Command Center)
         </h3>
         <p className="text-xs opacity-75">
           ศูนย์บัญชาการสถานการณ์กองอำนวยการร่วม ปภ. ตำรวจภูธรภาค 8 และกู้ภัยการกุศลร่วมใจ
@@ -276,7 +276,7 @@ export default function ResponderDashboard({
 
       <div className="w-full max-w-4xl mx-auto space-y-4">
         <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-          🚨 6.1 รายการแจ้งเหตุฉุกเฉินล่าสุด ({sortedReports.length} รายการจริง) — กดที่รายการเพื่อดูรายละเอียดและเปลี่ยนสถานะงาน
+          🚨 รายการแจ้งเหตุฉุกเฉินล่าสุด ({sortedReports.length} รายการจริง) — กดที่รายการเพื่อดูรายละเอียดและเปลี่ยนสถานะงาน
         </h4>
 
         <div className="space-y-4 pr-1">

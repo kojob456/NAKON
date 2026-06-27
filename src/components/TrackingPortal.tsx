@@ -78,7 +78,7 @@ export default function TrackingPortal({
     <div className="space-y-6">
       <div>
         <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-          <Clock className="w-5 h-5 text-blue-600" /> 5.0 ติดตามสถานะช่วยเหลือของประชาชน (My Report Tracking)
+          <Clock className="w-5 h-5 text-blue-600" /> ติดตามสถานะช่วยเหลือของประชาชน (My Report Tracking)
         </h3>
         <p className="text-xs opacity-75">
           {currentUser.role === UserRole.ADMIN 

@@ -456,7 +456,7 @@ export default function ReportPortal({
 
             {/* Photo upload */}
             <div>
-              <label className="text-xs font-bold block mb-1">📸 4.1 แผงอัปโหลดหลักฐานรูปถ่าย (สูงสุด 5 ใบ)</label>
+              <label className="text-xs font-bold block mb-1">📸 แผงอัปโหลดหลักฐานรูปถ่าย (สูงสุด 5 ใบ)</label>
               <div className="flex gap-2 items-center flex-wrap">
                 <button
                   type="button"
@@ -543,7 +543,7 @@ export default function ReportPortal({
       <div className="lg:col-span-2 space-y-4">
         <div>
           <h3 className="font-bold text-base md:text-lg flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
-            <Compass className="w-5 h-5 text-blue-500" /> 4.2 ระบบดึงแลนด์มาร์ก & แผนที่สัมผัส
+            <Compass className="w-5 h-5 text-blue-500" /> ระบบดึงแลนด์มาร์ก & แผนที่สัมผัส
           </h3>
           <p className="text-xs opacity-75">คลิกบนพื้นที่ของข่ายแมปเพื่อดึงละติจูด/ลองจิจูดอัพเดตฟอร์มอัตโนมัติ</p>
         </div>
