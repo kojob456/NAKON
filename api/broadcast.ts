@@ -382,9 +382,15 @@ export default async function handler(req: any, res: any) {
   const { title = "รายงานสถานการณ์น้ำท่วมประจำวัน", isEmergency = false, placeName = "อำเภอเมืองนครศรีธรรมราช" } = req.body || {};
 
   try {
-    const isMorningDaily = queryCron === "morning_daily" || req.query?.mode === "morning" || !isEmergency;
+    const isMorningDaily = queryCron === "morning_daily" || req.query?.mode === "morning";
+    const isNightDaily = queryCron === "night_daily" || req.query?.mode === "night";
+    const isScheduledDaily = isMorningDaily || isNightDaily || !isEmergency;
 
-    if (isMorningDaily) {
+    if (isScheduledDaily) {
+      const timeLabel = isNightDaily ? "22:00 น." : "07:00 น.";
+      const periodEmoji = isNightDaily ? "🌙" : "🌅";
+      const periodName = isNightDaily ? "ยามค่ำคืนก่อนนอน" : "ยามเช้า";
+
       const targetDistricts = [
         "เมืองนครศรีธรรมราช", "ปากพนัง", "ทุ่งสง", "ลานสกา", "พิปูน", 
         "สิชล", "ท่าศาลา", "ทุ่งใหญ่", "ฉวาง", "เชียรใหญ่", 
@@ -401,17 +407,25 @@ export default async function handler(req: any, res: any) {
         dispatchLogs.push({
           amphoe: dist,
           recipientsCount: Math.floor(Math.random() * 450) + 80,
-          forecastTitle: distFlex.altText
+          forecastTitle: distFlex.altText.replace("ยามเช้า", periodName)
         });
       }
 
       // Build a Carousel of representative zones so every follower receives their location forecast via LINE Broadcast
       const keyZones = ["เมืองนครศรีธรรมราช", "ปากพนัง", "ลานสกา", "ทุ่งสง", "สิชล"];
-      const carouselBubbles = keyZones.map(zone => getDistrictMorningForecastFlex(`อำเภอ${zone}`).contents);
+      const carouselBubbles = keyZones.map(zone => {
+        const bubble = getDistrictMorningForecastFlex(`อำเภอ${zone}`).contents;
+        // Dynamically adjust header text if night daily
+        if (isNightDaily && bubble.header && bubble.header.contents[0] && bubble.header.contents[0].contents[0]) {
+          bubble.header.contents[0].contents[0].text = `🌙 พยากรณ์น้ำท่วมยามดึก (22:00 น.)`;
+          bubble.header.backgroundColor = "#0F172A"; // Darker navy for night
+        }
+        return bubble;
+      });
 
-      const morningBroadcastMsg = {
+      const broadcastMsg = {
         type: "flex",
-        altText: "🌅 พยากรณ์น้ำท่วมรายวัน 07:00 น. แยกตามพื้นที่ในนครศรีธรรมราช (เลื่อนขวาดูอำเภอของคุณ)",
+        altText: `${periodEmoji} พยากรณ์น้ำท่วมรายวัน ${timeLabel} แยกตามพื้นที่ในนครศรีธรรมราช (เลื่อนขวาดูอำเภอของคุณ)`,
         contents: {
           type: "carousel",
           contents: carouselBubbles
@@ -426,12 +440,12 @@ export default async function handler(req: any, res: any) {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
           },
-          body: JSON.stringify({ messages: [morningBroadcastMsg] })
+          body: JSON.stringify({ messages: [broadcastMsg] })
         });
 
         if (!response.ok) {
           const errText = await response.text();
-          console.error("LINE Morning Broadcast failed:", errText);
+          console.error(`LINE Daily Broadcast (${timeLabel}) failed:`, errText);
           throw new Error(`LINE Broadcast API failed: ${errText}`);
         }
       }
@@ -440,10 +454,10 @@ export default async function handler(req: any, res: any) {
 
       return res.status(200).json({
         success: true,
-        mode: "MORNING_DAILY_LOCATION_TARGETED_CRON_0700",
+        mode: isNightDaily ? "NIGHT_DAILY_LOCATION_TARGETED_CRON_2200" : "MORNING_DAILY_LOCATION_TARGETED_CRON_0700",
         deliveredDistrictsCount: targetDistricts.length,
         totalRecipientsEstimated: totalDispatched,
-        summary: `จัดส่งไลน์แจ้งเตือนพยากรณ์รายวันเวลา 07:00 น. แยกตามโลเคชั่นอำเภอที่ผู้ใช้แต่ละคนอยู่อาศัยจริงครบทั้ง ${targetDistricts.length} พื้นที่เรียบร้อยแล้ว`,
+        summary: `จัดส่งไลน์แจ้งเตือนพยากรณ์รายวันเวลา ${timeLabel} แยกตามโลเคชั่นอำเภอที่ผู้ใช้แต่ละคนอยู่อาศัยจริงครบทั้ง ${targetDistricts.length} พื้นที่เรียบร้อยแล้ว`,
         breakdown: dispatchLogs,
         timestamp: new Date().toISOString()
       });

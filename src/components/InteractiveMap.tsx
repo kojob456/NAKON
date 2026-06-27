@@ -99,10 +99,13 @@ export default function InteractiveMap({
     );
   };
 
-  // คำนวณหาจุดน้ำท่วมใกล้ที่สุด
+  // กรองเฉพาะเคสที่ยังช่วยเหลือไม่เสร็จ (active cases) มาแสดงบนแผนที่สำหรับประชาชนทั่วไป
+  const activeReports = reports.filter((r) => r.status !== ReportStatus.COMPLETED);
+
+  // คำนวณหาจุดน้ำท่วมใกล้ที่สุด (เฉพาะจุดที่ยังไม่ช่วยเหลือเสร็จสิ้น)
   let minFloodDist = Infinity;
   let nearestFlood: FloodReport | null = null;
-  reports.forEach((r) => {
+  activeReports.forEach((r) => {
     const d = calculateDistanceMeters(userPos.lat, userPos.lng, r.latitude, r.longitude);
     if (d < minFloodDist) {
       minFloodDist = d;
@@ -388,8 +391,8 @@ export default function InteractiveMap({
             />
           )}
 
-          {/* Reports Markers */}
-          {reports.map((r) => (
+          {/* Reports Markers (เฉพาะเคสที่ยังไม่เสร็จสิ้น) */}
+          {activeReports.map((r) => (
             <Marker key={r.id} position={[r.latitude, r.longitude]} icon={getSeverityIcon(r.severity)}>
               <Popup className="custom-popup">
                 <div className="w-64 font-sans">

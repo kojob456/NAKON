@@ -21,11 +21,11 @@ export default function TrackingPortal({
 
   if (!currentUser) return null;
 
-  // Filters reports. Citizens can list only their custom reported cases.
-  // Admins can see ALL cases in the database tracking portal.
+  // Filters reports. Citizens can list only their custom reported cases (excluding completed ones so they disappear from user app).
+  // Admins can see ALL cases (including historical completed ones) in the database tracking portal.
   const ownReports = reports.filter((r) => {
     if (currentUser.role === UserRole.ADMIN) return true; // admin inspect all
-    return r.reporterId === currentUser.uid;
+    return r.reporterId === currentUser.uid && r.status !== ReportStatus.COMPLETED;
   });
 
   const filteredReports = ownReports.filter((r) => {
