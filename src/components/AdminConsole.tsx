@@ -190,7 +190,7 @@ export default function AdminConsole({
           }`}
         >
           <span>🚨</span>
-          <span className="truncate">แจ้งเหตุ LINE OA ({reports.length})</span>
+          <span className="truncate">แจ้งเหตุ / แจ้งเตือนจากไลน์ AI ({reports.length})</span>
         </button>
         <button
           onClick={() => setActiveTab("thresholds")}
@@ -272,7 +272,7 @@ export default function AdminConsole({
             <div>
               <h4 className="font-extrabold text-sm md:text-base flex items-center gap-2 text-red-900 dark:text-red-100">
                 <ShieldAlert className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 animate-bounce" />
-                <span>ศูนย์ติดตามและแจ้งเตือนเหตุน้ำท่วมเรียลไทม์ (LINE OA & Live Feed)</span>
+                <span>ศูนย์ติดตามและแจ้งเหตุ / แจ้งเตือนจากไลน์ AI (Real-time Feed)</span>
               </h4>
               <p className="text-xs text-red-800 dark:text-red-300 opacity-90 mt-1">
                 แสดงรายการแจ้งเหตุน้ำท่วม พร้อมรูปถ่ายจากกล้องและพิกัด GPS จริงจากประชาชน เพื่อสั่งการกู้ภัยและแจ้งเตือนกลับไปยัง LINE OA น้องน้ำหวาน

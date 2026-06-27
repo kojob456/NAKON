@@ -30,10 +30,18 @@ import { logUserAccess } from "./utils/userTracker";
 export default function App() {
   // Global States loaded from LocalStorage if available
   const [activeTab, setActiveTab] = useState<string>(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") === "report" || params.get("tab") === "report" || params.get("source")?.includes("line")) {
+      return "dashboard";
+    }
     return localStorage.getItem("activeTab") || "dashboard";
   });
 
   const [dashboardMode, setDashboardMode] = useState<"map" | "report">(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") === "report" || params.get("tab") === "report" || params.get("source")?.includes("line")) {
+      return "report";
+    }
     return localStorage.getItem("activeTab") === "report" ? "report" : "map";
   });
 

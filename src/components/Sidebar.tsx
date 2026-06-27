@@ -107,15 +107,6 @@ export default function Sidebar({
           {/* Special Requests */}
           <h3 className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">บริการเพิ่มเติม (Services)</h3>
 
-          <a
-            href="https://line.me/R/"
-            target="_blank"
-            rel="noreferrer"
-            className={`${navButtonBaseClass} text-[#06C755] bg-green-50 dark:bg-green-950/20 hover:bg-green-100 dark:hover:bg-green-900/40 border border-green-200 dark:border-green-900`}
-            onClick={onClose}
-          >
-            <MessageCircle className="w-5 h-5" /> 🟢 LINE น้องน้ำหวาน (แจ้งเหตุ & เฝ้าระวัง)
-          </a>
 
           <button
             onClick={() => {

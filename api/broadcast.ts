@@ -131,6 +131,17 @@ function getDailySummaryFlexMessage(userName: string = "ประชาชน") 
           {
             type: "button",
             style: "primary",
+            color: "#DC2626",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
+              uri: `${WEB_APP_URL}?mode=report&source=line`
+            }
+          },
+          {
+            type: "button",
+            style: "secondary",
             color: "#2563EB",
             height: "sm",
             action: {
@@ -294,6 +305,17 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
           {
             type: "button",
             style: "primary",
+            color: "#DC2626",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
+              uri: `${WEB_APP_URL}?mode=report&source=line`
+            }
+          },
+          {
+            type: "button",
+            style: "secondary",
             color: "#2563EB",
             height: "sm",
             action: {
@@ -325,10 +347,12 @@ function getQuickReplyMenu() {
       {
         type: "action",
         action: {
-          type: "location",
-          label: "📍 ส่งตำแหน่ง GPS"
+          type: "uri",
+          label: "🚨 แจ้งเหตุน้ำท่วมด่วน",
+          uri: `${WEB_APP_URL}?mode=report&source=line`
         }
       },
+
       {
         type: "action",
         action: {

@@ -134,6 +134,17 @@ function getDailySummaryFlexMessage(userName: string = "ประชาชน") 
           {
             type: "button",
             style: "primary",
+            color: "#DC2626",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
+              uri: `${WEB_APP_URL}?mode=report&source=line`
+            }
+          },
+          {
+            type: "button",
+            style: "secondary",
             color: "#2563EB",
             height: "sm",
             action: {
@@ -297,6 +308,17 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
           {
             type: "button",
             style: "primary",
+            color: "#DC2626",
+            height: "sm",
+            action: {
+              type: "uri",
+              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
+              uri: `${WEB_APP_URL}?mode=report&source=line`
+            }
+          },
+          {
+            type: "button",
+            style: "secondary",
             color: "#2563EB",
             height: "sm",
             action: {
@@ -328,10 +350,12 @@ function getQuickReplyMenu() {
       {
         type: "action",
         action: {
-          type: "location",
-          label: "📍 ส่งตำแหน่ง GPS"
+          type: "uri",
+          label: "🚨 แจ้งเหตุน้ำท่วมด่วน",
+          uri: `${WEB_APP_URL}?mode=report&source=line`
         }
       },
+
       {
         type: "action",
         action: {
@@ -413,11 +437,22 @@ export default async function handler(req: any, res: any) {
           const { address = "จ.นครศรีธรรมราช", latitude, longitude } = event.message;
           let districtFlex = getDistrictMorningForecastFlex(address);
           replyMessages.push({
+            type: "text",
+            text: `📍 ได้รับพิกัด GPS (${latitude || ""}, ${longitude || ""}) ของท่านแล้ว! กรุณากดปุ่มสีแดง 🚨 "แจ้งเหตุน้ำท่วมด่วน" ด้านล่าง เพื่อแนบรูปถ่ายสถานที่จริงส่งขึ้นฐานข้อมูล Admin ทันทีครับ`,
+            quickReply: getQuickReplyMenu()
+          });
+          replyMessages.push({
             ...districtFlex,
             quickReply: getQuickReplyMenu()
           });
         } else if (msgType === 'text') {
-          if (userText.includes("ขอบคุณ") || userText.includes("ดีมาก") || userText.includes("เจ๋ง")) {
+          if (userText.includes("แจ้งเหตุ") || userText.includes("แจ้งน้ำท่วม") || userText.includes("ถ่ายรูป") || userText.includes("ช่วยด้วย") || userText.includes("รายงาน")) {
+            replyMessages.push({
+              type: "text",
+              text: "🚨 ระบบรับแจ้งเหตุน้ำท่วมฉุกเฉิน (เรียลไทม์)\nกรุณากดปุ่มสีแดงด้านล่าง **[ 🚨 แจ้งเหตุน้ำท่วมด่วน ]** เพื่อเปิดกล้องมือถือถ่ายรูปหลักฐาน และแชร์พิกัด GPS อัตโนมัติ ข้อมูลจะถูกส่งขึ้นระบบ Admin ในทันทีครับ!",
+              quickReply: getQuickReplyMenu()
+            });
+          } else if (userText.includes("ขอบคุณ") || userText.includes("ดีมาก") || userText.includes("เจ๋ง")) {
             replyMessages.push({
               type: "text",
               text: "ด้วยความยินดีครับ! น้องน้ำหวานและทีมศูนย์บรรเทาภัยเทศบาลนครนครศรีธรรมราช พร้อมเคียงข้างและแจ้งเตือนคุณตลอด 24 ชั่วโมงครับ ขอให้ปลอดภัยนะครับ ❤️🌊",
@@ -470,7 +505,7 @@ export default async function handler(req: any, res: any) {
         } else {
           replyMessages.push({
             type: "text",
-            text: "🚨 ระบบได้รับข้อมูลของท่านแล้ว กรุณากดเลือกเมนูด้านล่างเพื่อดูแดชบอร์ดสถานการณ์น้ำท่วมเรียลไทม์ครับ",
+            text: "📸 ได้รับไฟล์ข้อมูลเบื้องต้นแล้ว! กรุณากดปุ่มสีแดงด้านล่าง **[ 🚨 แจ้งเหตุน้ำท่วมด่วน ]** เพื่อยืนยันพิกัด GPS เรียลไทม์ และส่งรูปภาพขึ้นสู่ฐานข้อมูล Admin เว็บหลักครับ!",
             quickReply: getQuickReplyMenu()
           });
         }
