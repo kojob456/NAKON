@@ -329,25 +329,6 @@ export default function App() {
     }
   };
 
-  const handleQuickLineShare = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = +pos.coords.latitude.toFixed(5);
-          const lng = +pos.coords.longitude.toFixed(5);
-          const msg = `🚨 แจ้งเตือนภัยน้ำท่วมด่วน! (NakhonFlood Alert)\n📍 พิกัดตำแหน่งเรียลไทม์ (GPS จริง): https://maps.google.com/?q=${lat},${lng}\n⚠️ กรุณาตรวจสอบสถานการณ์น้ำท่วมในพื้นที่และประสานงานความช่วยเหลือฉุกเฉินครับ`;
-          window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, "_blank");
-        },
-        () => {
-          const msg = `🚨 แจ้งเตือนภัยน้ำท่วมด่วน! (NakhonFlood Alert)\n📍 พิกัดศูนย์เฝ้าระวัง จ.นครศรีธรรมราช: https://maps.google.com/?q=8.4325,99.9631\n⚠️ กรุณาตรวจสอบสถานการณ์น้ำท่วมในพื้นที่และประสานงานความช่วยเหลือฉุกเฉินครับ`;
-          window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, "_blank");
-        }
-      );
-    } else {
-      const msg = `🚨 แจ้งเตือนภัยน้ำท่วมด่วน! (NakhonFlood Alert)\n📍 พิกัดศูนย์เฝ้าระวัง จ.นครศรีธรรมราช: https://maps.google.com/?q=8.4325,99.9631`;
-      window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, "_blank");
-    }
-  };
 
   // Handler 3: Add new user submitted flood report case
   const handleAddReportCase = (newReport: FloodReport) => {
@@ -539,7 +520,7 @@ export default function App() {
                   📌 เลือกเมนูหลัก: หน้าหลัก & แจ้งเหตุด่วน
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto min-w-[350px]">
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto min-w-[300px]">
                 <button
                   onClick={() => { setDashboardMode("map"); setActiveTab("dashboard"); }}
                   className={`py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer ${
@@ -561,13 +542,6 @@ export default function App() {
                 >
                   <Camera className="w-4 h-4 shrink-0 text-red-500" />
                   <span>🔊 แจ้งเหตุกู้ภัยด่วน</span>
-                </button>
-                <button
-                  onClick={handleQuickLineShare}
-                  className="py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer bg-[#06C755] hover:bg-[#05b34c] text-white shadow-md hover:scale-[1.02]"
-                >
-                  <span className="text-base leading-none">💬</span>
-                  <span>แจ้งพิกัด LINE</span>
                 </button>
               </div>
             </div>

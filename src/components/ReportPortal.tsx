@@ -539,26 +539,13 @@ export default function ReportPortal({
             />
           </div>
 
-          {/* Submit button & LINE Share */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-xl text-sm font-extrabold transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
-            >
-              🔊 ยืนยันส่งรายงานเข้าศูนย์กู้ภัย
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                const sevText = severity === "CRITICAL" ? "🔴 วิกฤตหนัก (อพยพด่วน)" : severity === "HIGH" ? "🟠 น้ำท่วมสูง" : "🟡 น้ำท่วมขัง";
-                const msg = `🚨 แจ้งเหตุน้ำท่วมด่วน (NakhonFlood Alert)!\n📍 พิกัด GPS เรียลไทม์: https://maps.google.com/?q=${latitude},${longitude}\n🏙️ พื้นที่: ต.${tambon || "-"} อ.${amphoe}\n🏷️ จุดสังเกต: ${landmark || "-"}\n⚠️ ระดับความรุนแรง: ${sevText}\n📝 รายละเอียด: ${description || "ขอความช่วยเหลือด่วน"}`;
-                window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, "_blank");
-              }}
-              className="w-full py-3.5 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-sm font-extrabold transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
-            >
-              💬 แจ้งเตือนลง LINE (พิกัดจริง)
-            </button>
-          </div>
+          {/* Submit button */}
+          <button
+            type="submit"
+            className="w-full py-3.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-xl text-sm font-extrabold transition-all shadow-md active:scale-[0.99]"
+          >
+            🔊 ยืนยันการส่งรายงานกู้ภัย (Dispatch Report)
+          </button>
         </form>
       </div>
 
