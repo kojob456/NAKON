@@ -3,6 +3,7 @@ import { Compass, Navigation, Crosshair, MapPin, ExternalLink } from "lucide-rea
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { FloodReport, FloodSeverity, ReportStatus } from "../types";
+import { ImageLightboxModal } from "./ImageLightboxModal";
 
 // Setup default marker icons (in case custom ones fail)
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -78,6 +79,7 @@ export default function InteractiveMap({
     lng: 99.9631
   });
   const [isLocating, setIsLocating] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleLocateUser = () => {
     if (!navigator.geolocation) {
@@ -397,7 +399,16 @@ export default function InteractiveMap({
               <Popup className="custom-popup">
                 <div className="w-64 font-sans">
                   {r.images && r.images[0] && (
-                    <img src={r.images[0]} alt="ภาพหน้างาน" className="w-full h-32 object-cover rounded-xl mb-2 shadow" />
+                    <button
+                      type="button"
+                      onClick={() => setPreviewImage(r.images[0])}
+                      className="w-full block overflow-hidden rounded-xl mb-2 shadow hover:opacity-90 relative group cursor-pointer"
+                    >
+                      <img src={r.images[0]} alt="ภาพหน้างาน" className="w-full h-32 object-cover pointer-events-none" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
+                        🔍 คลิกขยายดูรูป
+                      </div>
+                    </button>
                   )}
                   <h4 className="font-bold text-sm">ต.{r.tambon}, อ.{r.amphoe}</h4>
                   <p className="text-xs text-slate-500 mt-1">เวลาแจ้ง: {new Date(r.timestamp).toLocaleString("th-TH")}</p>
@@ -459,6 +470,12 @@ export default function InteractiveMap({
 
         </MapContainer>
       </div>
+
+      <ImageLightboxModal
+        isOpen={!!previewImage}
+        imageUrl={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
   );
 }

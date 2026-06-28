@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ListFilter, Search, Clock, ShieldCheck, CheckCircle2, ChevronRight, HelpCircle } from "lucide-react";
 import { User, FloodReport, ReportStatus, FloodSeverity, UserRole } from "../types";
+import { ImageLightboxModal } from "./ImageLightboxModal";
 
 interface TrackingPortalProps {
   currentUser: User | null;
@@ -18,6 +19,7 @@ export default function TrackingPortal({
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   if (!currentUser) return null;
 
@@ -147,12 +149,25 @@ export default function TrackingPortal({
                   <div className="flex gap-4 items-start md:items-center">
                     {/* Compact Image */}
                     {r.images && r.images[0] && (
-                      <img
-                        src={r.images[0]}
-                        alt="Case picture"
-                        className="w-12 h-12 rounded-xl object-cover shrink-0 border"
-                        referrerPolicy="no-referrer"
-                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewImage(r.images[0]);
+                        }}
+                        title="คลิกเพื่อขยายดูรูปเต็ม"
+                        className="relative shrink-0 block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-105 transition-transform group cursor-pointer"
+                      >
+                        <img
+                          src={r.images[0]}
+                          alt="Case picture"
+                          className="w-12 h-12 object-cover pointer-events-none"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white">
+                          🔍
+                        </div>
+                      </button>
                     )}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
@@ -300,6 +315,12 @@ export default function TrackingPortal({
           </p>
         </div>
       )}
+
+      <ImageLightboxModal
+        isOpen={!!previewImage}
+        imageUrl={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
   );
 }

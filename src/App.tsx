@@ -24,6 +24,7 @@ import TrackingPortal from "./components/TrackingPortal";
 import ResponderDashboard from "./components/ResponderDashboard";
 import AdminConsole from "./components/AdminConsole";
 import EvacuationPortalModal from "./components/EvacuationPortalModal";
+import { fetchCollectionData, logout } from "./utils/firebase";
 import { getThemeStyle, AppThemeType } from "./utils/theme";
 import { logUserAccess } from "./utils/userTracker";
 
@@ -146,7 +147,6 @@ export default function App() {
   useEffect(() => {
     const fetchRemoteFloodData = async () => {
       try {
-        const { fetchCollectionData } = await import("./utils/firebase");
         const [locList, floodList] = await Promise.all([
           fetchCollectionData("location"),
           fetchCollectionData("flooddata")
@@ -301,7 +301,6 @@ export default function App() {
       setCurrentUser(null);
       setActiveTab("dashboard");
       try {
-        const { logout } = await import("./utils/firebase");
         await logout();
       } catch(e) {}
     } else {

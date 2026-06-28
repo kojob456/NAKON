@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { AlertCircle, Phone, Navigation, Landmark, Plus, Save, Clock, ArrowRight, CheckCircle } from "lucide-react";
 import { User, FloodReport, ReportStatus, FloodSeverity } from "../types";
+import { ImageLightboxModal } from "./ImageLightboxModal";
 
 interface ResponderDashboardProps {
   currentUser: User | null;
@@ -20,6 +21,7 @@ export default function ResponderDashboard({
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(reports[0]?.id || null);
   const [agencyInput, setAgencyInput] = useState("");
   const [noteInput, setNoteInput] = useState("");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const selectedCase = reports.find((r) => r.id === selectedCaseId);
 
@@ -134,14 +136,20 @@ export default function ResponderDashboard({
         {/* 6.2.1 Photo evidence */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 space-y-2">
-            <h4 className="text-xs font-bold text-slate-500 block">ภาพถ่ายหลักฐานผู้ประสบภัยส่งเข้ามาจริง :</h4>
-            <div className="aspect-video rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-800 relative shadow-inner">
+            <h4 className="text-xs font-bold text-slate-500 block">ภาพถ่ายหลักฐานผู้ประสบภัยส่งเข้ามาจริง (คลิกเพื่อขยายดูเต็มจอ):</h4>
+            <div 
+              onClick={() => caseObj.images && caseObj.images[0] && setPreviewImage(caseObj.images[0])}
+              className="aspect-video rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-800 relative shadow-inner cursor-pointer group"
+            >
               <img
                 src={caseObj.images[0]}
                 alt="ภัยพิบัติหน้างานสัมผัส"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 referrerPolicy="no-referrer"
               />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="bg-slate-900/80 text-white text-xs px-3 py-1.5 rounded-xl font-bold border border-white/20 shadow-lg">🔍 คลิกเพื่อขยายดูรูปเต็ม</span>
+              </div>
               <div className="absolute bottom-2 left-2 bg-black/60 text-[9px] text-white px-2 py-0.5 rounded">
                 ระดับนํ้าในภาพประมาณ {caseObj.waterLevelCm} ซม.
               </div>
@@ -347,6 +355,12 @@ export default function ResponderDashboard({
           })}
         </div>
       </div>
+
+      <ImageLightboxModal
+        isOpen={!!previewImage}
+        imageUrl={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
   );
 }

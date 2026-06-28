@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Hammer, Users, RefreshCw, Sliders, Check, Network, Activity, Trash, ShieldAlert, Heart } from "lucide-react";
 import { User, UserRole, ThresholdSettings, IntegrationAPI, FloodReport, FloodSeverity, ReportStatus } from "../types";
 import { nakhonDistrictsAndTambons } from "../data/mockData";
+import { ImageLightboxModal } from "./ImageLightboxModal";
 
 interface AdminConsoleProps {
   currentUser: User | null;
@@ -38,6 +39,7 @@ export default function AdminConsole({
   const [rapidRise, setRapidRise] = useState(thresholdSettings.rapidRiseRateCmHr);
 
   const [activeTab, setActiveTab] = useState<"reports_feed" | "thresholds" | "users" | "apis" | "line_broadcast" | "simulate">("reports_feed");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleSimulateReport = () => {
     if (!onAddReport) {
@@ -321,12 +323,17 @@ export default function AdminConsole({
                     {/* Images display */}
                     {r.images && r.images.length > 0 && (
                       <div>
-                        <span className="text-[10px] font-bold opacity-75 block mb-1">📸 รูปถ่ายหลักฐานจากกล้อง / LINE OA:</span>
+                        <span className="text-[10px] font-bold opacity-75 block mb-1">📸 รูปถ่ายหลักฐานจากกล้อง / LINE OA (คลิกเพื่อขยายดูรูปเต็ม):</span>
                         <div className="flex gap-2 overflow-x-auto pb-1">
                           {r.images.map((img, idx) => (
-                            <a key={idx} href={img} target="_blank" rel="noreferrer" className="shrink-0 block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:opacity-90">
-                              <img src={img} alt="Flood evidence" className="w-20 h-20 object-cover" />
-                            </a>
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setPreviewImage(img)}
+                              className="shrink-0 block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:opacity-90 transition-transform active:scale-95 cursor-pointer"
+                            >
+                              <img src={img} alt="Flood evidence" className="w-20 h-20 object-cover pointer-events-none" />
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -733,6 +740,12 @@ export default function AdminConsole({
           </div>
         </div>
       )}
+
+      <ImageLightboxModal
+        isOpen={!!previewImage}
+        imageUrl={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
   );
 }

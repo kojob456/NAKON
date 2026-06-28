@@ -1,5 +1,6 @@
 import { collection, addDoc } from "firebase/firestore";
 import { User } from "../types";
+import { db } from "./firebase";
 
 export interface AccessLog {
   uid: string;
@@ -36,11 +37,7 @@ export const logUserAccess = async (user: User, action: "LOGIN" | "LOGOUT" | "VI
     }
 
     // Try saving to Firebase Firestore
-    const { getFirestore } = await import("firebase/firestore");
-    const { getApps } = await import("firebase/app");
-
-    if (getApps().length > 0) {
-      const db = getFirestore();
+    if (db) {
       const logsRef = collection(db, "user_access_logs");
       await addDoc(logsRef, logData).catch(err => {
         console.log("Simulated Firestore log saved locally:", err.message);
