@@ -7,48 +7,104 @@ const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || "";
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || "";
 const WEB_APP_URL = "https://nakon-seven.vercel.app/";
 
-function getDailySummaryFlexMessage(userName: string = "ประชาชน") {
-  const dateStr = new Date().toLocaleDateString('th-TH', {
-    year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Bangkok'
+function getWaterWaveStatusFlex(queryText: string = "ทั่วไป", customTitle?: string) {
+  const dateStr = new Date().toLocaleDateString('th-TH', { 
+    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Bangkok' 
   });
-  const timeStr = new Date().toLocaleTimeString('th-TH', {
-    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok'
+  const timeStr = new Date().toLocaleTimeString('th-TH', { 
+    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' 
   });
+
+  let waveLevel = "🟢 ระดับปกติ / ปลอดภัย (สีเขียว)";
+  let waveColor = "#059669"; // Green
+  let waveBgColor = "#065F46";
+  let waveBanner = "🌊 คลื่นน้ำระดับปกติ/ปลอดภัย (สีเขียว) 🌊";
+  let waveDesc = "ระดับน้ำในลำคลองต่ำกว่าตลิ่ง กระแสน้ำไหลสงบ ไม่มีคลื่นน้ำป่าหลาก";
+  let locationText = "ทั่วเขตเทศบาลนครนครศรีธรรมราช และคลองสายหลัก";
+  let timeText = `เวลา ${timeStr} น. (ประจำวันที่ ${dateStr})`;
+  let adviceText = "• สถานการณ์ทั่วไปปลอดภัย สามารถใช้ชีวิตประจำวันได้ตามปกติ\n• ติดตามการแจ้งเตือนจากศูนย์บรรเทาภัยอย่างต่อเนื่อง";
+
+  const q = queryText.toLowerCase();
+
+  // 1. ระดับวิกฤต (สีแดง)
+  if (
+    q.includes("วิกฤต") || q.includes("หนัก") || q.includes("ท่วม") || q.includes("ล้นตลิ่ง") || 
+    q.includes("ฝน") || q.includes("เขาหลวง") || q.includes("คลองท่าดี") || q.includes("ลานสะกา") || 
+    q.includes("คีรีวง") || q.includes("ปากพนัง") || q.includes("แดง") || q.includes("ด่วน") || q.includes("อพยพ") ||
+    q.includes("เมือง") || q.includes("ท่าวัง") || q.includes("ปากนคร") || q.includes("เชียรใหญ่")
+  ) {
+    waveLevel = "🚨 ระดับวิกฤตคลื่นน้ำหลาก (สีแดง)";
+    waveColor = "#DC2626"; // Red
+    waveBgColor = "#991B1B";
+    waveBanner = "🌊🌊🌊 คลื่นน้ำระดับวิกฤต (สีแดง) 🌊🌊🌊";
+    waveDesc = "คลื่นน้ำป่าหลากเชี่ยวแรงจากเทือกเขาหลวง ระดับน้ำคลองท่าดี +4.85 ม. (ล้นตลิ่ง) ฝนสะสม 145.2 มม.";
+    
+    if (q.includes("ปากพนัง") || q.includes("เชียรใหญ่")) {
+      locationText = "อ.ปากพนัง / ลุ่มน้ำปากพนัง (รับมวลน้ำเหนือหลากรวมน้ำทะเลหนุน)";
+    } else if (q.includes("ลานสะกา") || q.includes("คีรีวง") || q.includes("เขาหลวง") || q.includes("คลองท่าดี")) {
+      locationText = "ต้นน้ำคลองท่าดี (บ้านลานสะกา / คีรีวง) อ.ลานสะกา";
+    } else {
+      locationText = "คลองท่าดี ไหลบ่าเข้าท่วม เขตเทศบาลนครนครศรีธรรมราช (โซนตัวเมือง)";
+    }
+    
+    timeText = `เวลา ${timeStr} น. (มวลน้ำหลากถึงตัวเมืองใน 2-3 ชั่วโมง)`;
+    adviceText = "• ห้ามขับขี่หรือเดินลุยผ่านกระแสน้ำเชี่ยวเด็ดขาด!\n• ยกสิ่งของขึ้นที่สูงพ้นระดับน้ำล้นตลิ่งทันที\n• พร้อมอพยพไปที่ศูนย์พักพิง รร.เทศบาลวัดมเหยงคณ์";
+  } 
+  // 2. ระดับเฝ้าระวัง (สีส้ม/เหลือง)
+  else if (
+    q.includes("เตือนภัย") || q.includes("เฝ้าระวัง") || q.includes("เพิ่ม") || q.includes("ทุ่งสง") || 
+    q.includes("ฉวาง") || q.includes("ร่อนพิบูลย์") || q.includes("ส้ม") || q.includes("เหลือง") || 
+    q.includes("ท่าศาลา") || q.includes("สิชล") || q.includes("ขนอม")
+  ) {
+    waveLevel = "⚠️ ระดับเฝ้าระวังคลื่นน้ำหลาก (สีส้ม)";
+    waveColor = "#EA580C"; // Orange
+    waveBgColor = "#C2410C";
+    waveBanner = "🌊🌊 คลื่นน้ำระดับเฝ้าระวัง (สีส้ม) 🌊🌊";
+    waveDesc = "ระดับน้ำในลำคลองเพิ่มขึ้นอย่างรวดเร็ว (+15 ซม./ชม.) เริ่มมีคลื่นกระแสน้ำไหลแรงบริเวณที่ลุ่มต่ำ";
+    
+    if (q.includes("ทุ่งสง")) locationText = "ลุ่มน้ำตรัง / เขตเทศบาลเมืองทุ่งสง อ.ทุ่งสง";
+    else if (q.includes("ท่าศาลา") || q.includes("สิชล")) locationText = "ลำคลองสายสั้นริมฝั่งทะเล อ.ท่าศาลา / อ.สิชล";
+    else locationText = "คลองสายรอง และพื้นที่ลุ่มต่ำริมตลิ่งรอบนอกตัวเมือง";
+    
+    timeText = `เวลา ${timeStr} น. (คาดการณ์ระดับน้ำเพิ่มขึ้นต่อเนื่อง)`;
+    adviceText = "• ติดตามระดับน้ำและกราฟคลื่นน้ำอย่างใกล้ชิดทุก 1 ชั่วโมง\n• เตรียมความพร้อมเก็บของมีค่าและเอกสารสำคัญ";
+  }
 
   return {
     type: "flex",
-    altText: `🚨 รายงานสถานการณ์น้ำท่วมนครศรีธรรมราช ประจำวันที่ ${dateStr}`,
+    altText: `🌊 แจ้งเตือนคลื่นน้ำ: ${waveLevel} - ${locationText}`,
     contents: {
       type: "bubble",
       size: "giga",
       header: {
         type: "box",
         layout: "vertical",
-        backgroundColor: "#DC2626",
+        backgroundColor: waveBgColor,
         paddingAll: "lg",
         contents: [
           {
-            type: "text",
-            text: "🚨 แจ้งเตือนภัยวิกฤตด่วนที่สุด",
-            color: "#FFFFFF",
-            weight: "bold",
-            size: "sm"
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              { type: "text", text: waveBanner, color: "#FFFFFF", size: "xs", weight: "bold", flex: 8 },
+              { type: "text", text: "LIVE 🔴", color: "#FEF08A", size: "xxs", weight: "bold", align: "end", flex: 2 }
+            ]
           },
           {
             type: "text",
-            text: "ศูนย์บรรเทาภัยน้ำท่วมนครศรีธรรมราช",
+            text: customTitle || `รายงานสถานการณ์คลื่นน้ำ & ระดับน้ำ`,
             color: "#FFFFFF",
-            weight: "bold",
             size: "xl",
-            margin: "xs",
+            weight: "bold",
+            margin: "sm",
             wrap: true
           },
           {
             type: "text",
-            text: `อัปเดตประจำวันที่ ${dateStr} (${timeStr} น.)`,
-            color: "#FEF08A",
+            text: `🕒 ${timeText}`,
+            color: "#E2E8F0",
             size: "xxs",
-            margin: "sm"
+            margin: "xs"
           }
         ]
       },
@@ -61,240 +117,60 @@ function getDailySummaryFlexMessage(userName: string = "ประชาชน") 
           {
             type: "box",
             layout: "vertical",
-            margin: "md",
-            spacing: "sm",
+            backgroundColor: "#F8FAFC",
+            paddingAll: "md",
+            cornerRadius: "lg",
+            borderColor: waveColor,
+            borderWidth: "semi-bold",
             contents: [
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  { type: "text", text: "🌧️ ฝนเขาหลวง 24 ชม.:", size: "xs", color: "#64748B", flex: 5 },
-                  { type: "text", text: "145.2 มม. (วิกฤต)", size: "xs", color: "#DC2626", weight: "bold", align: "end", flex: 5 }
+                  { type: "text", text: "📊 ระดับคลื่นน้ำ / ความหนัก:", size: "xs", color: "#64748B", weight: "bold", flex: 4 },
+                  { type: "text", text: waveLevel, size: "xs", color: waveColor, weight: "bold", align: "end", flex: 6 }
                 ]
               },
               {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  { type: "text", text: "🌊 น้ำคลองท่าดี (ลานสกา):", size: "xs", color: "#64748B", flex: 5 },
-                  { type: "text", text: "+4.85 ม. (ล้นตลิ่ง)", size: "xs", color: "#DC2626", weight: "bold", align: "end", flex: 5 }
-                ]
-              },
-              {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  { type: "text", text: "⚡ โอกาสน้ำท่วมในเมือง:", size: "xs", color: "#64748B", flex: 5 },
-                  { type: "text", text: "85% (เสี่ยงสูงมาก)", size: "xs", color: "#EA580C", weight: "bold", align: "end", flex: 5 }
-                ]
+                type: "text",
+                text: waveDesc,
+                size: "xxs",
+                color: "#334155",
+                margin: "sm",
+                wrap: true
               }
+            ]
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            backgroundColor: "#EFF6FF",
+            paddingAll: "md",
+            cornerRadius: "md",
+            contents: [
+              { type: "text", text: "📍 เหตุที่ไหน:", size: "xs", color: "#1D4ED8", weight: "bold", flex: 3 },
+              { type: "text", text: locationText, size: "xs", color: "#1E3A8A", weight: "bold", wrap: true, flex: 7 }
+            ]
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            backgroundColor: "#F1F5F9",
+            paddingAll: "md",
+            cornerRadius: "md",
+            contents: [
+              { type: "text", text: "🕒 เวลาเท่าไหร่:", size: "xs", color: "#475569", weight: "bold", flex: 3 },
+              { type: "text", text: timeText, size: "xs", color: "#0F172A", weight: "bold", wrap: true, flex: 7 }
             ]
           },
           { type: "separator", margin: "md", color: "#E2E8F0" },
           {
             type: "box",
             layout: "vertical",
-            margin: "md",
-            backgroundColor: "#EFF6FF",
-            paddingAll: "md",
-            cornerRadius: "md",
+            spacing: "xs",
             contents: [
-              {
-                type: "text",
-                text: "📍 ศูนย์พักพิงอพยพแนะนำใกล้คุณ:",
-                size: "xs",
-                color: "#1D4ED8",
-                weight: "bold"
-              },
-              {
-                type: "text",
-                text: "โรงเรียนเทศบาลวัดมเหยงคณ์",
-                size: "sm",
-                color: "#1E3A8A",
-                weight: "bold",
-                margin: "xs"
-              },
-              {
-                type: "text",
-                text: "📊 สถานะ: เหลือที่ว่าง 160 คน (เปิดรับตลอด 24 ชม.)",
-                size: "xxs",
-                color: "#3B82F6",
-                margin: "xs"
-              }
-            ]
-          }
-        ]
-      },
-      footer: {
-        type: "box",
-        layout: "vertical",
-        paddingAll: "lg",
-        spacing: "sm",
-        contents: [
-          {
-            type: "button",
-            style: "primary",
-            color: "#DC2626",
-            height: "sm",
-            action: {
-              type: "uri",
-              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
-              uri: `${WEB_APP_URL}?mode=report&source=line`
-            }
-          },
-          {
-            type: "button",
-            style: "secondary",
-            color: "#2563EB",
-            height: "sm",
-            action: {
-              type: "uri",
-              label: "🌐 กดเปิดดูแดชบอร์ดเว็บแอปเต็ม",
-              uri: WEB_APP_URL
-            }
-          },
-          {
-            type: "button",
-            style: "secondary",
-            color: "#10B981",
-            height: "sm",
-            action: {
-              type: "uri",
-              label: "🧭 นำทางไปศูนย์อพยพ (จีพีเอส)",
-              uri: "https://www.google.com/maps/dir/?api=1&destination=8.442,99.962&travelmode=driving"
-            }
-          }
-        ]
-      }
-    }
-  };
-}
-
-function getDistrictMorningForecastFlex(placeName = "อำเภอเมืองนครศรีธรรมราช") {
-  let prob = "85%";
-  let riskLevel = "เสี่ยงสูงมาก (สีแดง)";
-  let riskColor = "#DC2626";
-  let warn3h = "อีก 3 ชั่วโมง มวลน้ำเหนือหลากจากเทือกเขาหลวง/คลองท่าดี จะเดินทางถึงพื้นที่ของคุณ ขอให้ขนย้ายสิ่งของขึ้นที่สูงทันที";
-  let weather = "ฝนฟ้าคะนองร้อยละ 80 ของพื้นที่ | อุณหภูมิ 27°C | ลมกระโชกแรง 20 กม./ชม.";
-
-  if (placeName.includes("ปากพนัง") || placeName.includes("เชียรใหญ่") || placeName.includes("ท่าซัก")) {
-    prob = "92%";
-    riskLevel = "วิกฤตรับน้ำหลากหนุน (สีแดงเข้ม)";
-    riskColor = "#991B1B";
-    warn3h = "อีก 2-3 ชั่วโมง มวลน้ำหลากรวมกับน้ำทะเลหนุน จะล้นตลิ่งเข้าท่วมพื้นที่ริมฝั่งแม่น้ำ";
-    weather = "ฝนตกหนักต่อเนื่องร้อยละ 85 | อุณหภูมิ 28°C | ลมกระโชกแรงจากอ่าวไทย";
-  } else if (placeName.includes("ทุ่งสง") || placeName.includes("ฉวาง") || placeName.includes("พิปูน") || placeName.includes("ร่อนพิบูลย์")) {
-    prob = "65%";
-    riskLevel = "เฝ้าระวังน้ำหลาก (สีส้ม)";
-    riskColor = "#EA580C";
-    warn3h = "อีก 3-4 ชั่วโมง ระดับน้ำมีแนวโน้มเพิ่มขึ้นอย่างรวดเร็ว ให้ติดตามระดับน้ำใกล้ชิด";
-    weather = "ฝนกระจายตัวร้อยละ 60 ของพื้นที่ | อุณหภูมิ 26°C";
-  } else if (placeName.includes("ท่าศาลา") || placeName.includes("สิชล") || placeName.includes("ขนอม") || placeName.includes("นบพิตำ")) {
-    prob = "50%";
-    riskLevel = "ปานกลาง (สีเหลือง)";
-    riskColor = "#CA8A04";
-    warn3h = "สถานการณ์ทั่วไปปกติ แต่มีฝนสะสมบางพื้นที่ เฝ้าระวังน้ำป่าไหลหลากบริเวณเชิงเขา";
-    weather = "เมฆเป็นส่วนมาก มีฝนร้อยละ 40 | อุณหภูมิ 29°C";
-  } else if (placeName.includes("ลานสะกา") || placeName.includes("คีรีวง") || placeName.includes("พรหมคีรี")) {
-    prob = "88%";
-    riskLevel = "เสี่ยงน้ำป่าหลากด่วน (สีแดง)";
-    riskColor = "#DC2626";
-    warn3h = "อีก 1-2 ชั่วโมง ต้นน้ำเทือกเขาหลวงฝนตกหนักมาก มวลน้ำป่ากำลังหลากลงสู่ลำน้ำสายหลักด่วน";
-    weather = "ฝนตกหนักมากร้อยละ 90 | อุณหภูมิ 24°C | ระดับความชื้นสูง";
-  }
-
-  return {
-    type: "flex",
-    altText: `🌅 แจ้งเตือนโอกาสน้ำท่วมยามเช้าอัตโนมัติ ประจำวัน - พื้นที่ ${placeName}`,
-    contents: {
-      type: "bubble",
-      size: "giga",
-      header: {
-        type: "box",
-        layout: "vertical",
-        backgroundColor: "#1E3A8A",
-        paddingAll: "lg",
-        contents: [
-          {
-            type: "box",
-            layout: "horizontal",
-            contents: [
-              { type: "text", text: "🌅 พยากรณ์น้ำท่วมยามเช้า (07:00 น.)", color: "#93C5FD", size: "xs", weight: "bold" },
-              { type: "text", text: "เรียลไทม์", color: "#10B981", size: "xxs", weight: "bold", align: "end" }
-            ]
-          },
-          { type: "text", text: `📍 พิกัด: ${placeName}`, color: "#FFFFFF", size: "lg", weight: "bold", margin: "xs", wrap: true }
-        ]
-      },
-      body: {
-        type: "box",
-        layout: "vertical",
-        paddingAll: "lg",
-        spacing: "md",
-        contents: [
-          {
-            type: "box",
-            layout: "horizontal",
-            backgroundColor: "#F8FAFC",
-            paddingAll: "md",
-            cornerRadius: "lg",
-            borderColor: riskColor,
-            borderWidth: "semi-bold",
-            contents: [
-              {
-                type: "box",
-                layout: "vertical",
-                flex: 6,
-                contents: [
-                  { type: "text", text: "🌊 โอกาสเกิดน้ำท่วมวันนี้", size: "xs", color: "#64748B", weight: "bold" },
-                  { type: "text", text: riskLevel, size: "xxs", color: riskColor, weight: "bold", margin: "xs" }
-                ]
-              },
-              {
-                type: "text",
-                text: prob,
-                size: "xxl",
-                color: riskColor,
-                weight: "bold",
-                align: "end",
-                flex: 4
-              }
-            ]
-          },
-          {
-            type: "box",
-            layout: "vertical",
-            backgroundColor: "#FEF2F2",
-            paddingAll: "md",
-            cornerRadius: "md",
-            contents: [
-              {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  { type: "text", text: "⏳ แจ้งเตือนล่วงหน้า 3 ชม. (Early Warning)", size: "xs", color: "#991B1B", weight: "bold" }
-                ]
-              },
-              { type: "text", text: warn3h, size: "xs", color: "#B91C1C", margin: "xs", wrap: true }
-            ]
-          },
-          {
-            type: "box",
-            layout: "vertical",
-            backgroundColor: "#F1F5F9",
-            paddingAll: "md",
-            cornerRadius: "md",
-            contents: [
-              { type: "text", text: "🌦️ พยากรณ์อากาศประจำวัน", size: "xs", color: "#334155", weight: "bold" },
-              { type: "text", text: weather, size: "xxs", color: "#475569", margin: "xs", wrap: true }
-            ]
-          },
-          {
-            type: "box",
-            layout: "vertical",
-            contents: [
-              { type: "text", text: "🚨 บริการช่วยเหลือและสายด่วน:", size: "xxs", color: "#64748B", weight: "bold" },
-              { type: "text", text: "• สายด่วนสาธารณภัย: โทร 199 หรือ 1784\n• ศูนย์อพยพใกล้บ้านท่าน: เปิดรับ 24 ชม.", size: "xxs", color: "#047857", margin: "xs", wrap: true }
+              { type: "text", text: "💡 คำแนะนำการปฏิบัติตน:", size: "xs", color: "#0F172A", weight: "bold" },
+              { type: "text", text: adviceText, size: "xxs", color: "#475569", wrap: true }
             ]
           }
         ]
@@ -308,12 +184,12 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
           {
             type: "button",
             style: "primary",
-            color: "#DC2626",
+            color: waveColor,
             height: "sm",
             action: {
               type: "uri",
-              label: "🚨 แจ้งเหตุน้ำท่วมด่วน (ถ่ายรูป/พิกัด)",
-              uri: `${WEB_APP_URL}?mode=report&source=line`
+              label: "🔍 กดดูระดับคลื่นน้ำ & กราฟสดบนเว็บ",
+              uri: WEB_APP_URL
             }
           },
           {
@@ -323,25 +199,33 @@ function getDistrictMorningForecastFlex(placeName = "อำเภอเมือ
             height: "sm",
             action: {
               type: "uri",
-              label: "📊 เปิดแดชบอร์ดติดตามน้ำเต็มรูปแบบ",
-              uri: WEB_APP_URL
+              label: "🚨 แจ้งเหตุน้ำท่วม/คลื่นน้ำเชี่ยว (ถ่ายรูป)",
+              uri: `${WEB_APP_URL}?mode=report&source=line`
             }
           },
           {
             type: "button",
             style: "secondary",
-            color: "#64748B",
+            color: "#10B981",
             height: "sm",
             action: {
-              type: "message",
-              label: "🔍 วิธีเสิร์ชดูอำเภออื่น",
-              text: "วิธีเสิร์ชสถานที่อื่น"
+              type: "uri",
+              label: "🧭 นำทางไปศูนย์อพยพปลอดภัย",
+              uri: "https://www.google.com/maps/dir/?api=1&destination=8.442,99.962&travelmode=driving"
             }
           }
         ]
       }
     }
   };
+}
+
+function getDailySummaryFlexMessage(userName: string = "ประชาชน") {
+  return getWaterWaveStatusFlex("วิกฤต ฝนตกหนัก คลองท่าดี", `🚨 รายงานสถานการณ์คลื่นน้ำ & น้ำท่วมนครฯ`);
+}
+
+function getDistrictMorningForecastFlex(placeName = "อำเภอเมืองนครศรีธรรมราช") {
+  return getWaterWaveStatusFlex(placeName, `🌅 พยากรณ์คลื่นน้ำ & โอกาสน้ำท่วม: ${placeName}`);
 }
 
 function getQuickReplyMenu() {
@@ -465,39 +349,36 @@ export default async function handler(req: any, res: any) {
               quickReply: getQuickReplyMenu()
             });
           } else {
-            const amphoeKeywords = ["เมือง", "ใกล้ๆเมือง", "ปากพนัง", "ลานสะกา", "ลานสกา", "คีรีวง", "ทุ่งสง", "ท่าศาลา", "สิชล", "ชะอวด", "ร่อนพิบูลย์", "หัวไทร", "ทุ่งใหญ่", "นาบอน", "ขนอม", "พรหมคีรี", "เชียรใหญ่", "บางขัน", "ถ้ำพรรณรา", "จุฬาภรณ์", "พระพรหม", "นบพิตำ", "ช้างกลาง", "เฉลิมพระเกียรติ", "เขาหลวง", "คลองท่าดี", "ท่าวัง", "ปากนคร", "ท่าซัก", "เช็ค", "ดู", "ถาม", "อำเภอ", "ที่", "ท่วม"];
+            const amphoeKeywords = ["เมือง", "ใกล้ๆเมือง", "ปากพนัง", "ลานสะกา", "ลานสกา", "คีรีวง", "ทุ่งสง", "ท่าศาลา", "สิชล", "ชะอวด", "ร่อนพิบูลย์", "หัวไทร", "ทุ่งใหญ่", "นาบอน", "ขนอม", "พรหมคีรี", "เชียรใหญ่", "บางขัน", "ถ้ำพรรณรา", "จุฬาภรณ์", "พระพรหม", "นบพิตำ", "ช้างกลาง", "เฉลิมพระเกียรติ", "เขาหลวง", "คลองท่าดี", "ท่าวัง", "ปากนคร", "ท่าซัก", "เช็ค", "ดู", "ถาม", "อำเภอ", "ที่", "ท่วม", "หนัก", "วิกฤต", "เตือนภัย", "เฝ้าระวัง", "ปกติ", "ปลอดภัย", "คลื่น", "ระดับ", "สถานการณ์", "ฝน", "น้ำ"];
             const isPlaceQuery = amphoeKeywords.some(kw => userText.includes(kw));
 
             if (isPlaceQuery) {
               if (userText.includes("ฝน") && !userText.includes("อำเภอ")) {
                 replyMessages.push({
-                  type: "text",
-                  text: "🌧️ ปริมาณฝนเขาหลวงสะสม 24 ชม. ล่าสุดอยู่ที่ 145.2 มม. (เกณฑ์สีแดงวิกฤตมาก) มีความเสี่ยงสูงที่น้ำป่าจะหลากลงคลองท่าดีเข้าสู่เขตเมืองครับ",
+                  ...getWaterWaveStatusFlex(userText, "🌧️ รายงานคลื่นน้ำ & ฝนเขาหลวง"),
                   quickReply: getQuickReplyMenu()
                 });
               } else if (userText.includes("คลองท่าดี") && !userText.includes("อำเภอ") && !userText.includes("เช็ค")) {
                 replyMessages.push({
-                  type: "text",
-                  text: "🌊 ระดับน้ำคลองท่าดี (สถานีบ้านลานสกา) ปัจจุบัน +4.85 เมตร (ล้นตลิ่งแล้ว) มวลน้ำกำลังเดินทางถึงเขตเทศบาลนครฯ ในอีก 3 ชั่วโมงครับ!",
+                  ...getWaterWaveStatusFlex(userText, "🌊 รายงานคลื่นน้ำ & ระดับน้ำคลองท่าดี"),
                   quickReply: getQuickReplyMenu()
                 });
               } else if (userText.includes("อพยพ") || userText.includes("พักพิง")) {
                 replyMessages.push({
-                  type: "text",
-                  text: "🏃 ศูนย์อพยพหลักที่เปิดรับตอนนี้:\n1. โรงเรียนเทศบาลวัดมเหยงคณ์ (ว่าง 160 ที่)\n2. อาคารอเนกประสงค์เทศบาลนครฯ (ว่าง 250 ที่)\n📞 ต้องการความช่วยเหลือด่วน โทร 199 ฟรีตลอด 24 ชม.",
+                  ...getWaterWaveStatusFlex("อพยพด่วน วิกฤต", "🏃 แจ้งเตือนคลื่นน้ำ & ศูนย์พักพิงอพยพ"),
                   quickReply: getQuickReplyMenu()
                 });
               } else {
                 const placeMatch = userText.replace(/^เช็ค/, "").replace(/^ดู/, "").replace(/^ถาม/, "").trim();
                 const queryPlace = placeMatch || userText;
                 replyMessages.push({
-                  ...getDistrictMorningForecastFlex(queryPlace),
+                  ...getWaterWaveStatusFlex(queryPlace, `📍 รายงานคลื่นน้ำพื้นที่: ${queryPlace}`),
                   quickReply: getQuickReplyMenu()
                 });
               }
             } else {
               replyMessages.push({
-                ...getDailySummaryFlexMessage("ประชาชนชาวนครฯ"),
+                ...getWaterWaveStatusFlex(userText, "🌊 รายงานสถานการณ์คลื่นน้ำ & น้ำท่วมเรียลไทม์"),
                 quickReply: getQuickReplyMenu()
               });
             }
