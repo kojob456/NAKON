@@ -45,7 +45,65 @@ export default function OverviewDashboard({
     return { label: "ปลอดภัยสูง (ระดับเขียว)", color: "bg-green-600 text-white font-black shadow-sm" };
   };
 
+  const [isWaveDetailOpen, setIsWaveDetailOpen] = useState(false);
   const criticalRivers = riverGauges.filter(g => g.currentLevel >= g.criticalLevel);
+  const warningRivers = riverGauges.filter(g => g.currentLevel >= g.warningLevel && g.currentLevel < g.criticalLevel);
+  const maxRain = Math.max(...weatherStations.map(s => s.rainfall24h || 0), 0);
+
+  let waveTheme = {
+    levelText: "🟢 ระดับปกติ / ปลอดภัย (GREEN WAVE)",
+    badgeText: "🌊 คลื่นน้ำระดับปกติ/ปลอดภัย (สีเขียว)",
+    colorScheme: "from-emerald-600 via-teal-600 to-green-600 text-white border-emerald-400 shadow-emerald-500/20",
+    bgCard: "bg-emerald-50/95 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100",
+    iconColor: "bg-emerald-600 text-white",
+    severityLabel: "ระดับ 1: ปกติ / ปลอดภัย (สีเขียว)",
+    title: "สถานการณ์คลื่นน้ำและลำคลองสายหลักอยู่ในเกณฑ์ปลอดภัย",
+    desc: "ระดับน้ำในลำคลองต่ำกว่าตลิ่ง กระแสน้ำไหลสงบ ไม่มีคลื่นน้ำป่าหลาก สามารถใช้ชีวิตประจำวันได้ตามปกติ",
+    location: "ทั่วเขตเทศบาลนครนครศรีธรรมราช และคลองสายหลัก (คลองท่าดี, คลองท่าวัง, ปากนคร)",
+    timeText: `เวลา ${new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น. (${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })})`,
+    advice: "• สถานการณ์ทั่วไปปลอดภัย สามารถใช้ชีวิตประจำวันได้ตามปกติ\n• ติดตามการแจ้งเตือนจากศูนย์บรรเทาภัยอย่างต่อเนื่อง",
+    isCritical: false,
+    waveIcon: "🌊",
+    btnColor: "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-500"
+  };
+
+  if (criticalRivers.length > 0 || maxRain >= thresholdSettings.minRainfallCritical) {
+    const names = criticalRivers.map(r => r.name).join(", ") || "คลองท่าดี (ต้นน้ำเขาหลวง)";
+    waveTheme = {
+      levelText: "🚨 ระดับวิกฤตคลื่นน้ำหลาก (RED WAVE)",
+      badgeText: "🌊🌊🌊 คลื่นน้ำระดับวิกฤตด่วนที่สุด (RED WAVE 3-HR WARNING)",
+      colorScheme: "from-red-700 via-rose-600 to-red-800 text-white border-red-500 shadow-red-600/40 animate-pulse",
+      bgCard: "bg-red-50/95 dark:bg-red-950/60 border-red-400 dark:border-red-700 text-red-950 dark:text-red-100 shadow-[0_8px_30px_rgb(220,38,38,0.25)]",
+      iconColor: "bg-red-600 text-white ring-4 ring-red-400/50 animate-bounce",
+      severityLabel: "ระดับ 3: วิกฤตสูงสุด (สีแดง #DC2626) - คลื่นน้ำป่าหลากเชี่ยวแรง",
+      title: `พบคลื่นมวลน้ำป่าหลากเชี่ยวแรงล้นตลิ่งที่ ${names} เตรียมยกกระเป๋าขึ้นที่สูงด่วน!`,
+      desc: `ปริมาณฝนสะสมเขาหลวง ${maxRain} มม. (เกณฑ์สีแดงวิกฤตมาก) กระแสน้ำป่าไหลหลากลงสู่คลองสายหลัก มีความเร็วและแรงคลื่นสูงล้นตลิ่งแล้ว มวลน้ำกำลังเดินทางถึงเขตเมืองในอีก 3 ชั่วโมง!`,
+      location: `ต้นน้ำเทือกเขาหลวง & ${names} -> ไหลบ่าเข้าท่วม เขตเทศบาลนครนครศรีธรรมราช (โซนตัวเมือง, ท่าวัง, ปากนคร, ปากพนัง)`,
+      timeText: `เวลาเกิดเหตุ: ${new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น. (${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}) - มวลน้ำถึงเขตเมืองใน 3 ชม.!`,
+      advice: "• ห้ามขับขี่หรือเดินลุยผ่านกระแสน้ำเชี่ยวเด็ดขาด!\n• ขนย้ายสิ่งของขึ้นที่สูงพ้นระดับน้ำล้นตลิ่งทันที\n• พร้อมอพยพไปที่ศูนย์พักพิง รร.เทศบาลวัดมเหยงคณ์ หรือจุดพักพิงใกล้บ้าน",
+      isCritical: true,
+      waveIcon: "🌊🌊🌊",
+      btnColor: "bg-red-600 hover:bg-red-700 text-white border-red-500"
+    };
+  } else if (warningRivers.length > 0 || maxRain >= thresholdSettings.minRainfallWarning) {
+    const names = warningRivers.map(r => r.name).join(", ") || "ลำคลองสายรอง";
+    waveTheme = {
+      levelText: "⚠️ ระดับเฝ้าระวังคลื่นน้ำหลาก (ORANGE WAVE)",
+      badgeText: "🌊🌊 คลื่นน้ำระดับเฝ้าระวัง (ORANGE WAVE WATCH)",
+      colorScheme: "from-orange-600 via-amber-600 to-yellow-600 text-white border-orange-400 shadow-orange-500/30",
+      bgCard: "bg-orange-50/95 dark:bg-orange-950/50 border-orange-300 dark:border-orange-700 text-orange-950 dark:text-orange-100",
+      iconColor: "bg-orange-500 text-white ring-4 ring-orange-300/50 animate-pulse",
+      severityLabel: "ระดับ 2: เฝ้าระวัง (สีส้ม #EA580C) - ระดับน้ำเพิ่มขึ้นรวดเร็ว",
+      title: `ระดับน้ำในลำคลองเพิ่มขึ้นอย่างรวดเร็ว เริ่มมีคลื่นกระแสน้ำไหลแรงที่ ${names}`,
+      desc: `ปริมาณฝนสะสม ${maxRain} มม. ระดับน้ำในลำคลองมีอัตราเพิ่มขึ้น +15 ซม./ชม. เริ่มมีคลื่นกระแสน้ำเชี่ยวบริเวณที่ลุ่มต่ำและเชิงเขา`,
+      location: `ลำคลองสายหลัก ${names} และพื้นที่ลุ่มต่ำริมตลิ่งรอบนอกตัวเมือง`,
+      timeText: `เวลาตรวจสอบ: ${new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น. (${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}) - แนวโน้มน้ำเพิ่มขึ้น`,
+      advice: "• ติดตามระดับน้ำและกราฟคลื่นน้ำอย่างใกล้ชิดทุก 1 ชั่วโมง\n• เตรียมความพร้อมเก็บของมีค่าและเอกสารสำคัญขึ้นที่สูง",
+      isCritical: false,
+      waveIcon: "🌊🌊",
+      btnColor: "bg-orange-600 hover:bg-orange-700 text-white border-orange-500"
+    };
+  }
 
   return (
     <motion.div 
@@ -54,70 +112,116 @@ export default function OverviewDashboard({
       transition={{ duration: 0.4 }}
       className="space-y-6"
     >
-      {/* 1.1 🔴 3-Hour Early Warning Banner */}
-      {criticalRivers.length > 0 ? (
-        <div className={`p-5 rounded-3xl border animate-pulse flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_8px_30px_rgb(220,38,38,0.2)] select-none glass-panel ${isHighContrast
-            ? "border-yellow-400 bg-black text-yellow-400"
-            : "border-red-200/50 bg-red-50/80 dark:bg-red-950/40 text-red-900 dark:text-red-200"
-          }`}>
-          <div className="flex items-start md:items-center gap-3.5 flex-1">
-            <div className="p-3 bg-red-600 text-white rounded-2xl shrink-0">
-              <AlertTriangle className="w-6 h-6 animate-pulse" />
+      {/* 🌊 1.1 Dynamic Water Wave Theme Banner & Interactive Status */}
+      <div className={`p-6 rounded-3xl border transition-all duration-300 select-none glass-panel shadow-lg ${
+        isHighContrast
+          ? "border-yellow-400 bg-black text-yellow-400"
+          : waveTheme.bgCard
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start md:items-center gap-4 flex-1">
+            <div className={`p-4 rounded-2xl shrink-0 flex items-center justify-center shadow-md ${waveTheme.iconColor}`}>
+              <Waves className="w-8 h-8" />
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-red-600 text-white font-extrabold text-[10px] md:text-xs px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                  แจ้งเตือนภัยวิกฤตด่วนที่สุด (3-HOUR WARNING)
+                <span className={`font-extrabold text-[11px] md:text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1.5 ${
+                  isHighContrast ? "bg-yellow-400 text-black" : "bg-gradient-to-r " + waveTheme.colorScheme
+                }`}>
+                  <span>{waveTheme.badgeText}</span>
+                </span>
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-black/10 dark:bg-white/10">
+                  LIVE 🔴
                 </span>
               </div>
-              <h2 className="text-sm md:text-base font-extrabold mt-1.5 leading-snug flex flex-wrap items-center gap-1.5">
-                <span>ชลประทานพบมวลน้ำป่าไหลหลากล้นตลิ่งที่</span>
-                <span className="text-yellow-300 underline font-black">{criticalRivers.map(r => r.name.split(" ")[0]).join(" และ ")}</span>
-                <span>เตรียมยกกระเป๋าขึ้นที่สูงด่วนภายใน 3 ชม.!</span>
+              <h2 className="text-base md:text-lg font-black mt-2 leading-snug flex flex-wrap items-center gap-1.5">
+                <span>{waveTheme.title}</span>
               </h2>
-              <p className="text-xs opacity-80 mt-1 leading-relaxed">
-                เป้าหมายอพยพหลบภัยหนีขึ้นที่ดอน ตำบลในเมือง, ท่าวัง, ปากนคร, และปากพนังตะวันออก ตรวจสอบพิกัดด้านล่าง
+              <p className="text-xs md:text-sm opacity-90 mt-1 font-medium leading-relaxed">
+                {waveTheme.desc}
               </p>
             </div>
           </div>
-          <button
-            onClick={onCheckEvacRights}
-            className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow w-full md:w-auto transition-transform active:scale-95"
-          >
-            <span>เช็คจุดสิทธิ์อพยพ</span> <ArrowRight className="w-4 h-4 shrink-0" />
-          </button>
-        </div>
-      ) : (
-        <div className={`p-5 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm transition-all glass-panel ${isHighContrast
-            ? "border-white bg-black text-white"
-            : "border-green-200/50 bg-green-50/80 dark:bg-green-950/30 text-green-900 dark:text-green-200"
-          }`}>
-          <div className="flex items-start md:items-center gap-3 flex-1">
-            <div className="p-3 bg-green-600 text-white rounded-2xl shrink-0">
-              <Check className="w-6 h-6 animate-pulse" />
-            </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-green-600 text-white font-black text-[9px] md:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  สถานการณ์ภาพรวมปกติ (SAFE STATUS)
-                </span>
-              </div>
-              <h2 className="text-sm md:text-base font-extrabold mt-1 leading-snug flex flex-wrap items-center gap-1.5">
-                <span>ไม่มีแม่น้ำล้นตลิ่งระดับวิกฤต หรือปริมาณน้ำฝนเกินเกณฑ์เฝ้าระวัง 3 ชม.</span>
-              </h2>
-              <p className="text-xs opacity-80 mt-0.5 leading-relaxed">
-                ระดับแม่น้ำสายหลักยังอยู่ใต้แนวป้องกันตลิ่ง ขอให้ประชาชนเฝ้าสังเกตการณ์รายงานสภาพอากาศรายชั่วโมงด้านล่าง
-              </p>
-            </div>
+          
+          <div className="flex flex-col sm:flex-row gap-2.5 w-full md:w-auto shrink-0">
+            <button
+              onClick={() => setIsWaveDetailOpen(!isWaveDetailOpen)}
+              className={`px-4 py-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 border ${
+                isWaveDetailOpen 
+                  ? "bg-slate-900 text-white border-slate-700 dark:bg-white dark:text-slate-900" 
+                  : "bg-white/80 hover:bg-white text-slate-900 border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-700"
+              }`}
+            >
+              <Info className="w-4 h-4 shrink-0 text-blue-500" />
+              <span>{isWaveDetailOpen ? "ซ่อนข้อมูลระดับ/สถานที่" : "🔍 กดดูระดับไหน & เหตุที่ไหน"}</span>
+            </button>
+
+            <button
+              onClick={onCheckEvacRights}
+              className={`px-5 py-3 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95 ${
+                waveTheme.btnColor
+              }`}
+            >
+              <span>เช็คจุดสิทธิ์อพยพ</span> <ArrowRight className="w-4 h-4 shrink-0" />
+            </button>
           </div>
-          <button
-            onClick={onCheckEvacRights}
-            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow w-full md:w-auto transition-transform active:scale-95"
-          >
-            <span>เช็คจุดสิทธิ์อพยพ</span> <ArrowRight className="w-4 h-4 shrink-0" />
-          </button>
         </div>
-      )}
+
+        {/* 📋 Interactive Expandable Details: ระดับไหน - เหตุที่ไหน - เวลาเท่าไหร่ */}
+        {(isWaveDetailOpen || waveTheme.isCritical) && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            transition={{ duration: 0.3 }}
+            className="mt-5 pt-5 border-t border-black/10 dark:border-white/10 grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
+            {/* 1. ระดับไหน */}
+            <div className="p-4 rounded-2xl bg-white/60 dark:bg-black/40 border border-black/5 dark:border-white/5 flex flex-col justify-between">
+              <div>
+                <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <span>📊 ระดับคลื่นน้ำ / ความหนัก</span>
+                </div>
+                <div className="text-sm md:text-base font-black text-slate-900 dark:text-white">
+                  {waveTheme.severityLabel}
+                </div>
+              </div>
+              <div className="mt-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                กระแสน้ำไหลบ่าเชี่ยวแรงตามสภาพพื้นที่
+              </div>
+            </div>
+
+            {/* 2. เหตุที่ไหน */}
+            <div className="p-4 rounded-2xl bg-white/60 dark:bg-black/40 border border-black/5 dark:border-white/5 flex flex-col justify-between">
+              <div>
+                <div className="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <span>📍 เหตุที่ไหน (สถานที่เกิดเหตุ)</span>
+                </div>
+                <div className="text-sm font-extrabold text-blue-950 dark:text-blue-100 leading-snug">
+                  {waveTheme.location}
+                </div>
+              </div>
+              <div className="mt-2 text-[11px] font-semibold text-blue-600 dark:text-blue-300">
+                พื้นที่รับน้ำเหนือและจุดลุ่มต่ำริมคลอง
+              </div>
+            </div>
+
+            {/* 3. เวลาเท่าไหร่ */}
+            <div className="p-4 rounded-2xl bg-white/60 dark:bg-black/40 border border-black/5 dark:border-white/5 flex flex-col justify-between">
+              <div>
+                <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <span>🕒 เวลาเท่าไหร่ & คำแนะนำ</span>
+                </div>
+                <div className="text-sm font-black text-slate-900 dark:text-white">
+                  {waveTheme.timeText}
+                </div>
+              </div>
+              <div className="mt-2 text-[11px] font-medium text-slate-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+                {waveTheme.advice}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
 
       {/* 📊 Citizen High-Visibility Summary Dashboard Section */}
       <div className={`p-6 md:p-8 rounded-3xl border transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] glass-panel ${isHighContrast

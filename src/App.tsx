@@ -55,7 +55,8 @@ export default function App() {
         uid: "line_oa_" + Date.now(),
         email: "citizen_line@line.me",
         displayName: "คุณพลเมือง นครศรีฯ (LINE OA น้องน้ำหวาน)",
-        role: "citizen",
+        avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100",
+        role: UserRole.CITIZEN,
         phone: "089-999-9999",
         watchZones: ["เมืองนครศรีธรรมราช", "ลานสกา", "ปากพนัง"]
       };
@@ -378,16 +379,16 @@ export default function App() {
   const handleUpdateReportStatus = (
     reportId: string,
     status: ReportStatus,
-    assignedAgency: string,
-    note: string
+    assignedAgency?: string,
+    note?: string
   ) => {
     const updated = reports.map((r) => {
       if (r.id === reportId) {
         return {
           ...r,
           status,
-          assignedAgency,
-          responderNote: note,
+          assignedAgency: assignedAgency || r.assignedAgency,
+          responderNote: note || r.responderNote,
           updatedAt: new Date().toISOString()
         };
       }

@@ -270,6 +270,7 @@ export const initialFloodReports: FloodReport[] = [
 
 export const defaultThresholdSettings: ThresholdSettings = {
   minRainfallCritical: 100, // 100 mm of accumulated mountain rainfall starts red alert
+  minRainfallWarning: 60, // 60 mm starts orange watch
   waterLevelWarningRatio: 85, // 85% of critical level trigger orange alert
   rapidRiseRateCmHr: 15, // 15 cm/hour level rise is orange warning
   baseWarningHours: 3

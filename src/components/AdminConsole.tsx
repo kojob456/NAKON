@@ -35,6 +35,7 @@ export default function AdminConsole({
 }: AdminConsoleProps) {
   // Local state copy of thresholds for instant editing before saving
   const [rainCrit, setRainCrit] = useState(thresholdSettings.minRainfallCritical);
+  const [rainWarn, setRainWarn] = useState(thresholdSettings.minRainfallWarning || 60);
   const [waterRatio, setWaterRatio] = useState(thresholdSettings.waterLevelWarningRatio);
   const [rapidRise, setRapidRise] = useState(thresholdSettings.rapidRiseRateCmHr);
 
@@ -151,6 +152,7 @@ export default function AdminConsole({
   const handleSaveThresholds = () => {
     onUpdateThresholds({
       minRainfallCritical: rainCrit,
+      minRainfallWarning: rainWarn,
       waterLevelWarningRatio: waterRatio,
       rapidRiseRateCmHr: rapidRise,
       baseWarningHours: 3

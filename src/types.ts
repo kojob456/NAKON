@@ -18,6 +18,7 @@ export interface User {
 
 export enum ReportStatus {
   PENDING = "pending",     // รอดำเนินการ
+  VERIFIED = "verified",   // ตรวจสอบแล้ว
   DISPATCHED = "dispatched", // ส่งต่อหน่วยงานแล้ว
   UNDERWAY = "underway",   // กำลังลงพื้นที่
   COMPLETED = "completed"   // ช่วยเหลือสำเร็จ
@@ -48,6 +49,7 @@ export interface FloodReport {
   description: string;
   images: string[]; // base64 or high quality mock image templates
   status: ReportStatus;
+  timeAgo?: string;
   responderNote?: string;
   assignedAgency?: string;
   updatedAt?: string;
@@ -73,6 +75,7 @@ export interface RiverGauge {
 
 export interface ThresholdSettings {
   minRainfallCritical: number; // เกณฑ์ฝนวิกฤต (e.g. 120mm)
+  minRainfallWarning: number; // เกณฑ์ฝนเฝ้าระวัง (e.g. 60mm)
   waterLevelWarningRatio: number; // สัดส่วนระดับน้ำตลิ่ง (e.g. 85%)
   rapidRiseRateCmHr: number; // อัตราการเพิ่มเร็วใน 1 ชม. (e.g. 15cm)
   baseWarningHours: number; // ระยะเวลาเตือนภัยล่วงหน้า (e.g. 3 ชม.)
