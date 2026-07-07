@@ -138,10 +138,10 @@ export default function OverviewDashboard({
             <li className="flex flex-wrap items-center gap-1.5">
               <strong className="text-slate-900 dark:text-amber-200">เช็คสัญลักษณ์คลื่นน้ำ & วงเรดาร์เตือนภัยบนแผนที่:</strong>
               <div className="flex flex-wrap items-center gap-1.5 my-1 w-full md:w-auto">
-                <span className="bg-green-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นเขียว - ปลอดภัย</span>
-                <span className="bg-yellow-500 text-black font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นเหลือง - น้ำขัง/เฝ้าระวัง</span>
-                <span className="bg-orange-500 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นส้ม - เตือนภัย 3 ชม.</span>
-                <span className="bg-red-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm animate-pulse">🌊 คลื่นแดง - วิกฤตน้ำหลาก (มีวงเรดาร์)</span>
+                <span className="bg-green-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นเขียว: ปลอดภัย (ล้อม 1 กม. / 1-2 ชม.)</span>
+                <span className="bg-yellow-500 text-black font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นเหลือง: น้ำขัง (ล้อม 2 กม. / นาน 4-8 ชม.)</span>
+                <span className="bg-orange-500 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm">🌊 คลื่นส้ม: เตือนภัย (ล้อม 3.5 กม. / นาน 12-24 ชม.)</span>
+                <span className="bg-red-600 text-white font-black px-2 py-0.5 rounded text-[10px] shadow-sm animate-pulse">🌊 คลื่นแดง: วิกฤตน้ำหลาก (ล้อม 5 กม. / นาน 1-2 วัน)</span>
               </div>
             </li>
             <li className="flex flex-wrap items-baseline gap-1">

@@ -472,16 +472,31 @@ export default function InteractiveMap({
                         </p>
                       </div>
 
-                      {/* 3. เวลาเท่าไหร่ (Time & Radar Reach) */}
-                      <div className="border-t border-b py-2 my-2 text-xs space-y-1 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20">
-                        <p className="text-[11px] font-bold text-amber-900 dark:text-amber-200">
-                          🕒 เวลาแจ้งเหตุ: {new Date(r.timestamp).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น. ({new Date(r.timestamp).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" })})
+                      {/* 3. เวลาเท่าไหร่ & รัศมีเรดาร์ & ระยะเวลาท่วมขัง */}
+                      <div className="border-t border-b py-2.5 my-2.5 text-xs space-y-2 bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/30">
+                        <p className="text-[11px] font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1">
+                          🕒 <span>เวลาแจ้งเหตุ: {new Date(r.timestamp).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น. ({new Date(r.timestamp).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" })})</span>
                         </p>
-                        <p className="text-[10px] text-slate-700 dark:text-slate-300 font-medium">
-                          📡 <strong>วงเรดาร์เตือนภัย:</strong> ตีกรอบครอบคลุมพื้นที่ใกล้เคียงรัศมี {r.severity === FloodSeverity.CRITICAL ? "5.0 กม." : r.severity === FloodSeverity.HIGH ? "3.5 กม." : r.severity === FloodSeverity.MEDIUM ? "2.0 กม." : "1.0 กม."}
-                        </p>
-                        <p><strong>ระดับน้ำปัจจุบัน:</strong> ลึก {r.waterLevelCm} ซม.</p>
-                        {r.strandedPeopleCount > 0 && <p className="text-red-600 font-black">🚨 ผู้ประสบภัยติดค้าง: {r.strandedPeopleCount} คน</p>}
+                        
+                        <div className="bg-white/95 dark:bg-black/70 p-2.5 rounded-xl border border-amber-500/30 shadow-sm space-y-1.5">
+                          <p className="text-xs text-slate-900 dark:text-white font-black flex items-center justify-between">
+                            <span className="flex items-center gap-1">📡 รัศมีท่วมล้อมรอบ:</span>
+                            <span className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-800">
+                              {r.severity === FloodSeverity.CRITICAL ? "ล้อมรอบ 5.0 กิโลเมตร" : r.severity === FloodSeverity.HIGH ? "ล้อมรอบ 3.5 กิโลเมตร" : r.severity === FloodSeverity.MEDIUM ? "ล้อมรอบ 2.0 กิโลเมตร" : "ล้อมรอบ 1.0 กิโลเมตร"}
+                            </span>
+                          </p>
+                          <p className="text-xs text-slate-900 dark:text-white font-black flex items-center justify-between">
+                            <span className="flex items-center gap-1">⏳ คาดการณ์ท่วมนาน:</span>
+                            <span className="text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2 py-0.5 rounded-md border border-orange-200 dark:border-orange-800">
+                              {r.severity === FloodSeverity.CRITICAL ? "ประมาณ 24 - 48 ชม. (1-2 วัน)" : r.severity === FloodSeverity.HIGH ? "ประมาณ 12 - 24 ชม." : r.severity === FloodSeverity.MEDIUM ? "ประมาณ 4 - 8 ชม. (รอระบาย)" : "ประมาณ 1 - 2 ชม. (ปกติ)"}
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[11px] pt-1">
+                          <span><strong>ระดับน้ำปัจจุบัน:</strong> ลึก {r.waterLevelCm} ซม.</span>
+                          {r.strandedPeopleCount > 0 && <span className="text-red-600 font-black bg-red-100 dark:bg-red-900/50 px-2 py-0.5 rounded">🚨 ติดค้าง {r.strandedPeopleCount} คน</span>}
+                        </div>
                       </div>
                       
                       <p className="text-xs font-bold text-blue-600 text-center my-1">{getThaiStatus(r.status)}</p>
