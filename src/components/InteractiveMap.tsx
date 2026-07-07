@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Compass, Navigation, Crosshair, MapPin, ExternalLink } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { FloodReport, FloodSeverity, ReportStatus } from "../types";
 import { ImageLightboxModal } from "./ImageLightboxModal";
@@ -126,21 +126,29 @@ export default function InteractiveMap({
     }
   });
 
-  // Custom Div Icons for visual fidelity with previous design
+  // Custom Div Icons for visual fidelity with Water Wave Theme & Radar Warnings
   const getSeverityIcon = (sev: FloodSeverity) => {
-    let colorClass = "bg-green-500 border-green-700";
-    let textCol = "text-white";
-    let extra = "";
-    if (sev === FloodSeverity.CRITICAL) { colorClass = "bg-red-600 border-red-800"; textCol = "text-white"; extra = "ring-4 ring-red-400 animate-ping"; }
-    else if (sev === FloodSeverity.HIGH) { colorClass = "bg-orange-500 border-orange-700"; textCol = "text-white"; extra = "ring-2 ring-orange-300"; }
-    else if (sev === FloodSeverity.MEDIUM) { colorClass = "bg-[#facc15] border-yellow-700"; textCol = "text-black"; extra = "ring-2 ring-yellow-200"; }
+    let colorClass = "bg-gradient-to-br from-emerald-500 to-green-600 border-emerald-300";
+    let extra = "shadow-[0_0_15px_rgba(16,185,129,0.8)]";
+    if (sev === FloodSeverity.CRITICAL) { 
+      colorClass = "bg-gradient-to-br from-red-600 to-rose-700 border-red-200"; 
+      extra = "ring-4 ring-red-400 animate-bounce shadow-[0_0_25px_rgba(220,38,38,0.9)]"; 
+    }
+    else if (sev === FloodSeverity.HIGH) { 
+      colorClass = "bg-gradient-to-br from-orange-500 to-amber-600 border-orange-200"; 
+      extra = "ring-4 ring-orange-300 animate-pulse shadow-[0_0_20px_rgba(234,88,12,0.8)]"; 
+    }
+    else if (sev === FloodSeverity.MEDIUM) { 
+      colorClass = "bg-gradient-to-br from-yellow-400 to-amber-500 border-yellow-100"; 
+      extra = "ring-2 ring-yellow-200 shadow-[0_0_15px_rgba(234,179,8,0.7)]"; 
+    }
     
     return L.divIcon({
       className: "custom-pin",
-      html: `<div class="w-8 h-8 rounded-full flex items-center justify-center border shadow-xl ${colorClass} ${textCol} ${extra}" style="font-size: 14px; font-weight: bold;">!</div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -16]
+      html: `<div class="w-10 h-10 rounded-full flex items-center justify-center border-2 shadow-2xl text-white ${colorClass} ${extra}" style="font-size: 20px;">🌊</div>`,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+      popupAnchor: [0, -20]
     });
   };
 
@@ -393,45 +401,104 @@ export default function InteractiveMap({
             />
           )}
 
-          {/* Reports Markers (เฉพาะเคสที่ยังไม่เสร็จสิ้น) */}
-          {activeReports.map((r) => (
-            <Marker key={r.id} position={[r.latitude, r.longitude]} icon={getSeverityIcon(r.severity)}>
-              <Popup className="custom-popup">
-                <div className="w-64 font-sans">
-                  {r.images && r.images[0] && (
-                    <button
-                      type="button"
-                      onClick={() => setPreviewImage(r.images[0])}
-                      className="w-full block overflow-hidden rounded-xl mb-2 shadow hover:opacity-90 relative group cursor-pointer"
-                    >
-                      <img src={r.images[0]} alt="ภาพหน้างาน" className="w-full h-32 object-cover pointer-events-none" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                        🔍 คลิกขยายดูรูป
+          {/* Reports Markers & Ship Radar Warning Rings (วงเรดาร์เตือนภัยรอบจุดเกิดเหตุ) */}
+          {activeReports.map((r) => {
+            const isCrit = r.severity === FloodSeverity.CRITICAL;
+            const isHigh = r.severity === FloodSeverity.HIGH;
+            const isMed = r.severity === FloodSeverity.MEDIUM;
+            
+            const radarColor = isCrit ? "#dc2626" : isHigh ? "#ea580c" : isMed ? "#eab308" : "#10b981";
+            const outerRadius = isCrit ? 5000 : isHigh ? 3500 : isMed ? 2000 : 1000;
+            const midRadius = isCrit ? 3000 : isHigh ? 2000 : isMed ? 1200 : 600;
+            const innerRadius = isCrit ? 1500 : isHigh ? 1000 : isMed ? 600 : 300;
+
+            return (
+              <React.Fragment key={r.id}>
+                {/* 📡 1. Outer Radar Reach Ring (ตีกรอบรัศมีเฝ้าระวังรอบนอก) */}
+                <Circle
+                  center={[r.latitude, r.longitude]}
+                  radius={outerRadius}
+                  pathOptions={{ color: radarColor, fillColor: radarColor, fillOpacity: 0.08, weight: 1.5, dashArray: "8, 10" }}
+                />
+                {/* 📡 2. Middle Radar Warning Ring (วงเรดาร์เตือนภัยชั้นกลาง) */}
+                <Circle
+                  center={[r.latitude, r.longitude]}
+                  radius={midRadius}
+                  pathOptions={{ color: radarColor, fillColor: radarColor, fillOpacity: 0.15, weight: 2, dashArray: "4, 6" }}
+                />
+                {/* 📡 3. Inner Risk Core Ring (จุดศูนย์กลางน้ำท่วม) */}
+                <Circle
+                  center={[r.latitude, r.longitude]}
+                  radius={innerRadius}
+                  pathOptions={{ color: radarColor, fillColor: radarColor, fillOpacity: 0.25, weight: 2.5 }}
+                />
+
+                {/* 🌊 4. Water Wave Severity Marker */}
+                <Marker position={[r.latitude, r.longitude]} icon={getSeverityIcon(r.severity)}>
+                  <Popup className="custom-popup">
+                    <div className="w-64 font-sans">
+                      {r.images && r.images[0] && (
+                        <button
+                          type="button"
+                          onClick={() => setPreviewImage(r.images[0])}
+                          className="w-full block overflow-hidden rounded-xl mb-2 shadow hover:opacity-90 relative group cursor-pointer"
+                        >
+                          <img src={r.images[0]} alt="ภาพหน้างาน" className="w-full h-32 object-cover pointer-events-none" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
+                            🔍 คลิกขยายดูรูป
+                          </div>
+                        </button>
+                      )}
+                      
+                      {/* 1. ระดับไหน (Severity / Wave Status) */}
+                      <div className="mb-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <span className="text-[10px] font-bold text-slate-500 block">🌊 ระดับคลื่นน้ำ / ความหนัก:</span>
+                        <span className="text-xs font-black text-slate-900 dark:text-white">
+                          {r.severity === FloodSeverity.CRITICAL && "🔴 คลื่นแดง: วิกฤตน้ำป่าหลากเชี่ยวแรง"}
+                          {r.severity === FloodSeverity.HIGH && "🟠 คลื่นส้ม: เสี่ยงภัยสูงน้ำขึ้นรวดเร็ว"}
+                          {r.severity === FloodSeverity.MEDIUM && "🟡 คลื่นเหลือง: เฝ้าระวังน้ำท่วมขัง"}
+                          {r.severity === FloodSeverity.LOW && "🟢 คลื่นเขียว: สถานการณ์ปกติ/ปลอดภัย"}
+                        </span>
                       </div>
-                    </button>
-                  )}
-                  <h4 className="font-bold text-sm">ต.{r.tambon}, อ.{r.amphoe}</h4>
-                  <p className="text-xs text-slate-500 mt-1">เวลาแจ้ง: {new Date(r.timestamp).toLocaleString("th-TH")}</p>
-                  
-                  <div className="border-t border-b py-2 my-2 text-xs space-y-1">
-                    <p><strong>ระดับน้ำ:</strong> {r.waterLevelCm} ซม. ({getThaiSeverity(r.severity)})</p>
-                    {r.strandedPeopleCount > 0 && <p className="text-red-600 font-bold">ติดค้าง: {r.strandedPeopleCount} คน</p>}
-                    <p className="italic text-slate-600">"{r.description}"</p>
-                  </div>
-                  
-                  <p className="text-xs font-bold text-blue-600">{getThaiStatus(r.status)}</p>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&origin=${userPos.lat},${userPos.lng}&destination=${r.latitude},${r.longitude}&travelmode=driving`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 block text-center py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700"
-                  >
-                    🧭 นำทางเส้นทางนี้ผ่าน Google Maps
-                  </a>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+
+                      {/* 2. เหตุที่ไหน (Location) */}
+                      <div className="mb-2">
+                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 block">📍 เหตุเกิดที่ไหน:</span>
+                        <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug">
+                          ต.{r.tambon}, อ.{r.amphoe} (จ.นครศรีธรรมราช)
+                        </h4>
+                        <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
+                          "<strong>{r.description}</strong>"
+                        </p>
+                      </div>
+
+                      {/* 3. เวลาเท่าไหร่ (Time & Radar Reach) */}
+                      <div className="border-t border-b py-2 my-2 text-xs space-y-1 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20">
+                        <p className="text-[11px] font-bold text-amber-900 dark:text-amber-200">
+                          🕒 เวลาแจ้งเหตุ: {new Date(r.timestamp).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น. ({new Date(r.timestamp).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" })})
+                        </p>
+                        <p className="text-[10px] text-slate-700 dark:text-slate-300 font-medium">
+                          📡 <strong>วงเรดาร์เตือนภัย:</strong> ตีกรอบครอบคลุมพื้นที่ใกล้เคียงรัศมี {r.severity === FloodSeverity.CRITICAL ? "5.0 กม." : r.severity === FloodSeverity.HIGH ? "3.5 กม." : r.severity === FloodSeverity.MEDIUM ? "2.0 กม." : "1.0 กม."}
+                        </p>
+                        <p><strong>ระดับน้ำปัจจุบัน:</strong> ลึก {r.waterLevelCm} ซม.</p>
+                        {r.strandedPeopleCount > 0 && <p className="text-red-600 font-black">🚨 ผู้ประสบภัยติดค้าง: {r.strandedPeopleCount} คน</p>}
+                      </div>
+                      
+                      <p className="text-xs font-bold text-blue-600 text-center my-1">{getThaiStatus(r.status)}</p>
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&origin=${userPos.lat},${userPos.lng}&destination=${r.latitude},${r.longitude}&travelmode=driving`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 block text-center py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 shadow"
+                      >
+                        🧭 นำทางเลี่ยงจุดเสี่ยงนี้ (Google Maps)
+                      </a>
+                    </div>
+                  </Popup>
+                </Marker>
+              </React.Fragment>
+            );
+          })}
 
           {/* Evacuation Centers Markers */}
           {evacCenters.map((e) => (
